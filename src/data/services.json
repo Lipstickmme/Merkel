@@ -1,0 +1,30 @@
+[
+  {
+    "id": "structural",
+    "code": "S-01",
+    "title": "Structural Engineering",
+    "summary": "Load-path analysis, seismic detailing and high-rise frame design that let architecture reach further with less material.",
+    "capabilities": ["Finite element analysis", "Seismic & wind design", "Steel, concrete & timber", "Retrofit & assessment"]
+  },
+  {
+    "id": "civil",
+    "code": "S-02",
+    "title": "Civil & Infrastructure",
+    "summary": "Roads, bridges, drainage and site works engineered for a hundred-year horizon and a changing climate.",
+    "capabilities": ["Highway & transit", "Stormwater & flood", "Bridges & culverts", "Land development"]
+  },
+  {
+    "id": "mechanical",
+    "code": "S-03",
+    "title": "Mechanical Systems",
+    "summary": "HVAC, process piping and thermal systems tuned for efficiency, redundancy and quiet, reliable operation.",
+    "capabilities": ["HVAC & ventilation", "Process & plant", "Energy modelling", "Commissioning"]
+  },
+  {
+    "id": "digital",
+    "code": "S-04",
+    "title": "Digital Engineering",
+    "summary": "BIM coordination, parametric design and digital twins that keep every discipline working from one source of truth.",
+    "capabilities": ["BIM / VDC", "Parametric design", "Digital twins", "Clash & 4D scheduling"]
+  }
+]

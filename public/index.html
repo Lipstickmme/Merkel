@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Merkel Engineering — Structures Engineered for a Longer Horizon</title>
+  <meta name="description" content="Merkel Engineering is a multidisciplinary consultancy delivering structural, civil, mechanical and digital engineering for landmark projects." />
+  <meta name="theme-color" content="#0b0c0e" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="scroll-progress" id="progress"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <a class="brand" href="#top" aria-label="Merkel Engineering home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 21V4l6 8 6-8v17" /><path d="M21 4v17" opacity="0.5"/>
+        </svg>
+      </span>
+      <span>
+        <b>MERKEL</b>
+        <span>Engineering</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="navlinks">
+      <a href="#services">Services</a>
+      <a href="#projects">Projects</a>
+      <a href="#approach">Approach</a>
+      <a href="#team">Studio</a>
+      <a href="#contact" class="nav-cta">Start a project</a>
+    </nav>
+    <button class="nav-toggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <video class="hero-video" id="herovideo" autoplay muted loop playsinline preload="auto"
+           poster="/assets/video/poster.svg">
+      <source src="/assets/video/merkel-bg.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-scanlines" aria-hidden="true"></div>
+
+    <div class="hero-inner wrap">
+      <span class="eyebrow hero-tag">Multidisciplinary Engineering · Est. 1998</span>
+      <h1 data-reveal>
+        We engineer<br /><span class="stroke">what stands</span><br />when everything<br /><em>else moves.</em>
+      </h1>
+      <p class="hero-sub" data-reveal>
+        Merkel Engineering turns ambitious architecture and infrastructure into buildable,
+        durable reality — from super-tall frames to fjord-spanning bridges, resolved to the
+        last connection.
+      </p>
+      <div class="hero-actions" data-reveal>
+        <a href="#projects" class="btn">View selected works <span class="arw">→</span></a>
+        <a href="#contact" class="btn ghost">Brief our engineers</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERO READOUT -->
+  <div class="hero-readout" aria-label="Practice at a glance">
+    <div class="cell"><span class="k">Founded</span><span class="v">1998</span></div>
+    <div class="cell"><span class="k">Disciplines</span><span class="v">04 <small>core</small></span></div>
+    <div class="cell"><span class="k">Projects delivered</span><span class="v">640<small>+</small></span></div>
+    <div class="cell"><span class="k">Coordinates</span><span class="v" style="font-size:clamp(14px,1.4vw,18px);font-family:var(--font-mono)">51.9244° N · 4.4777° E</span></div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Structural</span><span>Civil</span><span>Mechanical</span><span>Digital Twins</span><span>Seismic</span><span>Facades</span><span>Infrastructure</span>
+      <span>Structural</span><span>Civil</span><span>Mechanical</span><span>Digital Twins</span><span>Seismic</span><span>Facades</span><span>Infrastructure</span>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section class="section-pad" id="services">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">01 — Capability</span>
+        <h2>Four disciplines, one integrated model.</h2>
+        <p>Every project is resolved across structure, ground, systems and data — coordinated so nothing is left to the gap between drawings.</p>
+      </div>
+      <div class="services-grid" id="services-grid" data-reveal>
+        <!-- injected by main.js; static fallback below -->
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats" aria-label="Practice metrics">
+    <div class="wrap stats-grid">
+      <div class="stat"><div class="num" data-count="640" data-suffix="+">0</div><div class="lbl">Projects delivered</div></div>
+      <div class="stat"><div class="num" data-count="27" data-suffix="">0</div><div class="lbl">Years in practice</div></div>
+      <div class="stat"><div class="num"><em data-count="22" data-suffix="%">0</em></div><div class="lbl">Avg. material saved</div></div>
+      <div class="stat"><div class="num" data-count="14" data-suffix="">0</div><div class="lbl">Countries built in</div></div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section-pad" id="projects">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">02 — Selected works</span>
+        <h2>Projects that had to hold.</h2>
+        <p>A cross-section of recent commissions — where the engineering did the quiet, load-bearing work behind the architecture.</p>
+      </div>
+      <div class="proj-filters" id="proj-filters" data-reveal></div>
+      <div class="projects-grid" id="projects-grid" data-reveal></div>
+    </div>
+  </section>
+
+  <!-- APPROACH -->
+  <section class="section-pad" id="approach" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+    <div class="wrap approach">
+      <div data-reveal>
+        <span class="eyebrow">03 — Approach</span>
+        <p class="lead" style="margin-top:22px;">We treat engineering as a <em>design discipline</em>, not a checking service — in the room from the first sketch to the last bolt.</p>
+      </div>
+      <div class="body" data-reveal>
+        <p>Merkel was founded on a simple conviction: the best-performing structures are engineered early, when ideas are still cheap to change. So we embed with architects and clients from day one, running analysis alongside design rather than after it.</p>
+        <ol class="approach-steps">
+          <li><span class="st-num">/01</span><div><h4>Interrogate the brief</h4><p>Loads, ground, climate and constraints mapped before a single line is drawn.</p></div></li>
+          <li><span class="st-num">/02</span><div><h4>Model as one truth</h4><p>Every discipline works from a shared parametric model and digital twin.</p></div></li>
+          <li><span class="st-num">/03</span><div><h4>Optimise, then prove</h4><p>We reduce material and carbon, then verify with full non-linear analysis.</p></div></li>
+          <li><span class="st-num">/04</span><div><h4>Engineer to site</h4><p>Detailing and site support that keeps the design intact through construction.</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="section-pad" id="team">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">04 — Studio</span>
+        <h2>Principals in the room.</h2>
+        <p>Senior engineers who stay on the project — not just on the proposal.</p>
+      </div>
+      <div class="team-grid" id="team-grid" data-reveal></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section-pad contact" id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-info" data-reveal>
+        <span class="eyebrow">05 — Start a project</span>
+        <h2>Bring us the hard part.</h2>
+        <p>Tell us what you're trying to build and where it's getting difficult. A principal engineer will reply within two working days.</p>
+        <div class="contact-detail">
+          <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
+          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a></div></div>
+          <div class="row"><div class="k">Telephone</div><div class="val">+31 (0)10 240 0198</div></div>
+        </div>
+      </div>
+
+      <form id="contact-form" novalidate data-reveal>
+        <div class="field two">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" autocomplete="name" required />
+            <div class="err" data-err="name"></div>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email" required />
+            <div class="err" data-err="email"></div>
+          </div>
+        </div>
+        <div class="field two">
+          <div class="field">
+            <label for="company">Company <span style="text-transform:none;color:var(--faint)">(optional)</span></label>
+            <input type="text" id="company" name="company" autocomplete="organization" />
+            <div class="err" data-err="company"></div>
+          </div>
+          <div class="field">
+            <label for="service">Discipline</label>
+            <select id="service" name="service">
+              <option value="">Select…</option>
+              <option>Structural</option>
+              <option>Civil &amp; Infrastructure</option>
+              <option>Mechanical</option>
+              <option>Digital Engineering</option>
+              <option>Not sure yet</option>
+            </select>
+            <div class="err" data-err="service"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="message">Project brief</label>
+          <textarea id="message" name="message" placeholder="What are you building, and where does it get hard?" required></textarea>
+          <div class="err" data-err="message"></div>
+        </div>
+        <!-- honeypot -->
+        <div class="honeypot" aria-hidden="true">
+          <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+        <button type="submit" class="btn" id="submit-btn">Send enquiry <span class="arw">→</span></button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap footer-top">
+      <div>
+        <span class="eyebrow">Merkel Engineering</span>
+        <h3 style="margin-top:18px;">Engineered to stand. Designed to last.</h3>
+      </div>
+      <div class="col">
+        <h5>Navigate</h5>
+        <a href="#services">Services</a>
+        <a href="#projects">Projects</a>
+        <a href="#approach">Approach</a>
+        <a href="#team">Studio</a>
+      </div>
+      <div class="col">
+        <h5>Contact</h5>
+        <a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a>
+        <a href="tel:+31102400198">+31 (0)10 240 0198</a>
+        <a href="#contact">Start a project</a>
+      </div>
+    </div>
+    <div class="wrap footer-bottom">
+      <span>© <span id="year"></span> Merkel Engineering B.V.</span>
+      <span>51.9244° N · 4.4777° E — Rotterdam</span>
+      <span>Built to spec.</span>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

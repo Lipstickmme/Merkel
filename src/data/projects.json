@@ -1,0 +1,42 @@
+[
+  {
+    "id": "helix-tower",
+    "name": "Helix Tower",
+    "sector": "Commercial",
+    "location": "Rotterdam, NL",
+    "year": 2025,
+    "metric": "184 m",
+    "metricLabel": "structural height",
+    "blurb": "A diagrid super-structure that cut steel tonnage by 22% against a conventional frame."
+  },
+  {
+    "id": "north-crossing",
+    "name": "North Crossing",
+    "sector": "Infrastructure",
+    "location": "Aarhus, DK",
+    "year": 2024,
+    "metric": "410 m",
+    "metricLabel": "cable-stayed span",
+    "blurb": "A twin-pylon bridge engineered for extreme fjord wind loading and marine durability."
+  },
+  {
+    "id": "atlas-plant",
+    "name": "Atlas Process Plant",
+    "sector": "Industrial",
+    "location": "Duisburg, DE",
+    "year": 2024,
+    "metric": "38%",
+    "metricLabel": "energy reduction",
+    "blurb": "Heat-recovery redesign of a continuous process line, recommissioned with zero downtime."
+  },
+  {
+    "id": "meridian-transit",
+    "name": "Meridian Transit Hub",
+    "sector": "Transit",
+    "location": "Lyon, FR",
+    "year": 2023,
+    "metric": "60k / day",
+    "metricLabel": "passenger capacity",
+    "blurb": "A long-span steel canopy and below-grade concourse delivered on a live rail corridor."
+  }
+]
