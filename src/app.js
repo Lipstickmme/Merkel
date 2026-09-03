@@ -50,8 +50,8 @@ app.use(
   express.static(publicDir, {
     extensions: ['html'],
     setHeaders(res, filePath) {
-      // Long cache for the hero video; it never changes per-deploy.
-      if (filePath.endsWith('.mp4')) {
+      // Long cache for static media (hero slides, logos); versioned per deploy.
+      if (/\.(webp|png|jpg|jpeg|svg|mp4|woff2?)$/i.test(filePath)) {
         res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
       }
     },
