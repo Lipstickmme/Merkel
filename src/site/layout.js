@@ -1,0 +1,132 @@
+'use strict';
+
+/**
+ * Shared page layout. Pages provide their own <main> content; this module
+ * wraps it with the head, nav, footer and chat widget so every page stays
+ * consistent. Rendered at build time (scripts/build-pages.js) into static
+ * HTML, so there is no client-side layout flash.
+ */
+
+const YEAR = new Date().getFullYear();
+
+function head({ title, description }) {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${title}</title>
+  <meta name="description" content="${description}" />
+  <meta name="theme-color" content="#0b0c0e" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>`;
+}
+
+function nav(active = '') {
+  const link = (href, label, key) =>
+    `<a href="${href}"${key === active ? ' class="is-active"' : ''}>${label}</a>`;
+  return `
+  <header class="nav" id="nav">
+    <a class="brand" href="/" aria-label="Merkel Engineering home">
+      <img class="brand-logo" src="/assets/brand/merkel-wordmark.png" alt="Merkel Engineering" width="1062" height="215" />
+    </a>
+    <nav class="nav-links" id="navlinks">
+      ${link('/projects', 'Projects', 'projects')}
+      ${link('/#services', 'Services', 'services')}
+      ${link('/careers', 'Careers', 'careers')}
+      ${link('/contact', 'Contact us', 'contact')}
+    </nav>
+    <a href="/contact" class="nav-cta">Contact us</a>
+    <button class="nav-toggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>`;
+}
+
+function footer() {
+  return `
+  <footer class="footer">
+    <div class="wrap footer-top">
+      <div class="footer-brand">
+        <img class="brand-logo footer-logo" src="/assets/brand/merkel-wordmark.png" alt="Merkel Engineering" width="1062" height="215" />
+        <p>Engineering for buildings and infrastructure.</p>
+      </div>
+      <div class="col">
+        <h5>Company</h5>
+        <a href="/projects">Projects</a>
+        <a href="/#services">Services</a>
+        <a href="/#leadership">Leadership</a>
+        <a href="/careers">Careers</a>
+      </div>
+      <div class="col">
+        <h5>Contact</h5>
+        <a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a>
+        <a href="tel:+31102400198">+31 (0)10 240 0198</a>
+        <a href="/contact">Contact us</a>
+      </div>
+    </div>
+    <div class="wrap footer-bottom">
+      <span>&copy; ${YEAR} Merkel Engineering B.V.</span>
+      <span>Rotterdam, Netherlands</span>
+    </div>
+  </footer>`;
+}
+
+function chatWidget() {
+  return `
+  <div class="chat" id="chat" aria-live="polite">
+    <button class="chat-toggle" id="chat-toggle" aria-label="Open live chat" aria-expanded="false">
+      <svg class="i-open" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg>
+      <svg class="i-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="chat-panel" id="chat-panel" hidden>
+      <div class="chat-head">
+        <div class="chat-head-id">
+          <span class="dot"></span>
+          <div>
+            <strong>Merkel Studio</strong>
+            <small>Typically replies in a few minutes</small>
+          </div>
+        </div>
+        <button class="chat-min" id="chat-min" aria-label="Minimise chat">&minus;</button>
+      </div>
+      <div class="chat-log" id="chat-log"></div>
+      <form class="chat-form" id="chat-form">
+        <input type="text" id="chat-input" name="text" placeholder="Ask us anything" autocomplete="off" maxlength="2000" />
+        <button type="submit" aria-label="Send message">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>`;
+}
+
+function scripts(extra = []) {
+  const tags = ['/js/main.js', '/js/chat.js', ...extra]
+    .map((s) => `<script src="${s}"></script>`)
+    .join('\n  ');
+  return `  ${tags}\n</body>\n</html>`;
+}
+
+/**
+ * Compose a full page.
+ * @param {{title,description,active,bodyClass,content,extraScripts}} opts
+ */
+function page(opts) {
+  const { active = '', bodyClass = '', content = '', extraScripts = [] } = opts;
+  return [
+    head(opts),
+    `<body class="${bodyClass}">`,
+    `  <div class="scroll-progress" id="progress"></div>`,
+    nav(active),
+    content,
+    footer(),
+    chatWidget(),
+    scripts(extraScripts),
+  ].join('\n');
+}
+
+module.exports = { page, nav, footer, chatWidget, head };

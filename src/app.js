@@ -58,10 +58,23 @@ app.use(
   })
 );
 
-// SPA-ish fallback: serve the landing page for unknown non-API GET routes.
+// Clean-URL page routes. Each maps to a pre-built static HTML page.
+const sendPage = (file) => (req, res) => res.sendFile(path.join(publicDir, file));
+
+app.get('/', sendPage('index.html'));
+app.get('/projects', sendPage('projects.html'));
+// Project detail pages resolve the id client-side from the path.
+app.get('/projects/:id', sendPage('project.html'));
+app.get('/careers', sendPage('careers.html'));
+app.get('/contact', sendPage('contact.html'));
+
+// Unknown non-API, non-asset GET routes get the styled 404 page.
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/')) return next();
-  res.sendFile(path.join(publicDir, 'index.html'));
+  // Anything that looks like a file (has an extension) was not found by
+  // express.static above, so let it 404 rather than returning HTML.
+  if (path.extname(req.path)) return next();
+  res.status(404).sendFile(path.join(publicDir, '404.html'));
 });
 
 // 404 + centralized error handling.

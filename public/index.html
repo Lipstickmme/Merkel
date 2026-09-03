@@ -6,34 +6,30 @@
   <title>Merkel Engineering</title>
   <meta name="description" content="Merkel Engineering is a multidisciplinary consultancy delivering structural, civil, mechanical and digital engineering for buildings and infrastructure." />
   <meta name="theme-color" content="#0b0c0e" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-<body>
+<body class="page-home">
   <div class="scroll-progress" id="progress"></div>
-  <div class="grid-overlay" aria-hidden="true"></div>
 
-  <!-- NAV -->
   <header class="nav" id="nav">
-    <a class="brand" href="#top" aria-label="Merkel Engineering home">
+    <a class="brand" href="/" aria-label="Merkel Engineering home">
       <img class="brand-logo" src="/assets/brand/merkel-wordmark.png" alt="Merkel Engineering" width="1062" height="215" />
     </a>
     <nav class="nav-links" id="navlinks">
-      <a href="#services">Services</a>
-      <a href="#projects">Projects</a>
-      <a href="#approach">Approach</a>
-      <a href="#team">Studio</a>
-      <a href="#contact" class="nav-cta">Start a project</a>
+      <a href="/projects">Projects</a>
+      <a href="/#services">Services</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact">Contact us</a>
     </nav>
+    <a href="/contact" class="nav-cta">Contact us</a>
     <button class="nav-toggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </header>
 
-  <!-- HERO -->
   <section class="hero" id="top">
     <div class="hero-slides" id="hero-slides" aria-hidden="true">
       <div class="slide is-active" style="background-image:url('/assets/slides/blueprint-01.webp')"></div>
@@ -41,17 +37,15 @@
       <div class="slide" style="background-image:url('/assets/slides/blueprint-03.webp')"></div>
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
-
     <div class="hero-inner wrap">
-      <span class="eyebrow hero-tag">Structural · Civil · Mechanical · Digital</span>
+      <span class="eyebrow hero-tag">Structural &middot; Civil &middot; Mechanical &middot; Digital</span>
       <h1 data-reveal>Built to stand.</h1>
       <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
       <div class="hero-actions" data-reveal>
-        <a href="#projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
-        <a href="#contact" class="btn ghost">Start a project</a>
+        <a href="/projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
+        <a href="/contact" class="btn ghost">Contact us</a>
       </div>
     </div>
-
     <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
       <button class="dot is-active" data-slide="0" aria-label="Slide 1"></button>
       <button class="dot" data-slide="1" aria-label="Slide 2"></button>
@@ -59,7 +53,6 @@
     </div>
   </section>
 
-  <!-- READOUT -->
   <div class="hero-readout" aria-label="Practice at a glance">
     <div class="cell"><span class="k">Founded</span><span class="v">1998</span></div>
     <div class="cell"><span class="k">Disciplines</span><span class="v">Four core</span></div>
@@ -67,19 +60,22 @@
     <div class="cell"><span class="k">Based in</span><span class="v">Rotterdam, NL</span></div>
   </div>
 
-  <!-- SERVICES -->
   <section class="section-pad" id="services">
     <div class="wrap">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">01 / Capabilities</span>
-        <h2>Four disciplines, one coordinated model.</h2>
-        <p>Every project runs across structure, ground, systems and data, coordinated so nothing falls into the gap between drawings.</p>
+      <div class="services-head">
+        <div class="section-head" data-reveal>
+          <span class="eyebrow">01 / Capabilities</span>
+          <h2>Four disciplines, one coordinated model.</h2>
+          <p>Every project runs across structure, ground, systems and data, coordinated so nothing falls into the gap between drawings.</p>
+        </div>
+        <div class="services-media" data-reveal aria-hidden="true">
+          <img src="/assets/slides/blueprint-01.webp" alt="" loading="lazy" />
+        </div>
       </div>
       <div class="services-grid" id="services-grid" data-reveal></div>
     </div>
   </section>
 
-  <!-- STATS -->
   <section class="stats" aria-label="Practice metrics">
     <div class="wrap stats-grid">
       <div class="stat"><div class="num" data-count="640" data-suffix="+">0</div><div class="lbl">Projects delivered</div></div>
@@ -89,111 +85,45 @@
     </div>
   </section>
 
-  <!-- PROJECTS -->
-  <section class="section-pad" id="projects">
+  <section class="section-pad" id="leadership">
+    <div class="wrap leadership">
+      <div class="leadership-media" data-reveal>
+        <img src="/assets/img/ceo.svg" alt="Portrait of Dr. Ada Merkel" loading="lazy" />
+        <span class="leadership-badge">Founding Principal & CEO</span>
+      </div>
+      <div class="leadership-body" data-reveal>
+        <span class="eyebrow">02 / Leadership</span>
+        <blockquote>&ldquo;The best-performing structures are engineered early, while ideas are still cheap to change.&rdquo;</blockquote>
+        <h3>Dr. Ada Merkel</h3>
+        <p>Ada founded Merkel Engineering in 1998 after a decade designing tall buildings across Europe. She holds a doctorate in structural engineering and has led the practice through more than six hundred commissions, from super-tall frames to fjord-spanning bridges. She still reviews every major structural scheme the studio puts its name to.</p>
+        <a href="/careers" class="link-arrow">Join the studio <span class="arw">&rsaquo;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad alt" id="work">
     <div class="wrap">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">02 / Selected work</span>
-        <h2>Recent projects.</h2>
-        <p>A cross-section of recent commissions, where the engineering did the load-bearing work behind the architecture.</p>
+      <div class="section-head with-action" data-reveal>
+        <div>
+          <span class="eyebrow">03 / Selected work</span>
+          <h2>Recent projects.</h2>
+          <p>A cross-section of recent commissions across sectors.</p>
+        </div>
+        <a href="/projects" class="btn ghost">All projects <span class="arw">&rsaquo;</span></a>
       </div>
-      <div class="proj-filters" id="proj-filters" data-reveal></div>
-      <div class="projects-grid" id="projects-grid" data-reveal></div>
+      <div class="cards-grid" id="featured-projects" data-reveal></div>
     </div>
   </section>
 
-  <!-- APPROACH -->
-  <section class="section-pad" id="approach">
-    <div class="wrap approach">
-      <div data-reveal>
-        <span class="eyebrow">03 / Approach</span>
-        <p class="lead">We treat engineering as a <em>design discipline</em>, not a checking service. We are in the room from the first sketch to the last bolt.</p>
-      </div>
-      <div class="body" data-reveal>
-        <p>Merkel was founded on a simple idea: the best-performing structures are engineered early, while the design is still cheap to change. We work alongside architects and clients from day one, running analysis as the design develops rather than after it.</p>
-        <ol class="approach-steps">
-          <li><span class="st-num">/01</span><div><h4>Interrogate the brief</h4><p>Loads, ground, climate and constraints are mapped before a single line is drawn.</p></div></li>
-          <li><span class="st-num">/02</span><div><h4>Model as one source of truth</h4><p>Every discipline works from a shared parametric model and digital twin.</p></div></li>
-          <li><span class="st-num">/03</span><div><h4>Optimise, then prove</h4><p>We reduce material and carbon, then verify with full non-linear analysis.</p></div></li>
-          <li><span class="st-num">/04</span><div><h4>Engineer to site</h4><p>Detailing and site support keep the design intact through construction.</p></div></li>
-        </ol>
-      </div>
+  <section class="cta-band" id="cta">
+    <div class="cta-media" aria-hidden="true"><img src="/assets/img/contact.svg" alt="" loading="lazy" /></div>
+    <div class="wrap cta-inner" data-reveal>
+      <h2>Bring us the hard part.</h2>
+      <p>Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days.</p>
+      <a href="/contact" class="btn">Contact us <span class="arw">&rsaquo;</span></a>
     </div>
   </section>
 
-  <!-- STUDIO -->
-  <section class="section-pad" id="team">
-    <div class="wrap">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">04 / Studio</span>
-        <h2>Principals who stay on the project.</h2>
-        <p>Senior engineers who see the work through, not just the proposal.</p>
-      </div>
-      <div class="team-grid" id="team-grid" data-reveal></div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="section-pad contact" id="contact">
-    <div class="wrap contact-grid">
-      <div class="contact-info" data-reveal>
-        <span class="eyebrow">05 / Start a project</span>
-        <h2>Bring us the hard part.</h2>
-        <p>Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days.</p>
-        <div class="contact-detail">
-          <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
-          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a></div></div>
-          <div class="row"><div class="k">Telephone</div><div class="val">+31 (0)10 240 0198</div></div>
-        </div>
-      </div>
-
-      <form id="contact-form" novalidate data-reveal>
-        <div class="field two">
-          <div class="field">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" autocomplete="name" required />
-            <div class="err" data-err="name"></div>
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" autocomplete="email" required />
-            <div class="err" data-err="email"></div>
-          </div>
-        </div>
-        <div class="field two">
-          <div class="field">
-            <label for="company">Company <span class="opt">(optional)</span></label>
-            <input type="text" id="company" name="company" autocomplete="organization" />
-            <div class="err" data-err="company"></div>
-          </div>
-          <div class="field">
-            <label for="service">Discipline</label>
-            <select id="service" name="service">
-              <option value="">Select</option>
-              <option>Structural</option>
-              <option>Civil &amp; Infrastructure</option>
-              <option>Mechanical</option>
-              <option>Digital Engineering</option>
-              <option>Not sure yet</option>
-            </select>
-            <div class="err" data-err="service"></div>
-          </div>
-        </div>
-        <div class="field">
-          <label for="message">Project brief</label>
-          <textarea id="message" name="message" placeholder="What are you building, and where does it get hard?" required></textarea>
-          <div class="err" data-err="message"></div>
-        </div>
-        <div class="honeypot" aria-hidden="true">
-          <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
-        </div>
-        <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
-        <button type="submit" class="btn" id="submit-btn">Send enquiry <span class="arw">&rsaquo;</span></button>
-      </form>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
@@ -201,25 +131,51 @@
         <p>Engineering for buildings and infrastructure.</p>
       </div>
       <div class="col">
-        <h5>Navigate</h5>
-        <a href="#services">Services</a>
-        <a href="#projects">Projects</a>
-        <a href="#approach">Approach</a>
-        <a href="#team">Studio</a>
+        <h5>Company</h5>
+        <a href="/projects">Projects</a>
+        <a href="/#services">Services</a>
+        <a href="/#leadership">Leadership</a>
+        <a href="/careers">Careers</a>
       </div>
       <div class="col">
         <h5>Contact</h5>
         <a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a>
         <a href="tel:+31102400198">+31 (0)10 240 0198</a>
-        <a href="#contact">Start a project</a>
+        <a href="/contact">Contact us</a>
       </div>
     </div>
     <div class="wrap footer-bottom">
-      <span>&copy; <span id="year"></span> Merkel Engineering B.V.</span>
+      <span>&copy; 2026 Merkel Engineering B.V.</span>
       <span>Rotterdam, Netherlands</span>
     </div>
   </footer>
 
+  <div class="chat" id="chat" aria-live="polite">
+    <button class="chat-toggle" id="chat-toggle" aria-label="Open live chat" aria-expanded="false">
+      <svg class="i-open" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg>
+      <svg class="i-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="chat-panel" id="chat-panel" hidden>
+      <div class="chat-head">
+        <div class="chat-head-id">
+          <span class="dot"></span>
+          <div>
+            <strong>Merkel Studio</strong>
+            <small>Typically replies in a few minutes</small>
+          </div>
+        </div>
+        <button class="chat-min" id="chat-min" aria-label="Minimise chat">&minus;</button>
+      </div>
+      <div class="chat-log" id="chat-log"></div>
+      <form class="chat-form" id="chat-form">
+        <input type="text" id="chat-input" name="text" placeholder="Ask us anything" autocomplete="off" maxlength="2000" />
+        <button type="submit" aria-label="Send message">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
   <script src="/js/main.js"></script>
+  <script src="/js/chat.js"></script>
 </body>
 </html>
