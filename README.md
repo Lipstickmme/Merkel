@@ -1,6 +1,6 @@
 # Merkel Engineering
 
-Corporate website and API server for **Merkel Engineering** — a multidisciplinary
+Corporate website and API server for **Merkel Engineering**, a multidisciplinary
 engineering consultancy. A dependency-light Node/Express backend serves a bespoke,
 video-driven frontend and a small JSON API that powers the content on the page.
 
@@ -64,8 +64,11 @@ npm run dev            # watch mode (Node --watch)
 
 ## Frontend notes
 
-- The hero uses an MP4 **video background** with an SVG poster fallback; it pauses under
-  `prefers-reduced-motion` and degrades gracefully if autoplay is blocked.
+- The hero runs a **blueprint slideshow** (crossfade plus a subtle Ken Burns zoom) behind a
+  black overlay, with clickable slide indicators. It auto-advances, pauses when the tab is
+  hidden, and drops the motion under `prefers-reduced-motion`.
+- The brand wordmark (`public/assets/brand/merkel-wordmark.png`) is a transparent PNG keyed
+  from the black-background logo, so it sits cleanly on the dark nav and footer.
 - Services, projects (with live sector filtering) and the studio list are rendered from
   the API, with embedded seed data as a fallback so the page never renders empty.
 - The contact form validates inline and posts to the API.
@@ -75,7 +78,7 @@ npm run dev            # watch mode (Node --watch)
 | Variable                | Default | Purpose                                  |
 | ----------------------- | ------- | ---------------------------------------- |
 | `PORT`                  | `3000`  | HTTP port                                |
-| `NODE_ENV`              | —       | `production` tightens error output       |
-| `CONTACT_NOTIFY_EMAIL`  | —       | Integration point for enquiry notifications |
+| `NODE_ENV`              | none    | `production` tightens error output       |
+| `CONTACT_NOTIFY_EMAIL`  | none    | Integration point for enquiry notifications |
 | `RATE_LIMIT_WINDOW_MS`  | `60000` | Rate-limit window                        |
 | `RATE_LIMIT_MAX`        | `30`    | Max requests per window per IP           |

@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Merkel Engineering — server entry point.
+ * Merkel Engineering server entry point.
  * Boots the HTTP server and wires graceful shutdown.
  */
 

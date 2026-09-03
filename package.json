@@ -1,7 +1,7 @@
 {
   "name": "merkel-engineering",
   "version": "1.0.0",
-  "description": "Merkel Engineering — corporate website and API server",
+  "description": "Merkel Engineering corporate website and API server",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

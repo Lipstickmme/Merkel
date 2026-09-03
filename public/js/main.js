@@ -1,10 +1,9 @@
 'use strict';
 
 /* =========================================================================
-   Merkel Engineering — frontend behaviour
-   Data (services / projects / team) is pulled from the Express API; if the
-   API is unreachable the page falls back to embedded seed data so it never
-   renders empty.
+   Merkel Engineering frontend behaviour.
+   Services, projects and studio content are pulled from the Express API,
+   with embedded seed data as a fallback so the page never renders empty.
    ========================================================================= */
 
 (function () {
@@ -12,7 +11,7 @@
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---- Fallback seed data (mirrors src/data/*.json) --------------------- */
+  /* Fallback seed data (mirrors src/data/*.json) ------------------------- */
   const FALLBACK = {
     services: [
       { code: 'S-01', title: 'Structural Engineering', summary: 'Load-path analysis, seismic detailing and high-rise frame design that let architecture reach further with less material.', capabilities: ['Finite element analysis', 'Seismic & wind design', 'Steel, concrete & timber', 'Retrofit & assessment'] },
@@ -28,7 +27,7 @@
     ],
     team: [
       { name: 'Dr. Ada Merkel', role: 'Founding Principal', discipline: 'Structural', initials: 'AM' },
-      { name: 'Tomás Reyes', role: 'Director of Civil', discipline: 'Infrastructure', initials: 'TR' },
+      { name: 'Tomas Reyes', role: 'Director of Civil', discipline: 'Infrastructure', initials: 'TR' },
       { name: 'Lena Okafor', role: 'Head of Digital Engineering', discipline: 'BIM / VDC', initials: 'LO' },
       { name: 'Jun-seo Park', role: 'Principal, Mechanical', discipline: 'Systems', initials: 'JP' }
     ]
@@ -40,11 +39,11 @@
 
   async function fetchJSON(url) {
     const res = await fetch(url, { headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     return res.json();
   }
 
-  /* ---- Nav -------------------------------------------------------------- */
+  /* Nav ------------------------------------------------------------------ */
   const nav = $('#nav');
   const onScroll = () => {
     nav.classList.toggle('scrolled', window.scrollY > 24);
@@ -66,7 +65,31 @@
     toggle.setAttribute('aria-expanded', 'false');
   }));
 
-  /* ---- Reveal on scroll ------------------------------------------------- */
+  /* Hero slideshow ------------------------------------------------------- */
+  function setupSlides() {
+    const wrap = $('#hero-slides');
+    if (!wrap) return;
+    const slides = $$('.slide', wrap);
+    const dots = $$('#hero-dots .dot');
+    if (slides.length <= 1) return;
+    const DURATION = 5500;
+    let idx = 0;
+    let timer = null;
+
+    const go = (n) => {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+    };
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const start = () => { stop(); if (!reduceMotion) timer = setInterval(() => go(idx + 1), DURATION); };
+
+    dots.forEach((d) => d.addEventListener('click', () => { go(Number(d.dataset.slide)); start(); }));
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    start();
+  }
+
+  /* Reveal on scroll ----------------------------------------------------- */
   function observeReveals() {
     const els = $$('[data-reveal]:not(.in)');
     if (reduceMotion || !('IntersectionObserver' in window)) {
@@ -81,7 +104,7 @@
     els.forEach((el) => io.observe(el));
   }
 
-  /* ---- Animated counters ------------------------------------------------ */
+  /* Animated counters ---------------------------------------------------- */
   function runCounters() {
     const nums = $$('[data-count]');
     const animate = (el) => {
@@ -104,7 +127,7 @@
     nums.forEach((el) => io.observe(el));
   }
 
-  /* ---- Render: services ------------------------------------------------- */
+  /* Render: services ----------------------------------------------------- */
   function renderServices(services) {
     const grid = $('#services-grid');
     grid.innerHTML = services.map((s, i) => `
@@ -117,7 +140,7 @@
       </article>`).join('');
   }
 
-  /* ---- Render: projects (with filters) ---------------------------------- */
+  /* Render: projects (with filters) -------------------------------------- */
   let allProjects = [];
   function renderProjects(list) {
     const grid = $('#projects-grid');
@@ -145,7 +168,7 @@
     });
   }
 
-  /* ---- Render: team ----------------------------------------------------- */
+  /* Render: studio ------------------------------------------------------- */
   function renderTeam(team) {
     const grid = $('#team-grid');
     grid.innerHTML = team.map((m) => {
@@ -160,32 +183,29 @@
     }).join('');
   }
 
-  /* ---- Load data -------------------------------------------------------- */
+  /* Load data ------------------------------------------------------------ */
   async function loadData() {
-    // Services
     try {
       const d = await fetchJSON('/api/services');
       renderServices(d.services || FALLBACK.services);
-    } catch { renderServices(FALLBACK.services); }
+    } catch (e) { renderServices(FALLBACK.services); }
 
-    // Projects
     try {
       const d = await fetchJSON('/api/projects');
       allProjects = d.projects || FALLBACK.projects;
-    } catch { allProjects = FALLBACK.projects; }
+    } catch (e) { allProjects = FALLBACK.projects; }
     buildFilters(allProjects);
     renderProjects(allProjects);
 
-    // Team
     try {
       const d = await fetchJSON('/api/team');
       renderTeam(d.team || FALLBACK.team);
-    } catch { renderTeam(FALLBACK.team); }
+    } catch (e) { renderTeam(FALLBACK.team); }
 
-    observeReveals(); // re-observe freshly injected [data-reveal] containers
+    observeReveals();
   }
 
-  /* ---- Contact form ----------------------------------------------------- */
+  /* Contact form --------------------------------------------------------- */
   function setupForm() {
     const form = $('#contact-form');
     if (!form) return;
@@ -237,7 +257,7 @@
       };
       btn.disabled = true;
       const original = btn.innerHTML;
-      btn.innerHTML = 'Sending…';
+      btn.innerHTML = 'Sending';
       try {
         const res = await fetch('/api/contact', {
           method: 'POST',
@@ -248,19 +268,19 @@
         if (res.ok) {
           form.reset();
           statusEl.className = 'form-status ok';
-          statusEl.textContent = data.message || 'Thank you — your enquiry has reached our engineers.';
+          statusEl.textContent = data.message || 'Thank you. Your enquiry has reached our engineers.';
         } else if (res.status === 422 && data.fields) {
           Object.entries(data.fields).forEach(([k, v]) => setErr(k, v));
           statusEl.className = 'form-status bad';
           statusEl.textContent = 'Please correct the highlighted fields.';
         } else if (res.status === 429) {
           statusEl.className = 'form-status bad';
-          statusEl.textContent = 'Too many attempts — please wait a moment and try again.';
+          statusEl.textContent = 'Too many attempts. Please wait a moment and try again.';
         } else {
           statusEl.className = 'form-status bad';
           statusEl.textContent = data.message || 'Something went wrong. Please email studio@merkel.engineering.';
         }
-      } catch {
+      } catch (err) {
         statusEl.className = 'form-status bad';
         statusEl.textContent = 'Network error. Please email studio@merkel.engineering.';
       } finally {
@@ -270,21 +290,10 @@
     });
   }
 
-  /* ---- Video: reduced-motion + autoplay guard --------------------------- */
-  function setupVideo() {
-    const v = $('#herovideo');
-    if (!v) return;
-    if (reduceMotion) { try { v.pause(); v.removeAttribute('autoplay'); } catch (e) {} return; }
-    const p = v.play();
-    if (p && typeof p.catch === 'function') {
-      p.catch(() => { /* autoplay blocked — poster remains, fine */ });
-    }
-  }
-
-  /* ---- Init ------------------------------------------------------------- */
+  /* Init ----------------------------------------------------------------- */
   document.addEventListener('DOMContentLoaded', () => {
     $('#year').textContent = new Date().getFullYear();
-    setupVideo();
+    setupSlides();
     observeReveals();
     runCounters();
     setupForm();

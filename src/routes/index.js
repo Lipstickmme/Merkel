@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * API router — mounts feature routers under /api.
+ * API router - mounts feature routers under /api.
  */
 
 const router = require('express').Router();
