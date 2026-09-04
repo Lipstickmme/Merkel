@@ -1,6 +1,7 @@
 'use strict';
 
 const chatStore = require('../utils/chatStore');
+const notify = require('../utils/notify');
 
 function clean(str, max) {
   return String(str == null ? '' : str).trim().slice(0, max);
@@ -52,7 +53,14 @@ exports.postMessage = async (req, res, next) => {
     const userMsg = { role: 'user', text, at: now };
     const botMsg = { role: 'agent', text: autoReply(text), at: new Date(Date.now() + 1).toISOString() };
 
-    await chatStore.append(sessionId, [userMsg, botMsg]);
+    try {
+      await chatStore.append(sessionId, [userMsg, botMsg]);
+    } catch (err) {
+      console.error('[merkel] failed to persist chat message:', err.message);
+    }
+    // Route the visitor's message to the inbox so a human can pick it up.
+    await notify.chatMessage(sessionId, text);
+
     return res.status(201).json({ ok: true, reply: botMsg });
   } catch (err) {
     return next(err);

@@ -1,0 +1,13 @@
+{
+  "_comment": "Central image slots for page-level artwork. Replace the files in public/assets/ or point these at new paths. Per-project images live in projects.json; the CEO portrait lives in leadership.json.",
+  "heroSlides": [
+    "/assets/slides/blueprint-01.webp",
+    "/assets/slides/blueprint-02.webp",
+    "/assets/slides/blueprint-03.webp"
+  ],
+  "servicesMedia": "/assets/slides/blueprint-01.webp",
+  "projectsHeader": "/assets/img/proj-helix-tower.svg",
+  "careersHeader": "/assets/img/careers.svg",
+  "contactHeader": "/assets/img/contact.svg",
+  "ctaBand": "/assets/img/contact.svg"
+}

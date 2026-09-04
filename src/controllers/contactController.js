@@ -2,6 +2,7 @@
 
 const crypto = require('crypto');
 const storage = require('../utils/storage');
+const notify = require('../utils/notify');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,11 +42,14 @@ exports.create = async (req, res, next) => {
     };
 
     if (!trap) {
-      await storage.append(record);
-      // Integration point: forward to email / CRM when configured.
-      if (process.env.CONTACT_NOTIFY_EMAIL) {
-        console.log(`[merkel] new enquiry from ${email} (notify: ${process.env.CONTACT_NOTIFY_EMAIL})`);
+      // Persist first, then route to the inbox. Both are best effort so a
+      // notification outage never loses the enquiry or fails the request.
+      try {
+        await storage.append(record);
+      } catch (err) {
+        console.error('[merkel] failed to persist enquiry:', err.message);
       }
+      await notify.enquiry(record);
     }
 
     return res.status(201).json({
