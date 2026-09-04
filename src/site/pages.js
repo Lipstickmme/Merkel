@@ -1,6 +1,7 @@
 'use strict';
 
 const leadership = require('../data/leadership.json');
+const images = require('../data/images.json');
 
 /* Reusable interior page header with an image band. */
 function pageHeader({ eyebrow, title, sub, image }) {
@@ -20,9 +21,7 @@ const ceo = leadership[0];
 const indexContent = `
   <section class="hero" id="top">
     <div class="hero-slides" id="hero-slides" aria-hidden="true">
-      <div class="slide is-active" style="background-image:url('/assets/slides/blueprint-01.webp')"></div>
-      <div class="slide" style="background-image:url('/assets/slides/blueprint-02.webp')"></div>
-      <div class="slide" style="background-image:url('/assets/slides/blueprint-03.webp')"></div>
+      ${images.heroSlides.map((src, i) => `<div class="slide${i === 0 ? ' is-active' : ''}" style="background-image:url('${src}')"></div>`).join('\n      ')}
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
     <div class="hero-inner wrap">
@@ -35,9 +34,7 @@ const indexContent = `
       </div>
     </div>
     <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
-      <button class="dot is-active" data-slide="0" aria-label="Slide 1"></button>
-      <button class="dot" data-slide="1" aria-label="Slide 2"></button>
-      <button class="dot" data-slide="2" aria-label="Slide 3"></button>
+      ${images.heroSlides.map((src, i) => `<button class="dot${i === 0 ? ' is-active' : ''}" data-slide="${i}" aria-label="Slide ${i + 1}"></button>`).join('\n      ')}
     </div>
   </section>
 
@@ -57,7 +54,7 @@ const indexContent = `
           <p>Every project runs across structure, ground, systems and data, coordinated so nothing falls into the gap between drawings.</p>
         </div>
         <div class="services-media" data-reveal aria-hidden="true">
-          <img src="/assets/slides/blueprint-01.webp" alt="" loading="lazy" />
+          <img src="${images.servicesMedia}" alt="" loading="lazy" />
         </div>
       </div>
       <div class="services-grid" id="services-grid" data-reveal></div>
@@ -104,7 +101,7 @@ const indexContent = `
   </section>
 
   <section class="cta-band" id="cta">
-    <div class="cta-media" aria-hidden="true"><img src="/assets/img/contact.svg" alt="" loading="lazy" /></div>
+    <div class="cta-media" aria-hidden="true"><img src="${images.ctaBand}" alt="" loading="lazy" /></div>
     <div class="wrap cta-inner" data-reveal>
       <h2>Bring us the hard part.</h2>
       <p>Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days.</p>
@@ -114,7 +111,7 @@ const indexContent = `
 
 /* ---------- Projects listing ---------- */
 const projectsContent = `
-  ${pageHeader({ eyebrow: 'Selected work', title: 'Projects.', sub: 'Towers, bridges, industrial plant and transit, engineered to perform and built to last.', image: '/assets/img/proj-helix-tower.svg' })}
+  ${pageHeader({ eyebrow: 'Selected work', title: 'Projects.', sub: 'Towers, bridges, industrial plant and transit, engineered to perform and built to last.', image: images.projectsHeader })}
   <section class="section-pad">
     <div class="wrap">
       <div class="proj-filters" id="proj-filters" data-reveal></div>
@@ -130,7 +127,7 @@ const projectContent = `
 
 /* ---------- Careers ---------- */
 const careersContent = `
-  ${pageHeader({ eyebrow: 'Careers', title: 'Build things that stand.', sub: 'We are a studio of senior engineers who stay on the work. If you want your name on projects that matter, we should talk.', image: '/assets/img/careers.svg' })}
+  ${pageHeader({ eyebrow: 'Careers', title: 'Build things that stand.', sub: 'We are a studio of senior engineers who stay on the work. If you want your name on projects that matter, we should talk.', image: images.careersHeader })}
   <section class="section-pad">
     <div class="wrap careers-intro" data-reveal>
       <div>
@@ -153,7 +150,7 @@ const careersContent = `
 
 /* ---------- Contact ---------- */
 const contactContent = `
-  ${pageHeader({ eyebrow: 'Start a project', title: 'Contact us.', sub: 'Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days.', image: '/assets/img/contact.svg' })}
+  ${pageHeader({ eyebrow: 'Start a project', title: 'Contact us.', sub: 'Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days.', image: images.contactHeader })}
   <section class="section-pad">
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
