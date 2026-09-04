@@ -2,17 +2,47 @@
 
 /**
  * Contact enquiry persistence.
- * Uses Redis when configured (production / Vercel), otherwise a JSON file.
+ * Backend priority: Supabase -> Redis -> filesystem (local development).
  */
 
 const fs = require('fs/promises');
 const path = require('path');
 const { getRedis, dataDir, parseItem } = require('./kv');
+const { getSupabase } = require('./supabase');
 
+const TABLE = 'enquiries';
 const REDIS_KEY = 'merkel:submissions';
 const FILE = () => path.join(dataDir(), 'submissions.json');
 
 let writeChain = Promise.resolve();
+
+/** App record -> database row. */
+function toRow(r) {
+  return {
+    id: r.id,
+    name: r.name,
+    email: r.email,
+    company: r.company,
+    service: r.service,
+    message: r.message,
+    ip: r.ip,
+    received_at: r.receivedAt,
+  };
+}
+
+/** Database row -> app record. */
+function fromRow(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    company: row.company,
+    service: row.service,
+    message: row.message,
+    ip: row.ip,
+    receivedAt: row.received_at,
+  };
+}
 
 async function readFromFile() {
   try {
@@ -26,6 +56,11 @@ async function readFromFile() {
 }
 
 async function readAll() {
+  const supabase = getSupabase();
+  if (supabase) {
+    const rows = await supabase.select(TABLE, 'select=*&order=received_at.desc');
+    return rows.map(fromRow);
+  }
   const redis = getRedis();
   if (redis) {
     const items = await redis.lrange(REDIS_KEY, 0, -1);
@@ -35,6 +70,11 @@ async function readAll() {
 }
 
 async function append(record) {
+  const supabase = getSupabase();
+  if (supabase) {
+    await supabase.insert(TABLE, toRow(record));
+    return record;
+  }
   const redis = getRedis();
   if (redis) {
     await redis.lpush(REDIS_KEY, JSON.stringify(record));
