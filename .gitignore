@@ -3,6 +3,7 @@ node_modules/
 
 # Runtime data (contact submissions persisted at runtime)
 data/submissions.json
+data/chat/
 
 # Environment
 .env
