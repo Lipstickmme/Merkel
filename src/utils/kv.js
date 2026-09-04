@@ -9,12 +9,19 @@
  *   - Upstash direct:                  UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN
  */
 
+const { allows } = require('./backend');
+
 let client;
 let resolved = false;
 
 function getRedis() {
   if (resolved) return client;
   resolved = true;
+
+  if (!allows('redis')) {
+    client = null;
+    return client;
+  }
 
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;

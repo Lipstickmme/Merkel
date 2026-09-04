@@ -129,9 +129,36 @@ The function logs `[merkel] storage: Neon (Postgres)` on the next request.
 - Other accepted names: `POSTGRES_URL`, `NEON_DATABASE_URL`,
   `DATABASE_URL_UNPOOLED`, `POSTGRES_URL_NON_POOLING`.
 
-**Using Supabase or Redis instead?** Set `SUPABASE_URL` plus
-`SUPABASE_SERVICE_ROLE_KEY` (and run the RLS lines at the end of `db/schema.sql`),
-or connect a KV/Upstash store. Neon wins if more than one is configured.
+### Using Supabase instead
+
+1. Create the tables: in the Supabase dashboard open **SQL Editor, New query**,
+   paste [`db/schema.supabase.sql`](../db/schema.supabase.sql) and **Run**. It is the
+   same three tables as Neon, plus row level security.
+2. In Supabase open **Project Settings, API** and copy the **Project URL** and the
+   **`service_role`** key.
+3. In Vercel add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, then **Redeploy**.
+   Vercel's Supabase integration usually adds both for you; check they are present.
+   `VITE_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_URL` also work as the URL.
+
+The function then logs `[merkel] storage: Supabase`.
+
+### If both databases are connected
+
+Neon wins by default. Set **`STORAGE_BACKEND`** to pin one explicitly:
+
+| Value | Effect |
+| ----- | ------ |
+| `neon` | Neon only |
+| `supabase` | Supabase only |
+| `redis` | Vercel KV / Upstash only |
+| `file` | Local files (development) |
+| blank or `auto` | The default order above |
+
+One gotcha worth knowing: Supabase's integration also injects `POSTGRES_URL`. That is
+a Supabase host, and Neon's HTTP driver only speaks to Neon hosts, so the app checks
+the hostname and skips Neon rather than failing every query. If you see
+`a Postgres connection string is set but its host is not Neon` in the logs, that is
+this check working; add the Supabase keys (or `STORAGE_BACKEND=supabase`).
 
 ---
 
@@ -273,7 +300,8 @@ notifications, so you can work entirely offline. To test notifications locally, 
 
 | Variable | Required | Purpose |
 | -------- | -------- | ------- |
-| `DATABASE_URL` | for Neon | Postgres connection string; server side only |
+| `DATABASE_URL` | for Neon | Neon connection string; server side only |
+| `STORAGE_BACKEND` | no | Pin one backend: `neon`, `supabase`, `redis` or `file` |
 | `SUPABASE_URL` | Supabase alternative | Project URL (`VITE_SUPABASE_URL` accepted) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase alternative | Server-side key; never expose to a browser |
 | `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Redis alternative | Vercel KV credentials |

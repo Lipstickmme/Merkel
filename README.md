@@ -146,14 +146,20 @@ The backend is chosen at runtime, in this order:
 
 1. **Neon / Postgres** when `DATABASE_URL` is set. Uses Neon's HTTP driver, so there
    is no connection pool to exhaust on serverless, and every query is parameterised.
-2. **Supabase** when `SUPABASE_URL` (or `VITE_SUPABASE_URL`) and
-   `SUPABASE_SERVICE_ROLE_KEY` are set.
+2. **Supabase** when `SUPABASE_URL` (or `VITE_SUPABASE_URL` /
+   `NEXT_PUBLIC_SUPABASE_URL`) and `SUPABASE_SERVICE_ROLE_KEY` are set. Create the
+   tables with [`db/schema.supabase.sql`](db/schema.supabase.sql).
 3. **Redis** when Vercel KV or Upstash credentials are set.
 4. **Filesystem** otherwise, under `DATA_DIR` (defaults to `./data`, `/tmp` on Vercel).
 
 Tables: `enquiries`, `chat_messages`, `inbound_emails`. Create them with
-[`db/schema.sql`](db/schema.sql). Database credentials are server-side only and must
-never be exposed to the browser or put behind a `VITE_` prefix.
+[`db/schema.sql`](db/schema.sql), or [`db/schema.supabase.sql`](db/schema.supabase.sql)
+on Supabase. Set `STORAGE_BACKEND` (`neon`, `supabase`, `redis`, `file`) to pin one
+when several are connected. Neon's driver only speaks to Neon hosts, so a Postgres URL
+from another provider is skipped rather than failing at query time.
+
+Database credentials are server-side only and must never be exposed to the browser or
+put behind a `VITE_` or `NEXT_PUBLIC_` prefix.
 
 ## Images
 
