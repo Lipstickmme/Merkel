@@ -11,6 +11,7 @@
 const { verify } = require('../utils/webhookSignature');
 const notify = require('../utils/notify');
 const { getSupabase } = require('../utils/supabase');
+const { getSql } = require('../utils/neon');
 
 const TABLE = 'inbound_emails';
 
@@ -62,21 +63,31 @@ exports.resend = async (req, res, next) => {
       return res.status(200).json({ ok: true, ignored: 'not_for_mailbox' });
     }
 
-    // Archive (best effort).
-    const supabase = getSupabase();
-    if (supabase) {
-      try {
-        await supabase.insert(TABLE, {
-          message_id: email.messageId || null,
-          from_address: email.from || null,
-          to_address: email.to || null,
-          subject: email.subject,
-          body: email.text,
-          received_at: new Date().toISOString(),
-        });
-      } catch (err) {
-        console.error('[merkel] failed to archive inbound email:', err.message);
+    // Archive (best effort). Neon first, then Supabase.
+    const receivedAt = new Date().toISOString();
+    try {
+      const sql = getSql();
+      if (sql) {
+        await sql`
+          insert into inbound_emails (message_id, from_address, to_address, subject, body, received_at)
+          values (${email.messageId || null}, ${email.from || null}, ${email.to || null},
+                  ${email.subject}, ${email.text}, ${receivedAt})
+        `;
+      } else {
+        const supabase = getSupabase();
+        if (supabase) {
+          await supabase.insert(TABLE, {
+            message_id: email.messageId || null,
+            from_address: email.from || null,
+            to_address: email.to || null,
+            subject: email.subject,
+            body: email.text,
+            received_at: receivedAt,
+          });
+        }
       }
+    } catch (err) {
+      console.error('[merkel] failed to archive inbound email:', err.message);
     }
 
     // Forward to a real inbox.

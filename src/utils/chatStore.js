@@ -2,13 +2,14 @@
 
 /**
  * Per-session chat persistence.
- * Backend priority: Supabase -> Redis -> filesystem (local development).
+ * Backend priority: Neon (Postgres) -> Supabase -> Redis -> filesystem.
  */
 
 const fs = require('fs/promises');
 const path = require('path');
 const { getRedis, dataDir, parseItem } = require('./kv');
 const { getSupabase } = require('./supabase');
+const { getSql } = require('./neon');
 
 const TABLE = 'chat_messages';
 const SAFE = /^[A-Za-z0-9_-]{8,64}$/;
@@ -20,6 +21,8 @@ let chain = Promise.resolve();
 function isValidId(id) {
   return typeof id === 'string' && SAFE.test(id);
 }
+
+const asIso = (v) => (v instanceof Date ? v.toISOString() : v);
 
 async function loadFromFile(sessionId) {
   try {
@@ -34,23 +37,48 @@ async function loadFromFile(sessionId) {
 }
 
 async function load(sessionId) {
+  const sql = getSql();
+  if (sql) {
+    const rows = await sql`
+      select role, text, created_at
+      from chat_messages
+      where session_id = ${sessionId}
+      order by created_at asc
+      limit 200
+    `;
+    return { sessionId, messages: rows.map((r) => ({ role: r.role, text: r.text, at: asIso(r.created_at) })) };
+  }
+
   const supabase = getSupabase();
   if (supabase) {
     const rows = await supabase.select(
       TABLE,
       `select=role,text,created_at&session_id=eq.${encodeURIComponent(sessionId)}&order=created_at.asc&limit=200`
     );
-    return { sessionId, messages: rows.map((r) => ({ role: r.role, text: r.text, at: r.created_at })) };
+    return { sessionId, messages: rows.map((r) => ({ role: r.role, text: r.text, at: asIso(r.created_at) })) };
   }
+
   const redis = getRedis();
   if (redis) {
     const items = await redis.lrange(keyFor(sessionId), 0, -1);
     return { sessionId, messages: (items || []).map(parseItem).filter(Boolean) };
   }
+
   return loadFromFile(sessionId);
 }
 
 async function append(sessionId, messages) {
+  const sql = getSql();
+  if (sql) {
+    for (const m of messages) {
+      await sql`
+        insert into chat_messages (session_id, role, text, created_at)
+        values (${sessionId}, ${m.role}, ${m.text}, ${m.at})
+      `;
+    }
+    return { sessionId, messages };
+  }
+
   const supabase = getSupabase();
   if (supabase) {
     await supabase.insert(
@@ -59,6 +87,7 @@ async function append(sessionId, messages) {
     );
     return { sessionId, messages };
   }
+
   const redis = getRedis();
   if (redis) {
     await redis.rpush(keyFor(sessionId), ...messages.map((m) => JSON.stringify(m)));
@@ -67,6 +96,7 @@ async function append(sessionId, messages) {
     await redis.sadd('merkel:chat:sessions', sessionId);
     return { sessionId, messages };
   }
+
   const task = chain.then(async () => {
     await fs.mkdir(CHAT_DIR(), { recursive: true });
     const convo = await loadFromFile(sessionId);

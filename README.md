@@ -11,7 +11,7 @@ live-chat endpoint.
 - **Frontend:** hand-written HTML / CSS / vanilla JS, assembled from shared
   partials by a tiny build step (no framework)
 - **Data:** flat JSON files for content; enquiries, chat and inbound mail persisted to
-  Supabase (or Redis) in production, or `data/` locally
+  Neon (serverless Postgres) in production, or `data/` locally
 - **Notifications:** enquiries and chat messages routed to an inbox via Resend email
   and/or a webhook (Slack, Discord, help desk)
 - **Inbound mail:** a signed Resend webhook archives and forwards mail sent to your domain
@@ -41,7 +41,7 @@ A live-chat widget is available on every page.
 │   └── build-pages.js        # assembles public/*.html from shared partials
 ├── docs/
 │   └── DEPLOYMENT.md         # fork -> images -> Vercel -> database -> inbox
-├── supabase/
+├── db/
 │   └── schema.sql            # tables for enquiries, chat and inbound mail
 ├── src/
 │   ├── app.js                # local Express app: pages + API + static
@@ -50,6 +50,7 @@ A live-chat widget is available on every page.
 │   ├── controllers/          # projects, careers, leadership, contact, chat
 │   ├── middleware/           # error handling + in-memory rate limiter
 │   ├── utils/
+│   │   ├── neon.js           # Neon serverless Postgres (HTTP driver)
 │   │   ├── supabase.js       # Supabase (PostgREST) client over fetch
 │   │   ├── kv.js             # Redis (Vercel KV / Upstash) or filesystem
 │   │   ├── storage.js        # contact-enquiry persistence
@@ -115,8 +116,8 @@ npm run dev            # build + watch mode
 ## Deploying
 
 See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for the full walkthrough: replacing the
-placeholder imagery, forking, deploying to Vercel, connecting free Redis storage, and
-routing enquiries and chat to your inbox.
+placeholder imagery, forking, deploying to Vercel, connecting a free Neon database,
+and routing enquiries and chat to your inbox.
 
 The repo is Vercel-ready: `vercel.json` builds the static pages into `public/` and
 `api/[...path].js` runs the Express API as a single serverless function.
@@ -143,14 +144,16 @@ request. Set `CHAT_NOTIFY=off` to silence chat notifications while keeping enqui
 
 The backend is chosen at runtime, in this order:
 
-1. **Supabase** when `SUPABASE_URL` (or `VITE_SUPABASE_URL`) and
-   `SUPABASE_SERVICE_ROLE_KEY` are set. Tables: `enquiries`, `chat_messages`,
-   `inbound_emails`. Create them with [`supabase/schema.sql`](supabase/schema.sql).
-2. **Redis** when Vercel KV or Upstash credentials are set.
-3. **Filesystem** otherwise, under `DATA_DIR` (defaults to `./data`, `/tmp` on Vercel).
+1. **Neon / Postgres** when `DATABASE_URL` is set. Uses Neon's HTTP driver, so there
+   is no connection pool to exhaust on serverless, and every query is parameterised.
+2. **Supabase** when `SUPABASE_URL` (or `VITE_SUPABASE_URL`) and
+   `SUPABASE_SERVICE_ROLE_KEY` are set.
+3. **Redis** when Vercel KV or Upstash credentials are set.
+4. **Filesystem** otherwise, under `DATA_DIR` (defaults to `./data`, `/tmp` on Vercel).
 
-The service-role key bypasses row level security and is server-side only; the site
-never calls Supabase from the browser, so no anon key is needed.
+Tables: `enquiries`, `chat_messages`, `inbound_emails`. Create them with
+[`db/schema.sql`](db/schema.sql). Database credentials are server-side only and must
+never be exposed to the browser or put behind a `VITE_` prefix.
 
 ## Images
 
