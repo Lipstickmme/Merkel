@@ -2,27 +2,26 @@
 
 /**
  * Per-session chat persistence.
- * Backend priority: Neon (Postgres) -> Supabase -> Redis -> filesystem.
+ *
+ * Supabase in production; local JSON files when it is not configured.
  */
 
 const fs = require('fs/promises');
 const path = require('path');
-const { getRedis, dataDir, parseItem } = require('./kv');
+const { dataDir } = require('./paths');
 const { getSupabase } = require('./supabase');
-const { getSql } = require('./neon');
 
 const TABLE = 'chat_messages';
 const SAFE = /^[A-Za-z0-9_-]{8,64}$/;
 const CHAT_DIR = () => path.join(dataDir(), 'chat');
-const keyFor = (id) => `merkel:chat:${id}`;
 
 let chain = Promise.resolve();
+
+const asIso = (v) => (v instanceof Date ? v.toISOString() : v);
 
 function isValidId(id) {
   return typeof id === 'string' && SAFE.test(id);
 }
-
-const asIso = (v) => (v instanceof Date ? v.toISOString() : v);
 
 async function loadFromFile(sessionId) {
   try {
@@ -37,18 +36,6 @@ async function loadFromFile(sessionId) {
 }
 
 async function load(sessionId) {
-  const sql = getSql();
-  if (sql) {
-    const rows = await sql`
-      select role, text, created_at
-      from chat_messages
-      where session_id = ${sessionId}
-      order by created_at asc
-      limit 200
-    `;
-    return { sessionId, messages: rows.map((r) => ({ role: r.role, text: r.text, at: asIso(r.created_at) })) };
-  }
-
   const supabase = getSupabase();
   if (supabase) {
     const rows = await supabase.select(
@@ -57,43 +44,16 @@ async function load(sessionId) {
     );
     return { sessionId, messages: rows.map((r) => ({ role: r.role, text: r.text, at: asIso(r.created_at) })) };
   }
-
-  const redis = getRedis();
-  if (redis) {
-    const items = await redis.lrange(keyFor(sessionId), 0, -1);
-    return { sessionId, messages: (items || []).map(parseItem).filter(Boolean) };
-  }
-
   return loadFromFile(sessionId);
 }
 
 async function append(sessionId, messages) {
-  const sql = getSql();
-  if (sql) {
-    for (const m of messages) {
-      await sql`
-        insert into chat_messages (session_id, role, text, created_at)
-        values (${sessionId}, ${m.role}, ${m.text}, ${m.at})
-      `;
-    }
-    return { sessionId, messages };
-  }
-
   const supabase = getSupabase();
   if (supabase) {
     await supabase.insert(
       TABLE,
       messages.map((m) => ({ session_id: sessionId, role: m.role, text: m.text, created_at: m.at }))
     );
-    return { sessionId, messages };
-  }
-
-  const redis = getRedis();
-  if (redis) {
-    await redis.rpush(keyFor(sessionId), ...messages.map((m) => JSON.stringify(m)));
-    await redis.ltrim(keyFor(sessionId), -200, -1);
-    await redis.expire(keyFor(sessionId), 60 * 60 * 24 * 90);
-    await redis.sadd('merkel:chat:sessions', sessionId);
     return { sessionId, messages };
   }
 
