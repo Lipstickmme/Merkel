@@ -1,0 +1,10 @@
+# Local runtime data
+data/
+
+# Docs and database schema are not needed by the deployment
+docs/
+db/
+
+# Dev tooling
+.github/
+*.log

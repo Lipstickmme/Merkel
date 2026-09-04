@@ -11,7 +11,7 @@ live-chat endpoint.
 - **Frontend:** hand-written HTML / CSS / vanilla JS, assembled from shared
   partials by a tiny build step (no framework)
 - **Data:** flat JSON files for content; enquiries, chat and inbound mail persisted to
-  Neon (serverless Postgres) in production, or `data/` locally
+  Supabase (Postgres) in production, or `data/` locally
 - **Notifications:** enquiries and chat messages routed to an inbox via Resend email
   and/or a webhook (Slack, Discord, help desk)
 - **Inbound mail:** a signed Resend webhook archives and forwards mail sent to your domain
@@ -42,7 +42,7 @@ A live-chat widget is available on every page.
 ├── docs/
 │   └── DEPLOYMENT.md         # fork -> images -> Vercel -> database -> inbox
 ├── db/
-│   └── schema.sql            # tables for enquiries, chat and inbound mail
+│   └── schema.sql            # Supabase tables for enquiries, chat, inbound mail
 ├── src/
 │   ├── app.js                # local Express app: pages + API + static
 │   ├── api-app.js            # API-only Express app (used on Vercel)
@@ -50,9 +50,8 @@ A live-chat widget is available on every page.
 │   ├── controllers/          # projects, careers, leadership, contact, chat
 │   ├── middleware/           # error handling + in-memory rate limiter
 │   ├── utils/
-│   │   ├── neon.js           # Neon serverless Postgres (HTTP driver)
 │   │   ├── supabase.js       # Supabase (PostgREST) client over fetch
-│   │   ├── kv.js             # Redis (Vercel KV / Upstash) or filesystem
+│   │   ├── paths.js          # where local file storage writes
 │   │   ├── storage.js        # contact-enquiry persistence
 │   │   ├── chatStore.js      # per-session chat persistence
 │   │   ├── notify.js         # email (Resend) + webhook notifications
@@ -116,7 +115,7 @@ npm run dev            # build + watch mode
 ## Deploying
 
 See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for the full walkthrough: replacing the
-placeholder imagery, forking, deploying to Vercel, connecting a free Neon database,
+placeholder imagery, forking, deploying to Vercel, connecting a free Supabase database,
 and routing enquiries and chat to your inbox.
 
 The repo is Vercel-ready: `vercel.json` builds the static pages into `public/` and
@@ -142,24 +141,18 @@ request. Set `CHAT_NOTIFY=off` to silence chat notifications while keeping enqui
 
 ## Storage
 
-The backend is chosen at runtime, in this order:
+**Supabase** when `SUPABASE_URL` (or `VITE_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_URL`)
+and `SUPABASE_SERVICE_ROLE_KEY` are set; **local JSON files** under `DATA_DIR`
+otherwise, so development works offline with no setup.
 
-1. **Neon / Postgres** when `DATABASE_URL` is set. Uses Neon's HTTP driver, so there
-   is no connection pool to exhaust on serverless, and every query is parameterised.
-2. **Supabase** when `SUPABASE_URL` (or `VITE_SUPABASE_URL` /
-   `NEXT_PUBLIC_SUPABASE_URL`) and `SUPABASE_SERVICE_ROLE_KEY` are set. Create the
-   tables with [`db/schema.supabase.sql`](db/schema.supabase.sql).
-3. **Redis** when Vercel KV or Upstash credentials are set.
-4. **Filesystem** otherwise, under `DATA_DIR` (defaults to `./data`, `/tmp` on Vercel).
+Tables are `enquiries`, `chat_messages` and `inbound_emails`. Create them by running
+[`db/schema.sql`](db/schema.sql) once in the Supabase SQL Editor. It enables row level
+security with no public policies, so the `service_role` key is required; the `anon` key
+cannot read or write. Keep that key server side and never behind a `VITE_` or
+`NEXT_PUBLIC_` prefix, which are inlined into browser bundles.
 
-Tables: `enquiries`, `chat_messages`, `inbound_emails`. Create them with
-[`db/schema.sql`](db/schema.sql), or [`db/schema.supabase.sql`](db/schema.supabase.sql)
-on Supabase. Set `STORAGE_BACKEND` (`neon`, `supabase`, `redis`, `file`) to pin one
-when several are connected. Neon's driver only speaks to Neon hosts, so a Postgres URL
-from another provider is skipped rather than failing at query time.
-
-Database credentials are server-side only and must never be exposed to the browser or
-put behind a `VITE_` or `NEXT_PUBLIC_` prefix.
+Vercel is serverless with a read-only filesystem, so production needs the database:
+without it, writes go to `/tmp` and do not survive between requests.
 
 ## Images
 

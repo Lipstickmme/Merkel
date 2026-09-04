@@ -11,19 +11,12 @@
  * can reuse the same value.
  */
 
-const { allows } = require('./backend');
-
 let client;
 let resolved = false;
 
 function getSupabase() {
   if (resolved) return client;
   resolved = true;
-
-  if (!allows('supabase')) {
-    client = null;
-    return client;
-  }
 
   const rawUrl =
     process.env.SUPABASE_URL ||

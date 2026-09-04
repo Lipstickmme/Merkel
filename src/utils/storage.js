@@ -2,21 +2,24 @@
 
 /**
  * Contact enquiry persistence.
- * Backend priority: Neon (Postgres) -> Supabase -> Redis -> filesystem.
+ *
+ * Supabase in production; local JSON files when it is not configured, so
+ * development works offline.
  */
 
 const fs = require('fs/promises');
 const path = require('path');
-const { getRedis, dataDir, parseItem } = require('./kv');
+const { dataDir } = require('./paths');
 const { getSupabase } = require('./supabase');
-const { getSql } = require('./neon');
 
 const TABLE = 'enquiries';
-const REDIS_KEY = 'merkel:submissions';
 const FILE = () => path.join(dataDir(), 'submissions.json');
 
 let writeChain = Promise.resolve();
 
+const asIso = (v) => (v instanceof Date ? v.toISOString() : v);
+
+/** App record -> database row. */
 function toRow(r) {
   return {
     id: r.id,
@@ -30,6 +33,7 @@ function toRow(r) {
   };
 }
 
+/** Database row -> app record. */
 function fromRow(row) {
   return {
     id: row.id,
@@ -39,7 +43,7 @@ function fromRow(row) {
     service: row.service,
     message: row.message,
     ip: row.ip,
-    receivedAt: row.received_at instanceof Date ? row.received_at.toISOString() : row.received_at,
+    receivedAt: asIso(row.received_at),
   };
 }
 
@@ -55,51 +59,18 @@ async function readFromFile() {
 }
 
 async function readAll() {
-  const sql = getSql();
-  if (sql) {
-    const rows = await sql`
-      select id, name, email, company, service, message, ip, received_at
-      from enquiries
-      order by received_at desc
-    `;
-    return rows.map(fromRow);
-  }
-
   const supabase = getSupabase();
   if (supabase) {
     const rows = await supabase.select(TABLE, 'select=*&order=received_at.desc');
     return rows.map(fromRow);
   }
-
-  const redis = getRedis();
-  if (redis) {
-    const items = await redis.lrange(REDIS_KEY, 0, -1);
-    return (items || []).map(parseItem).filter(Boolean);
-  }
-
   return readFromFile();
 }
 
 async function append(record) {
-  const sql = getSql();
-  if (sql) {
-    const r = toRow(record);
-    await sql`
-      insert into enquiries (id, name, email, company, service, message, ip, received_at)
-      values (${r.id}, ${r.name}, ${r.email}, ${r.company}, ${r.service}, ${r.message}, ${r.ip}, ${r.received_at})
-    `;
-    return record;
-  }
-
   const supabase = getSupabase();
   if (supabase) {
     await supabase.insert(TABLE, toRow(record));
-    return record;
-  }
-
-  const redis = getRedis();
-  if (redis) {
-    await redis.lpush(REDIS_KEY, JSON.stringify(record));
     return record;
   }
 
