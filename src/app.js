@@ -20,7 +20,8 @@ app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
 // Body parsing (built-in, no extra deps).
-app.use(express.json({ limit: '32kb' }));
+// `verify` stashes the exact bytes so webhook signatures can be checked.
+app.use(express.json({ limit: '1mb', verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(express.urlencoded({ extended: false, limit: '32kb' }));
 
 // Lightweight security headers (dependency-free).
@@ -42,6 +43,9 @@ app.use((req, res, next) => {
 });
 
 // API namespace (rate limited).
+// Signed provider webhooks: verified by signature, not rate limited.
+app.use('/api/inbound', require('./routes/inbound'));
+
 app.use('/api', rateLimiter, apiRoutes);
 
 // Static frontend.
