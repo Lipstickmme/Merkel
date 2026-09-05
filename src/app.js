@@ -71,6 +71,8 @@ app.get('/projects', sendPage('projects.html'));
 app.get('/projects/:id', sendPage('project.html'));
 app.get('/careers', sendPage('careers.html'));
 app.get('/contact', sendPage('contact.html'));
+// Staff dashboard. Access is decided by Supabase auth on the page itself.
+app.get('/admin', sendPage('admin.html'));
 
 // Unknown non-API, non-asset GET routes get the styled 404 page.
 app.get('*', (req, res, next) => {

@@ -8,5 +8,6 @@
 # Not needed by the deployment
 /docs/
 /supabase/
+/test/
 /.github/
 *.log

@@ -125,6 +125,12 @@ create table if not exists public.chat_sessions (
   status          public.item_status not null default 'new'
 );
 
+-- Set once a member of the studio answers, so the canned responder steps
+-- aside and the visitor is not talked over. It cannot be read off `status`:
+-- the trigger below returns a thread to 'new' every time the visitor speaks.
+alter table public.chat_sessions
+  add column if not exists handled_by_agent boolean not null default false;
+
 create index if not exists chat_sessions_last_message_idx
   on public.chat_sessions (last_message_at desc);
 

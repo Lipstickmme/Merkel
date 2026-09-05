@@ -191,6 +191,81 @@ const contactContent = `
     </div>
   </section>`;
 
+/* ---------- Admin dashboard (staff only, no site furniture) ---------- */
+const adminContent = `
+  <main class="admin" id="admin">
+    <section class="admin-gate" id="admin-boot">
+      <div class="admin-card"><p class="admin-note">Checking access&hellip;</p></div>
+    </section>
+
+    <section class="admin-gate" id="admin-unconfigured" hidden>
+      <div class="admin-card">
+        <span class="eyebrow">Merkel / Studio desk</span>
+        <h1>Backend not connected.</h1>
+        <p class="admin-note">Set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> on the deployment, then reload. Nothing needs rebuilding.</p>
+        <p class="admin-note"><a href="/api/health">/api/health</a> lists what the server can see.</p>
+        <a class="admin-back" href="/">Back to site</a>
+      </div>
+    </section>
+
+    <section class="admin-gate" id="admin-login" hidden>
+      <form class="admin-card" id="login-form" novalidate>
+        <span class="eyebrow">Merkel / Studio desk</span>
+        <h1>Staff sign in.</h1>
+        <p class="admin-note" id="login-note">Enquiries, live chat and studio mail in one place.</p>
+        <div class="field"><label for="login-email">Email</label><input type="email" id="login-email" name="email" autocomplete="username" required /></div>
+        <div class="field"><label for="login-password">Password</label><input type="password" id="login-password" name="password" autocomplete="current-password" required /></div>
+        <div class="err" id="login-error" role="alert"></div>
+        <button type="submit" class="btn" id="login-btn">Sign in <span class="arw">&rsaquo;</span></button>
+        <a class="admin-back" href="/">Back to site</a>
+      </form>
+    </section>
+
+    <div class="admin-shell" id="admin-shell" hidden>
+      <header class="admin-bar">
+        <a class="admin-brand" href="/">
+          <img src="/assets/brand/merkel-wordmark.png" alt="Merkel Engineering" width="1062" height="215" />
+          <span>Studio desk</span>
+        </a>
+        <div class="admin-bar-end">
+          <span class="admin-who" id="admin-who"></span>
+          <button type="button" class="admin-signout" id="admin-signout">Sign out</button>
+        </div>
+      </header>
+
+      <nav class="admin-tabs" id="admin-tabs" role="tablist" aria-label="Sections">
+        <button type="button" class="admin-tab is-active" role="tab" data-tab="enquiries" aria-selected="true">Enquiries<span class="tally" data-tally="enquiries">0</span></button>
+        <button type="button" class="admin-tab" role="tab" data-tab="chat" aria-selected="false">Live chat<span class="tally" data-tally="chat">0</span></button>
+        <button type="button" class="admin-tab" role="tab" data-tab="email" aria-selected="false">Email<span class="tally" data-tally="email">0</span></button>
+      </nav>
+
+      <p class="admin-alert" id="admin-alert" role="alert" hidden></p>
+
+      <div class="admin-body">
+        <section class="admin-panel" data-panel="enquiries">
+          <div class="admin-split">
+            <ul class="admin-list" id="enquiry-list"><li class="admin-empty">Loading&hellip;</li></ul>
+            <div class="admin-detail" id="enquiry-detail"><p class="admin-empty">Pick an enquiry to read it.</p></div>
+          </div>
+        </section>
+
+        <section class="admin-panel" data-panel="chat" hidden>
+          <div class="admin-split">
+            <ul class="admin-list" id="chat-list"><li class="admin-empty">Loading&hellip;</li></ul>
+            <div class="admin-detail" id="chat-detail"><p class="admin-empty">Pick a conversation to read and reply.</p></div>
+          </div>
+        </section>
+
+        <section class="admin-panel" data-panel="email" hidden>
+          <div class="admin-split">
+            <ul class="admin-list" id="email-list"><li class="admin-empty">Loading&hellip;</li></ul>
+            <div class="admin-detail" id="email-detail"><p class="admin-empty">Pick a thread to read it.</p></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>`;
+
 /* ---------- 404 ---------- */
 const notFoundContent = `
   <section class="notfound">
@@ -208,5 +283,9 @@ module.exports = [
   { file: 'project.html', active: 'projects', bodyClass: 'page-project', title: 'Project | Merkel Engineering', description: 'Project detail.', content: projectContent, extraScripts: ['/js/project.js'] },
   { file: 'careers.html', active: 'careers', bodyClass: 'page-careers', title: 'Careers | Merkel Engineering', description: 'Open engineering roles at Merkel Engineering across structural, civil, mechanical and digital teams.', content: careersContent, extraScripts: ['/js/careers.js'] },
   { file: 'contact.html', active: 'contact', bodyClass: 'page-contact', title: 'Contact us | Merkel Engineering', description: 'Contact Merkel Engineering to start a project. A principal engineer replies within two working days.', content: contactContent },
+  { file: 'admin.html', active: '', bodyClass: 'page-admin', bare: true, noindex: true,
+    styles: ['/css/admin.css'],
+    title: 'Studio desk | Merkel Engineering', description: 'Staff dashboard.',
+    content: adminContent, extraScripts: ['/js/supabase-lite.js', '/js/admin.js'] },
   { file: '404.html', active: '', bodyClass: 'page-404', title: 'Page not found | Merkel Engineering', description: 'Page not found.', content: notFoundContent },
 ];

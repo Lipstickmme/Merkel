@@ -48,6 +48,25 @@ function getSupabase() {
       return true;
     },
 
+    /**
+     * Insert, tolerating a row that is already there.
+     *
+     * PostgREST maps `resolution=ignore-duplicates` to ON CONFLICT DO NOTHING
+     * against the primary key, so this is how a caller that already knows the
+     * id can make sure a parent row exists before writing children to it.
+     */
+    async upsert(table, rows) {
+      const res = await fetch(`${base}/${table}`, {
+        method: 'POST',
+        headers: { ...headers, Prefer: 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify(Array.isArray(rows) ? rows : [rows]),
+      });
+      if (!res.ok) {
+        throw new Error(`supabase upsert ${table} failed: ${res.status} ${await res.text().catch(() => '')}`);
+      }
+      return true;
+    },
+
     /** Insert and return the created rows (needed when we want the new id). */
     async insertReturning(table, rows) {
       const res = await fetch(`${base}/${table}`, {
