@@ -15,19 +15,41 @@ const path = require('path');
 const data = require('../data/images.json');
 
 const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
-// Preference order, best format first.
+// Preference order, best format first. WebP wins, so a converted copy is used
+// in place of a heavy original without anyone having to delete the original.
 const EXTENSIONS = ['.webp', '.avif', '.jpg', '.jpeg', '.png', '.svg'];
 const DIRS = ['/assets/img/', '/assets/slides/'];
 
 const found = [];
+
+/**
+ * Every candidate file, indexed by lower-cased name.
+ *
+ * Case-insensitive on purpose: an upload named Merkel3.png has to be found on
+ * Linux, where the deploy runs, not only on the machine it was named on.
+ */
+const index = new Map();
+DIRS.forEach((dir) => {
+  const abs = path.join(PUBLIC_DIR, dir);
+  let entries = [];
+  try {
+    entries = fs.readdirSync(abs);
+  } catch (err) {
+    return;
+  }
+  entries.forEach((file) => {
+    const key = `${dir}${file.toLowerCase()}`;
+    if (!index.has(key)) index.set(key, `${dir}${file}`);
+  });
+});
 
 /** The first file that actually exists for any of these base names. */
 function lookUp(names) {
   for (const name of names || []) {
     for (const dir of DIRS) {
       for (const ext of EXTENSIONS) {
-        const url = `${dir}${name}${ext}`;
-        if (fs.existsSync(path.join(PUBLIC_DIR, url))) return url;
+        const hit = index.get(`${dir}${name}${ext}`.toLowerCase());
+        if (hit) return hit;
       }
     }
   }

@@ -444,7 +444,8 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   content: ""; position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(180deg, rgba(8,9,11,0.78) 0%, rgba(8,9,11,0.62) 40%, rgba(8,9,11,0.9) 100%);
 }
-.page-header-inner { position: relative; z-index: 2; }
+/* A flex child shrinks to its content, so the wrap needs its width back. */
+.page-header-inner { position: relative; z-index: 2; width: 100%; }
 .page-header h1 { font-size: clamp(40px, 7vw, 84px); letter-spacing: -0.035em; margin: 16px 0 0; }
 .page-header p { color: #cfccc4; font-size: clamp(16px, 1.5vw, 20px); max-width: 54ch; margin: 18px 0 0; }
 
@@ -627,7 +628,9 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   position: absolute;
   /* Overscan, so the parallax shift never exposes an edge. */
   inset: -6% -4%;
-  background-position: center;
+  /* Site photography is a wide banner with people low in the frame; cover in a
+     tall viewport must keep them rather than crop to empty sky. */
+  background-position: 50% 62%;
   background-size: cover;
   background-repeat: no-repeat;
   transform: translate3d(0, var(--underlay-shift, 0px), 0) scale(1.06);
@@ -651,8 +654,8 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(11, 12, 14, 0.55) 0%, rgba(11, 12, 14, 0.86) 55%, rgba(8, 9, 11, 0.95) 100%),
-    linear-gradient(180deg, rgba(14, 16, 21, 0.9) 0%, rgba(11, 12, 14, 0.88) 45%, rgba(8, 9, 11, 0.96) 100%);
+    radial-gradient(130% 100% at 50% 30%, rgba(11, 12, 14, 0.82) 0%, rgba(11, 12, 14, 0.93) 55%, rgba(8, 9, 11, 0.97) 100%),
+    linear-gradient(180deg, rgba(14, 16, 21, 0.94) 0%, rgba(11, 12, 14, 0.92) 45%, rgba(8, 9, 11, 0.97) 100%);
 }
 
 /* =========================================================================
@@ -693,6 +696,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 58%;
   display: block;
   /* Settles as the section arrives; see .is-onstage below. */
   transform: scale(1.12);
@@ -849,3 +853,45 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 
 .hero-readout .v { font-size: clamp(17px, 1.9vw, 24px); }
 .hero-readout .cell { padding: 18px var(--gutter); min-width: 0; }
+
+/* Scrims for photography ------------------------------------------------
+   The site is now backed by bright daylight site photography rather than
+   dark drawings, so every layer that carries type over an image needs more
+   cover than a blueprint asked for. Type contrast first, picture second. */
+
+.chapter-scrim {
+  background:
+    linear-gradient(90deg, rgba(9, 10, 12, 0.96) 0%, rgba(9, 10, 12, 0.9) 38%, rgba(9, 10, 12, 0.58) 72%, rgba(9, 10, 12, 0.42) 100%),
+    linear-gradient(180deg, rgba(9, 10, 12, 0.86) 0%, rgba(9, 10, 12, 0.5) 38%, rgba(9, 10, 12, 0.92) 100%);
+}
+.chapter.is-centred .chapter-scrim {
+  background:
+    radial-gradient(85% 75% at 50% 52%, rgba(9, 10, 12, 0.86) 0%, rgba(9, 10, 12, 0.95) 72%),
+    linear-gradient(180deg, rgba(9, 10, 12, 0.72) 0%, rgba(9, 10, 12, 0.5) 45%, rgba(9, 10, 12, 0.9) 100%);
+}
+
+.hero-scrim {
+  background:
+    linear-gradient(90deg, rgba(9, 10, 12, 0.94) 0%, rgba(9, 10, 12, 0.84) 40%, rgba(9, 10, 12, 0.5) 78%, rgba(9, 10, 12, 0.4) 100%),
+    linear-gradient(180deg, rgba(9, 10, 12, 0.7) 0%, rgba(9, 10, 12, 0.42) 34%, rgba(9, 10, 12, 0.88) 100%);
+}
+.hero-slides .slide { background-position: 50% 60%; }
+
+.page-header-media { background-position: 50% 58%; }
+.page-header::after {
+  background:
+    linear-gradient(90deg, rgba(9, 10, 12, 0.94) 0%, rgba(9, 10, 12, 0.82) 45%, rgba(9, 10, 12, 0.55) 100%),
+    linear-gradient(180deg, rgba(9, 10, 12, 0.6) 0%, rgba(9, 10, 12, 0.45) 40%, rgba(9, 10, 12, 0.95) 100%);
+}
+
+/* Panels sitting on a photograph need to be opaque enough to read as panels. */
+.chapter .services-grid,
+.chapter .cards-grid .card { background: rgba(13, 15, 18, 0.86); }
+.chapter.is-centred .stats-grid { background: rgba(13, 15, 18, 0.8); }
+.chapter .contact-grid form { background: rgba(13, 15, 18, 0.88); }
+
+/* The rail gets its own lane on wide screens, so an active label never lands
+   on the edge of a panel. */
+@media (min-width: 1101px) {
+  .page-home .wrap { max-width: min(var(--maxw), calc(100vw - 260px)); }
+}
