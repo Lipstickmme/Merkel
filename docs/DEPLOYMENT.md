@@ -97,7 +97,7 @@ come next.
    the Vercel **Storage** tab.
 
 2. Create the tables. In the Supabase dashboard open **SQL Editor, New query**, paste
-   the contents of [`db/schema.sql`](../db/schema.sql) and **Run**. That creates
+   the contents of [`supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) and **Run**. That creates
    `enquiries`, `chat_messages` and `inbound_emails` with indexes, and enables row
    level security with no public policies.
 
@@ -295,7 +295,7 @@ Step 4, that the variables exist in the **Production** environment, and that you
 redeployed afterwards.
 
 **Database writes fail.** Check the function logs. A `42P01` (relation does not
-exist) means `db/schema.sql` has not been run. A `401` or `42501` means the anon key
+exist) means `supabase/migrations/0001_init.sql` has not been run. A `401` or `42501` means the anon key
 is being used instead of `service_role`, because row level security is on with no
 public policies.
 
