@@ -49,7 +49,9 @@
       </a>`;
   }
 
-  /* Reveal on scroll (idempotent; safe to re-run after injecting content) */
+  /* Reveal on scroll (idempotent; safe to re-run after injecting content).
+     Siblings inside one section arrive in sequence rather than all at once,
+     which is the difference between a page that animates and one that lurches. */
   function observeReveals() {
     const els = $$('[data-reveal]:not(.in)');
     if (reduceMotion || !('IntersectionObserver' in window)) {
@@ -58,7 +60,14 @@
     }
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const section = el.closest('.chapter, section, header') || document.body;
+        const peers = $$('[data-reveal]', section);
+        const step = Math.min(peers.indexOf(el), 5);
+        el.style.setProperty('--reveal-delay', (step * 110) + 'ms');
+        el.classList.add('in');
+        io.unobserve(el);
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     els.forEach((el) => io.observe(el));
@@ -66,19 +75,76 @@
 
   window.MERKEL = { $, $$, esc, fetchJSON, reduceMotion, projectCard, observeReveals, FALLBACK_PROJECTS };
 
-  /* Nav ------------------------------------------------------------------ */
+  /* Nav, scroll progress, underlay parallax, chapter rail ----------------- */
   const nav = $('#nav');
   const progress = $('#progress');
-  const onScroll = () => {
-    if (nav) nav.classList.toggle('scrolled', window.scrollY > 24);
-    if (progress) {
-      const doc = document.documentElement;
-      const pct = doc.scrollTop / (doc.scrollHeight - doc.clientHeight || 1);
-      progress.style.width = (pct * 100) + '%';
+  const underlay = $('.underlay-img');
+  const chapters = $$('.chapter[data-chapter]');
+  let railLinks = [];
+  let ticking = false;
+
+  /* The underlay drifts across the whole document rather than with raw scroll,
+     so the travel is the same on a short page and a long one. */
+  const UNDERLAY_TRAVEL = 70;
+
+  function frame() {
+    ticking = false;
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop || window.scrollY || 0;
+    const pct = scrolled / (doc.scrollHeight - doc.clientHeight || 1);
+
+    if (nav) nav.classList.toggle('scrolled', scrolled > 24);
+    if (progress) progress.style.width = (pct * 100) + '%';
+    if (underlay && !reduceMotion) {
+      underlay.style.setProperty('--underlay-shift', (-UNDERLAY_TRAVEL * pct).toFixed(1) + 'px');
     }
+
+    if (railLinks.length) {
+      const middle = scrolled + window.innerHeight / 2;
+      let active = 0;
+      chapters.forEach((section, i) => {
+        const top = section.offsetTop;
+        if (middle >= top) active = i;
+      });
+      railLinks.forEach((a, i) => a.classList.toggle('is-active', i === active));
+    }
+  }
+
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(frame);
   };
   window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  window.addEventListener('resize', onScroll, { passive: true });
+
+  /* Section artwork settles into place as its chapter arrives. */
+  function stageChapters() {
+    if (!chapters.length) return;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      chapters.forEach((c) => c.classList.add('is-onstage'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-onstage'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.2 });
+    chapters.forEach((c) => io.observe(c));
+  }
+
+  /* The rail is built from the sections themselves, so adding a chapter to
+     src/site/pages.js adds its marker here with nothing else to update. */
+  function buildRail() {
+    const rail = $('#chapter-rail');
+    if (!rail || !chapters.length) return;
+    rail.innerHTML = chapters.map((section) => `
+      <a href="#${esc(section.id)}" title="${esc(section.dataset.chapter)}">
+        <span class="label">${esc(section.dataset.chapter)}</span>
+        <span class="tick"></span>
+      </a>`).join('');
+    railLinks = $$('a', rail);
+  }
 
   const toggle = $('#navtoggle');
   const links = $('#navlinks');
@@ -162,11 +228,21 @@
   }
 
   /* Contact form --------------------------------------------------------- */
-  function setupForm() {
-    const form = $('#contact-form');
-    if (!form) return;
-    const statusEl = $('#form-status');
-    const btn = $('#submit-btn');
+
+  /** Wire every enquiry form on the page. Both post to the same endpoint, so
+      both land in `enquiries` and appear on the studio desk at /admin. */
+  function setupForms() {
+    $$('[data-contact-form]').forEach(setupForm);
+  }
+
+  function setupForm(form) {
+    if (!form || form.dataset.wired) return;
+    form.dataset.wired = '1';
+    const statusEl = $('[data-form-status]', form);
+    const btn = $('[data-submit]', form);
+    // `form.elements.namedItem` rather than `form.name`, which is the form's
+    // own name attribute and would shadow the field of the same name.
+    const field = (n) => form.elements.namedItem(n);
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const setErr = (name, msg) => {
       const errEl = form.querySelector(`[data-err="${name}"]`);
@@ -176,15 +252,15 @@
     };
     const validate = () => {
       let ok = true;
-      const name = form.name.value.trim(), email = form.email.value.trim(), message = form.message.value.trim();
+      const name = field('name').value.trim(), email = field('email').value.trim(), message = field('message').value.trim();
       if (name.length < 2) { setErr('name', 'Please enter your name.'); ok = false; } else setErr('name', '');
       if (!EMAIL_RE.test(email)) { setErr('email', 'Enter a valid email.'); ok = false; } else setErr('email', '');
       if (message.length < 10) { setErr('message', 'A little more detail, please.'); ok = false; } else setErr('message', '');
       return ok;
     };
     ['name', 'email', 'message'].forEach((n) => {
-      form[n].addEventListener('blur', validate);
-      form[n].addEventListener('input', () => {
+      field(n).addEventListener('blur', validate);
+      field(n).addEventListener('input', () => {
         const errEl = form.querySelector(`[data-err="${n}"]`);
         if (errEl && errEl.textContent) validate();
       });
@@ -194,9 +270,9 @@
       statusEl.className = 'form-status';
       if (!validate()) { statusEl.className = 'form-status bad'; statusEl.textContent = 'Please correct the highlighted fields.'; return; }
       const payload = {
-        name: form.name.value.trim(), email: form.email.value.trim(),
-        company: form.company.value.trim(), service: form.service.value,
-        message: form.message.value.trim(), website: form.website ? form.website.value : ''
+        name: field('name').value.trim(), email: field('email').value.trim(),
+        company: field('company').value.trim(), service: field('service').value,
+        message: field('message').value.trim(), website: field('website') ? field('website').value : ''
       };
       btn.disabled = true;
       const original = btn.innerHTML;
@@ -215,10 +291,13 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
+    buildRail();
+    stageChapters();
     setupSlides();
     runCounters();
-    setupForm();
+    setupForms();
     hydrateHome();
     observeReveals();
+    frame();
   });
 })();

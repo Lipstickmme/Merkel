@@ -167,22 +167,40 @@ async function until(check, what, timeout = 10000) {
 
     /* ---------------- enquiries tab ---------------- */
     await visitor.goto(`${base}/contact`, { waitUntil: 'networkidle' });
-    await visitor.fill('#name', 'Ada Kolen');
-    await visitor.fill('#email', 'ada@example.com');
-    await visitor.fill('#message', 'A 40m span over a canal, tight headroom.');
-    await visitor.click('#submit-btn');
+    await visitor.fill('#contact-form-name', 'Ada Kolen');
+    await visitor.fill('#contact-form-email', 'ada@example.com');
+    await visitor.fill('#contact-form-message', 'A 40m span over a canal, tight headroom.');
+    await visitor.click('#contact-form [data-submit]');
     await until(() => sb.db.enquiries.rows.length === 1, 'the enquiry to reach the database');
 
+    // The same form on the landing page has to reach the same inbox.
+    await visitor.goto(`${base}/`, { waitUntil: 'networkidle' });
+    await visitor.fill('#home-contact-form-name', 'Joris de Roo');
+    await visitor.fill('#home-contact-form-email', 'j.deroo@havenbouw.nl');
+    await visitor.fill('#home-contact-form-message', 'Quay wall replacement, 320m, live berth.');
+    await visitor.click('#home-contact-form [data-submit]');
+    await until(() => sb.db.enquiries.rows.length === 2, 'the landing-page enquiry to reach the database');
+    assert.ok(
+      sb.db.enquiries.rows.some((r) => r.email === 'j.deroo@havenbouw.nl'),
+      'landing page enquiry stored'
+    );
+    console.log('  ok  both enquiry forms write to the same inbox');
+
     await staff.click('.admin-tab[data-tab="enquiries"]');
-    await staff.waitForSelector('#enquiry-list .admin-row', { timeout: 10000 });
+    await staff.waitForFunction(
+      () => document.querySelectorAll('#enquiry-list .admin-row').length === 2,
+      null,
+      { timeout: 15000 }
+    );
+    const desk = await staff.$$eval('#enquiry-list .admin-row-title', (n) => n.map((x) => x.textContent));
+    assert.ok(desk.includes('Ada Kolen') && desk.includes('Joris de Roo'), JSON.stringify(desk));
+    console.log('  ok  both enquiries show up on the desk:', desk.join(', '));
+
     await staff.click('#enquiry-list .admin-row');
     await staff.waitForSelector('#enquiry-detail .admin-message');
-    assert.match(await staff.textContent('#enquiry-detail .admin-message'), /40m span over a canal/);
-    console.log('  ok  the enquiry shows up on the desk');
-
     await staff.selectOption('#enquiry-detail .admin-status select', 'closed');
-    await staff.waitForFunction(() => document.querySelector('[data-tally="enquiries"]').textContent === '0');
-    assert.strictEqual(sb.db.enquiries.rows[0].status, 'closed');
+    await staff.waitForFunction(() => document.querySelector('[data-tally="enquiries"]').textContent === '1');
+    assert.strictEqual(sb.db.enquiries.rows.filter((r) => r.status === 'closed').length, 1);
     console.log('  ok  triage writes back');
 
     /* ---------------- email tab ---------------- */

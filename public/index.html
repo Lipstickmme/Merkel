@@ -13,6 +13,12 @@
   
 </head>
 <body class="page-home">
+
+  <div class="underlay" aria-hidden="true">
+    <div class="underlay-img" style="background-image:url('/assets/slides/blueprint-01.webp')"></div>
+    <div class="underlay-grain"></div>
+    <div class="underlay-scrim"></div>
+  </div>
   <div class="scroll-progress" id="progress"></div>
 
   <header class="nav" id="nav">
@@ -30,8 +36,9 @@
       <span></span><span></span><span></span>
     </button>
   </header>
+<nav class="chapter-rail" id="chapter-rail" aria-label="Page sections"></nav>
 
-  <section class="hero" id="top">
+  <section class="hero chapter" id="top" data-chapter="Merkel">
     <div class="hero-slides" id="hero-slides" aria-hidden="true">
       <div class="slide is-active" style="background-image:url('/assets/slides/blueprint-01.webp')"></div>
       <div class="slide" style="background-image:url('/assets/slides/blueprint-02.webp')"></div>
@@ -39,90 +46,129 @@
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
     <div class="hero-inner wrap">
-      <span class="eyebrow hero-tag">Structural &middot; Civil &middot; Mechanical &middot; Digital</span>
+      <span class="eyebrow hero-tag" data-reveal>Structural &middot; Civil &middot; Mechanical &middot; Digital</span>
       <h1 data-reveal>Built to stand.</h1>
       <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
       <div class="hero-actions" data-reveal>
         <a href="/projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
-        <a href="/contact" class="btn ghost">Contact us</a>
+        <a href="#contact" class="btn ghost">Contact us</a>
+      </div>
+      <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
+        <button class="dot is-active" data-slide="0" aria-label="Slide 1"></button>
+        <button class="dot" data-slide="1" aria-label="Slide 2"></button>
+        <button class="dot" data-slide="2" aria-label="Slide 3"></button>
       </div>
     </div>
-    <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
-      <button class="dot is-active" data-slide="0" aria-label="Slide 1"></button>
-      <button class="dot" data-slide="1" aria-label="Slide 2"></button>
-      <button class="dot" data-slide="2" aria-label="Slide 3"></button>
+    <div class="hero-readout" aria-label="Practice at a glance">
+      <div class="cell"><span class="k">Founded</span><span class="v">1998</span></div>
+      <div class="cell"><span class="k">Disciplines</span><span class="v">Four core</span></div>
+      <div class="cell"><span class="k">Projects delivered</span><span class="v">640+</span></div>
+      <div class="cell"><span class="k">Based in</span><span class="v">Rotterdam, NL</span></div>
     </div>
   </section>
 
-  <div class="hero-readout" aria-label="Practice at a glance">
-    <div class="cell"><span class="k">Founded</span><span class="v">1998</span></div>
-    <div class="cell"><span class="k">Disciplines</span><span class="v">Four core</span></div>
-    <div class="cell"><span class="k">Projects delivered</span><span class="v">640+</span></div>
-    <div class="cell"><span class="k">Based in</span><span class="v">Rotterdam, NL</span></div>
-  </div>
+  <section class="chapter " id="services" data-chapter="Capabilities">
+    <div class="chapter-media" aria-hidden="true"><img src="/assets/slides/blueprint-02.webp" alt="" loading="lazy" decoding="async" /></div>
+    <div class="chapter-scrim" aria-hidden="true"></div>
+    <div class="wrap chapter-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">01 / Capabilities</span>
+        <h2>Four disciplines, one coordinated model.</h2>
+        <p>Every project runs across structure, ground, systems and data, coordinated so nothing falls into the gap between drawings.</p>
+      </div>
+      <div class="services-grid" id="services-grid" data-reveal></div></div>
+  </section>
 
-  <section class="section-pad" id="services">
-    <div class="wrap">
-      <div class="services-head">
-        <div class="section-head" data-reveal>
-          <span class="eyebrow">01 / Capabilities</span>
-          <h2>Four disciplines, one coordinated model.</h2>
-          <p>Every project runs across structure, ground, systems and data, coordinated so nothing falls into the gap between drawings.</p>
+  <section class="chapter is-centred" id="metrics" data-chapter="Practice">
+    <div class="chapter-media" aria-hidden="true"><img src="/assets/slides/blueprint-03.webp" alt="" loading="lazy" decoding="async" /></div>
+    <div class="chapter-scrim" aria-hidden="true"></div>
+    <div class="wrap chapter-inner">
+      <div class="section-head centred" data-reveal>
+        <span class="eyebrow">02 / The practice</span>
+        <h2>Twenty seven years of load paths.</h2>
+        <p>Numbers we are held to, not marketing ones.</p>
+      </div>
+      <div class="stats-grid" data-reveal>
+        <div class="stat"><div class="num" data-count="640" data-suffix="+">0</div><div class="lbl">Projects delivered</div></div>
+        <div class="stat"><div class="num" data-count="27" data-suffix="">0</div><div class="lbl">Years in practice</div></div>
+        <div class="stat"><div class="num"><em data-count="22" data-suffix="%">0</em></div><div class="lbl">Average material saved</div></div>
+        <div class="stat"><div class="num" data-count="14" data-suffix="">0</div><div class="lbl">Countries built in</div></div>
+      </div></div>
+  </section>
+
+  <section class="chapter " id="leadership" data-chapter="Leadership">
+    
+    <div class="wrap chapter-inner">
+      <div class="leadership">
+        <div class="leadership-media" data-reveal>
+          <img src="/assets/img/ceo.svg" alt="Portrait of Dr. Ada Merkel" loading="lazy" />
+          <span class="leadership-badge">Founding Principal & CEO</span>
         </div>
-        <div class="services-media" data-reveal aria-hidden="true">
-          <img src="/assets/slides/blueprint-01.webp" alt="" loading="lazy" />
+        <div class="leadership-body" data-reveal>
+          <span class="eyebrow">03 / Leadership</span>
+          <blockquote>&ldquo;The best-performing structures are engineered early, while ideas are still cheap to change.&rdquo;</blockquote>
+          <h3>Dr. Ada Merkel</h3>
+          <p>Ada founded Merkel Engineering in 1998 after a decade designing tall buildings across Europe. She holds a doctorate in structural engineering and has led the practice through more than six hundred commissions, from super-tall frames to fjord-spanning bridges. She still reviews every major structural scheme the studio puts its name to.</p>
+          <a href="/careers" class="link-arrow">Join the studio <span class="arw">&rsaquo;</span></a>
         </div>
-      </div>
-      <div class="services-grid" id="services-grid" data-reveal></div>
-    </div>
+      </div></div>
   </section>
 
-  <section class="stats" aria-label="Practice metrics">
-    <div class="wrap stats-grid">
-      <div class="stat"><div class="num" data-count="640" data-suffix="+">0</div><div class="lbl">Projects delivered</div></div>
-      <div class="stat"><div class="num" data-count="27" data-suffix="">0</div><div class="lbl">Years in practice</div></div>
-      <div class="stat"><div class="num"><em data-count="22" data-suffix="%">0</em></div><div class="lbl">Average material saved</div></div>
-      <div class="stat"><div class="num" data-count="14" data-suffix="">0</div><div class="lbl">Countries built in</div></div>
-    </div>
-  </section>
-
-  <section class="section-pad" id="leadership">
-    <div class="wrap leadership">
-      <div class="leadership-media" data-reveal>
-        <img src="/assets/img/ceo.svg" alt="Portrait of Dr. Ada Merkel" loading="lazy" />
-        <span class="leadership-badge">Founding Principal & CEO</span>
-      </div>
-      <div class="leadership-body" data-reveal>
-        <span class="eyebrow">02 / Leadership</span>
-        <blockquote>&ldquo;The best-performing structures are engineered early, while ideas are still cheap to change.&rdquo;</blockquote>
-        <h3>Dr. Ada Merkel</h3>
-        <p>Ada founded Merkel Engineering in 1998 after a decade designing tall buildings across Europe. She holds a doctorate in structural engineering and has led the practice through more than six hundred commissions, from super-tall frames to fjord-spanning bridges. She still reviews every major structural scheme the studio puts its name to.</p>
-        <a href="/careers" class="link-arrow">Join the studio <span class="arw">&rsaquo;</span></a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-pad alt" id="work">
-    <div class="wrap">
+  <section class="chapter " id="work" data-chapter="Work">
+    <div class="chapter-media" aria-hidden="true"><img src="/assets/img/proj-helix-tower.svg" alt="" loading="lazy" decoding="async" /></div>
+    <div class="chapter-scrim" aria-hidden="true"></div>
+    <div class="wrap chapter-inner">
       <div class="section-head with-action" data-reveal>
         <div>
-          <span class="eyebrow">03 / Selected work</span>
+          <span class="eyebrow">04 / Selected work</span>
           <h2>Recent projects.</h2>
           <p>A cross-section of recent commissions across sectors.</p>
         </div>
         <a href="/projects" class="btn ghost">All projects <span class="arw">&rsaquo;</span></a>
       </div>
-      <div class="cards-grid" id="featured-projects" data-reveal></div>
-    </div>
+      <div class="cards-grid" id="featured-projects" data-reveal></div></div>
   </section>
 
-  <section class="cta-band" id="cta">
-    <div class="cta-media" aria-hidden="true"><img src="/assets/img/contact.svg" alt="" loading="lazy" /></div>
-    <div class="wrap cta-inner" data-reveal>
-      <h2>Bring us the hard part.</h2>
-      <p>Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days.</p>
-      <a href="/contact" class="btn">Contact us <span class="arw">&rsaquo;</span></a>
-    </div>
+  <section class="chapter " id="contact" data-chapter="Contact">
+    <div class="chapter-media" aria-hidden="true"><img src="/assets/img/contact.svg" alt="" loading="lazy" decoding="async" /></div>
+    <div class="chapter-scrim" aria-hidden="true"></div>
+    <div class="wrap chapter-inner">
+      <div class="contact-grid">
+        <div class="contact-info" data-reveal>
+          <span class="eyebrow">05 / Start a project</span>
+          <h2>Bring us the hard part.</h2>
+          <p class="contact-lede">Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days, and every message reaches the studio desk directly.</p>
+          <div class="contact-detail">
+            <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
+            <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a></div></div>
+            <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
+          </div>
+        </div>
+        
+      <form id="home-contact-form" data-contact-form novalidate data-reveal>
+        <div class="field two">
+          <div class="field"><label for="home-contact-form-name">Name</label><input type="text" id="home-contact-form-name" name="name" autocomplete="name" required /><div class="err" data-err="name"></div></div>
+          <div class="field"><label for="home-contact-form-email">Email</label><input type="email" id="home-contact-form-email" name="email" autocomplete="email" required /><div class="err" data-err="email"></div></div>
+        </div>
+        <div class="field two">
+          <div class="field"><label for="home-contact-form-company">Company <span class="opt">(optional)</span></label><input type="text" id="home-contact-form-company" name="company" autocomplete="organization" /><div class="err" data-err="company"></div></div>
+          <div class="field"><label for="home-contact-form-service">Discipline</label>
+            <select id="home-contact-form-service" name="service">
+              <option value="">Select</option>
+              <option>Structural</option>
+              <option>Civil &amp; Infrastructure</option>
+              <option>Mechanical</option>
+              <option>Digital Engineering</option>
+              <option>Not sure yet</option>
+            </select><div class="err" data-err="service"></div>
+          </div>
+        </div>
+        <div class="field"><label for="home-contact-form-message">Project brief</label><textarea id="home-contact-form-message" name="message" placeholder="What are you building, and where does it get hard?" required></textarea><div class="err" data-err="message"></div></div>
+        <div class="honeypot" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <div class="form-status" data-form-status role="status" aria-live="polite"></div>
+        <button type="submit" class="btn" data-submit>Send enquiry <span class="arw">&rsaquo;</span></button>
+      </form>
+      </div></div>
   </section>
 
   <footer class="footer">

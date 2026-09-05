@@ -26,21 +26,29 @@ and local JSON files otherwise, so development works offline with no setup.
 
 ---
 
-## Step 1: Replace the placeholder images
+## Step 1: Add your images
 
-All current artwork is generated blueprint-style placeholder SVG. Drop your real
-images into `public/assets/` and point these fields at them.
+All current artwork is generated blueprint-style placeholder SVG. The five
+page-level images need no code change at all: **drop them into
+`public/assets/img/` named `merkel1` to `merkel5`** and the next build picks them
+up. Any of `.webp`, `.avif`, `.jpg`, `.jpeg`, `.png` works, and `.webp` is chosen
+first if more than one is present.
 
-**Page-level artwork.** Edit `src/data/images.json`:
+| File | Where it appears | Suggested size |
+| ---- | ---------------- | -------------- |
+| `merkel1` | The underlay behind every page, and the first hero slide | 2400 x 1400 |
+| `merkel2` | Capabilities chapter, and the second hero slide | 1920 x 1200 |
+| `merkel3` | Practice chapter, the third hero slide, and the `/careers` header | 1920 x 1200 |
+| `merkel4` | Selected work chapter and the `/projects` header | 1920 x 1200 |
+| `merkel5` | Contact chapter and the `/contact` header | 1920 x 1200 |
 
-| Key | Appears on | Suggested size |
-| --- | ---------- | -------------- |
-| `heroSlides[]` | Home hero slideshow (add or remove entries; the dots follow automatically) | 1920 x 900 |
-| `servicesMedia` | Home, beside the Services heading | 1200 x 750 |
-| `projectsHeader` | `/projects` header band | 1920 x 800 |
-| `careersHeader` | `/careers` header band | 1920 x 800 |
-| `contactHeader` | `/contact` header band | 1920 x 800 |
-| `ctaBand` | "Bring us the hard part" band on home and project pages | 1920 x 800 |
+`merkel1` carries the most weight: it is fixed behind the whole site, so pick the
+one that reads as the studio's signature and has calm space rather than busy
+detail in the middle, where headlines sit.
+
+The mapping lives in `src/data/images.json`. Each slot names the file it prefers
+and the placeholder it falls back on, so the site never shows a broken image
+while you are still collecting artwork, and swapping any single slot is one line.
 
 **Per-project images.** Edit the `image` field in `src/data/projects.json` (one per
 project; used for the card thumbnail and the detail-page figure). Suggested size
@@ -53,12 +61,13 @@ size 760 x 950 (4:5 portrait).
 
 Notes:
 
-- Any web format works (`.webp`, `.jpg`, `.png`, `.svg`). Keep files under ~400 KB.
-- Header and hero images sit behind a dark overlay, so pick images that stay readable
-  when darkened.
+- Keep files under about 400 KB each. The underlay is fetched on every page.
+- Everything sits behind a dark scrim, so pick images that stay readable when
+  darkened; a bright sky behind white type is the usual regret.
 - `public/js/main.js` has a small `FALLBACK_PROJECTS` list used only if the API is
   unreachable. Update those paths too if you rename project image files (optional).
-- Run `npm run build` after editing, or let Vercel do it on deploy.
+- Run `npm run build` after adding files, or let Vercel do it on deploy. The build
+  prints which real images it found.
 
 ---
 
