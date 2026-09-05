@@ -1,22 +1,35 @@
 /* =========================================================================
    Merkel Engineering
-   Dark, precise, blueprint-driven. Near-black canvas, bone-white type,
-   one signal accent, monospace readouts, a faint structural grid.
+   Light and precise. Off-white ground, ink type, one signal blue, monospace
+   readouts, and site photography carried at full strength: where words have
+   to sit over a picture the ground fades in behind them rather than a dark
+   sheet being laid over the picture.
    ========================================================================= */
 
 :root {
-  --bg:        #0b0c0e;
-  --bg-2:      #101216;
-  --panel:     #14171c;
-  --panel-2:   #191d23;
-  --ink:       #ece9e2;
-  --muted:     #8b9099;
-  --faint:     #5a6069;
-  --line:      rgba(236, 233, 226, 0.12);
-  --line-2:    rgba(236, 233, 226, 0.06);
+  /* Light ground, ink type, photography at full strength. Surfaces are warm
+     off-whites rather than pure white, so a bright page still has structure. */
+  /* One triple, used by every wash over a photograph, so the whole site's
+     brightness is a single edit rather than thirty gradients. */
+  --bg-rgb:    250 250 249;
+
+  --bg:        rgb(var(--bg-rgb));
+  --bg-2:      #ffffff;
+  --panel:     #ffffff;
+  --panel-2:   #f3f3f1;
+  --ink:       #14161a;
+  --ink-soft:  #34383f;
+  --muted:     #5c626b;
+  --faint:     #8d939b;
+  --line:      rgba(20, 22, 26, 0.13);
+  --line-2:    rgba(20, 22, 26, 0.07);
   --accent:    #1f4fa8;
-  --accent-2:  #2f6fe0;
+  --accent-2:  #2a5fc4;
   --accent-ink:#ffffff;
+
+  /* The one dark surface left: type set over a photograph. */
+  --on-image:  #ffffff;
+  --shade:     rgba(10, 12, 16, 0.55);
 
   --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
@@ -25,6 +38,7 @@
   --maxw: 1280px;
   --gutter: clamp(20px, 5vw, 72px);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * { box-sizing: border-box; }
@@ -101,7 +115,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
   border-bottom: 1px solid transparent;
 }
 .nav.scrolled {
-  background: rgba(11, 12, 14, 0.78);
+  background: rgb(255 255 255 / 0.86);
   backdrop-filter: blur(14px) saturate(1.2);
   border-bottom: 1px solid var(--line);
   padding-top: 12px; padding-bottom: 12px;
@@ -178,7 +192,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
   letter-spacing: -0.035em;
   font-weight: 600;
 }
-.hero-sub { margin-top: 22px; max-width: 46ch; color: #cfccc4; font-size: clamp(16px, 1.6vw, 21px); }
+.hero-sub { margin-top: 22px; max-width: 46ch; color: var(--ink-soft); font-size: clamp(16px, 1.6vw, 21px); }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
 
 /* Slide dots */
@@ -191,7 +205,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 }
 .hero-dots .dot {
   width: 30px; height: 3px; border: 0; padding: 0; cursor: pointer;
-  background: rgba(236,233,226,0.28); transition: background .3s var(--ease);
+  background: rgba(20,22,26,0.24); transition: background .3s var(--ease);
 }
 .hero-dots .dot.is-active { background: var(--accent-2); }
 
@@ -205,8 +219,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 .btn:hover { transform: translateY(-2px); background: var(--accent-2); border-color: var(--accent-2); }
 .btn .arw { font-size: 18px; line-height: 1; transition: transform .3s var(--ease); }
 .btn:hover .arw { transform: translateX(4px); }
-.btn.ghost { background: rgba(11,12,14,0.4); color: var(--ink); border-color: var(--line); }
-.btn.ghost:hover { border-color: var(--ink); background: rgba(11,12,14,0.6); }
+.btn.ghost { background: rgb(255 255 255 / 0.82); color: var(--ink); border-color: rgba(20,22,26,0.28); }
+.btn.ghost:hover { border-color: var(--ink); background: #ffffff; }
 
 /* Readout strip --------------------------------------------------------- */
 /* Sits on the floor of the hero rather than after it, so the hero is one
@@ -216,7 +230,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
   width: 100%;
   margin-top: auto;
   border-top: 1px solid var(--line);
-  background: rgba(11, 12, 14, 0.6);
+  background: rgb(255 255 255 / 0.82);
   backdrop-filter: blur(10px);
   display: grid; grid-template-columns: repeat(4, 1fr);
 }
@@ -249,7 +263,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 .service .num { position: absolute; right: clamp(20px,3vw,40px); top: clamp(20px,3vw,40px); font-family: var(--font-display); font-size: 54px; color: var(--line); font-weight: 700; }
 
 /* Stats ----------------------------------------------------------------- */
-.stats { background: rgba(16, 18, 22, 0.74); backdrop-filter: blur(6px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats { background: rgb(255 255 255 / 0.86); backdrop-filter: blur(6px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
 .stat { padding: clamp(44px, 7vw, 88px) var(--gutter); border-right: 1px solid var(--line); }
 .stat:last-child { border-right: 0; }
@@ -354,14 +368,41 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 /* Reveal ---------------------------------------------------------------- */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(26px);
-  transition: opacity .9s var(--ease), transform .9s var(--ease);
+  transform: translateY(18px);
+  transition: opacity .7s var(--ease-out), transform .8s var(--ease-out);
   /* Set per element by main.js so siblings arrive in sequence, not together. */
   transition-delay: var(--reveal-delay, 0ms);
 }
 [data-reveal].in { opacity: 1; transform: none; }
+
+/* Headings carry further and settle more slowly than the text around them, so
+   a section arrives in a sequence rather than as one block.
+
+   Deliberately not a clip-path wipe: clipping the heading to nothing leaves it
+   with no rendered area, and IntersectionObserver then never reports it as
+   visible, so the reveal that was meant to run never fires at all. */
+h1[data-reveal], h2[data-reveal],
+[data-reveal] h1, [data-reveal] h2 {
+  transform: translateY(26px);
+  transition: opacity .85s var(--ease-out), transform 1s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+h1[data-reveal].in, h2[data-reveal].in,
+[data-reveal].in h1, [data-reveal].in h2 { transform: none; }
+
+/* The rule beside an eyebrow draws itself in. */
+.eyebrow::before {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .7s var(--ease-out) 120ms;
+}
+[data-reveal].in .eyebrow::before,
+.eyebrow[data-reveal].in::before { transform: scaleX(1); }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1; transform: none; transition: none; }
+  h1[data-reveal], h2[data-reveal],
+  [data-reveal] h1, [data-reveal] h2 { transform: none; transition: none; }
+  .eyebrow::before { transform: none; transition: none; }
 }
 
 /* Responsive ------------------------------------------------------------ */
@@ -383,7 +424,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   .nav-toggle { display: block; }
   .nav-links.open {
     display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
-    background: rgba(11,12,14,0.97); backdrop-filter: blur(14px); padding: 20px var(--gutter); gap: 6px;
+    background: rgb(255 255 255 / 0.97); backdrop-filter: blur(14px); padding: 20px var(--gutter); gap: 6px;
     border-bottom: 1px solid var(--line);
   }
   .nav-links.open a { padding: 12px 0; }
@@ -442,16 +483,16 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 }
 .page-header::after {
   content: ""; position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(180deg, rgba(8,9,11,0.78) 0%, rgba(8,9,11,0.62) 40%, rgba(8,9,11,0.9) 100%);
+  background: linear-gradient(180deg, rgb(var(--bg-rgb) / 0.5) 0%, rgb(var(--bg-rgb) / 0.35) 40%, rgb(var(--bg-rgb) / 0.92) 100%);
 }
 /* A flex child shrinks to its content, so the wrap needs its width back. */
 .page-header-inner { position: relative; z-index: 2; width: 100%; }
 .page-header h1 { font-size: clamp(40px, 7vw, 84px); letter-spacing: -0.035em; margin: 16px 0 0; }
-.page-header p { color: #cfccc4; font-size: clamp(16px, 1.5vw, 20px); max-width: 54ch; margin: 18px 0 0; }
+.page-header p { color: var(--ink-soft); font-size: clamp(16px, 1.5vw, 20px); max-width: 54ch; margin: 18px 0 0; }
 
 /* Section variants ------------------------------------------------------ */
 .section-pad.alt {
-  background: rgba(16, 18, 22, 0.74);
+  background: rgb(255 255 255 / 0.8);
   backdrop-filter: blur(6px);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -482,10 +523,10 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .card {
   display: flex; flex-direction: column; text-decoration: none; color: var(--ink);
-  border: 1px solid var(--line); background: var(--bg); overflow: hidden;
+  border: 1px solid var(--line); background: var(--panel); overflow: hidden;
   transition: border-color .3s var(--ease), transform .3s var(--ease);
 }
-.card:hover { border-color: rgba(47,111,224,0.6); transform: translateY(-3px); }
+.card:hover { border-color: rgba(42,95,196,0.55); transform: translateY(-3px); box-shadow: 0 20px 44px -26px rgba(20,22,26,0.5); }
 .card .thumb { aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--panel); }
 .card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--ease); }
 .card:hover .thumb img { transform: scale(1.05); }
@@ -506,7 +547,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .project-hero .meta-row .sector { color: var(--accent-2); }
 .project-body { padding: clamp(60px, 9vw, 120px) 0; }
 .project-cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(40px, 6vw, 90px); }
-.project-cols .overview p { font-size: clamp(17px, 1.5vw, 20px); color: #d6d3cc; line-height: 1.7; }
+.project-cols .overview p { font-size: clamp(17px, 1.5vw, 20px); color: var(--ink-soft); line-height: 1.7; }
 .project-facts { border-top: 1px solid var(--line); }
 .project-facts .fact { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .project-facts .fact .k { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
@@ -543,7 +584,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .cta-band { position: relative; overflow: hidden; border-top: 1px solid var(--line); }
 .cta-band .cta-media { position: absolute; inset: 0; z-index: 0; opacity: 0.32; }
 .cta-band .cta-media img { width: 100%; height: 100%; object-fit: cover; }
-.cta-band::after { content:""; position:absolute; inset:0; z-index:1; background: linear-gradient(180deg, rgba(8,9,11,0.86), rgba(8,9,11,0.72)); }
+.cta-band::after { content:""; position:absolute; inset:0; z-index:1; background: linear-gradient(100deg, rgb(255 255 255 / 0.94) 0%, rgb(255 255 255 / 0.82) 48%, rgb(255 255 255 / 0.5) 100%); }
 .cta-inner { position: relative; z-index: 2; padding: clamp(70px, 10vw, 130px) 0; text-align: center; }
 .cta-inner h2 { font-size: clamp(30px, 5vw, 58px); }
 .cta-inner p { color: var(--muted); max-width: 52ch; margin: 18px auto 30px; font-size: clamp(16px,1.4vw,19px); }
@@ -558,7 +599,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .chat-toggle {
   width: 58px; height: 58px; border-radius: 50%; border: 0; cursor: pointer;
   background: var(--accent); color: #fff; display: grid; place-items: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45); transition: transform .25s var(--ease), background .25s var(--ease);
+  box-shadow: 0 12px 28px -10px rgba(20,22,26,0.45); transition: transform .25s var(--ease), background .25s var(--ease);
 }
 .chat-toggle:hover { transform: translateY(-2px); background: var(--accent-2); }
 .chat-toggle .i-close { display: none; }
@@ -569,7 +610,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   height: 520px; max-height: calc(100vh - 120px);
   background: var(--panel); border: 1px solid var(--line);
   display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  box-shadow: 0 28px 70px -24px rgba(20,22,26,0.45);
   animation: chat-in .25s var(--ease);
 }
 @keyframes chat-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -582,11 +623,11 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .chat-min:hover { color: var(--ink); }
 .chat-log { flex: 1; overflow-y: auto; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; }
 .chat-msg { max-width: 82%; padding: 10px 13px; font-size: 14px; line-height: 1.5; border: 1px solid var(--line); }
-.chat-msg.agent { align-self: flex-start; background: var(--bg); border-top-left-radius: 0; }
+.chat-msg.agent { align-self: flex-start; background: var(--panel-2); border-top-left-radius: 0; }
 .chat-msg.user { align-self: flex-end; background: var(--accent); color: #fff; border-color: var(--accent); border-bottom-right-radius: 0; }
 .chat-msg.typing { color: var(--muted); font-style: italic; }
 .chat-form { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); background: var(--bg-2); }
-.chat-form input { flex: 1; background: var(--bg); border: 1px solid var(--line); color: var(--ink); padding: 11px 13px; font-family: var(--font-body); font-size: 14px; }
+.chat-form input { flex: 1; background: var(--panel-2); border: 1px solid var(--line); color: var(--ink); padding: 11px 13px; font-family: var(--font-body); font-size: 14px; }
 .chat-form input:focus { outline: none; border-color: var(--accent-2); }
 .chat-form button { width: 44px; border: 0; background: var(--accent); color: #fff; cursor: pointer; display: grid; place-items: center; transition: background .25s var(--ease); }
 .chat-form button:hover { background: var(--accent-2); }
@@ -642,8 +683,8 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(236, 233, 226, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(236, 233, 226, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(20, 22, 26, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 22, 26, 0.05) 1px, transparent 1px);
   background-size: 96px 96px;
   mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
 }
@@ -654,8 +695,8 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(130% 100% at 50% 30%, rgba(11, 12, 14, 0.82) 0%, rgba(11, 12, 14, 0.93) 55%, rgba(8, 9, 11, 0.97) 100%),
-    linear-gradient(180deg, rgba(14, 16, 21, 0.94) 0%, rgba(11, 12, 14, 0.92) 45%, rgba(8, 9, 11, 0.97) 100%);
+    radial-gradient(130% 100% at 50% 30%, rgb(255 255 255 / 0.86) 0%, rgb(var(--bg-rgb) / 0.93) 55%, rgb(var(--bg-rgb) / 0.96) 100%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.9) 0%, rgb(var(--bg-rgb) / 0.92) 45%, rgb(var(--bg-rgb) / 0.96) 100%);
 }
 
 /* =========================================================================
@@ -710,11 +751,11 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   inset: 0;
   z-index: 1;
   background:
-    linear-gradient(90deg, rgba(11, 12, 14, 0.94) 0%, rgba(11, 12, 14, 0.82) 46%, rgba(11, 12, 14, 0.6) 100%),
-    linear-gradient(180deg, rgba(11, 12, 14, 0.85) 0%, rgba(11, 12, 14, 0.55) 30%, rgba(11, 12, 14, 0.9) 100%);
+    linear-gradient(90deg, rgb(var(--bg-rgb) / 0.96) 0%, rgb(var(--bg-rgb) / 0.8) 46%, rgb(var(--bg-rgb) / 0.2) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.5) 0%, rgb(var(--bg-rgb) / 0.14) 34%, rgb(var(--bg-rgb) / 0.55) 100%);
 }
 .chapter.is-centred .chapter-scrim {
-  background: radial-gradient(90% 80% at 50% 50%, rgba(11, 12, 14, 0.72) 0%, rgba(11, 12, 14, 0.93) 70%);
+  background: radial-gradient(90% 80% at 50% 50%, rgb(var(--bg-rgb) / 0.8) 0%, rgb(var(--bg-rgb) / 0.95) 70%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -728,7 +769,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .chapter.is-centred .stats-grid {
   border-top: 1px solid var(--line);
   border-left: 1px solid var(--line);
-  background: rgba(16, 18, 22, 0.5);
+  background: rgb(255 255 255 / 0.88);
   backdrop-filter: blur(6px);
 }
 .chapter.is-centred .stat { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: clamp(30px, 4vw, 54px) clamp(20px, 3vw, 40px); }
@@ -736,7 +777,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 /* Grids inside a chapter carry their own surface so they read off the photo. */
 .chapter .services-grid,
 .chapter .cards-grid .card {
-  background: rgba(16, 18, 22, 0.62);
+  background: rgb(255 255 255 / 0.9);
   backdrop-filter: blur(8px);
 }
 .chapter .services-grid { grid-template-columns: repeat(4, 1fr); }
@@ -745,11 +786,11 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .chapter .service h3 { font-size: clamp(18px, 1.5vw, 22px); }
 .chapter .service p { font-size: 14.5px; margin-bottom: 16px; }
 
-.chapter .leadership-media { border-color: rgba(236, 233, 226, 0.2); }
+.chapter .leadership-media { border-color: var(--line); }
 
 .contact-lede { color: var(--muted); font-size: clamp(16px, 1.4vw, 18px); max-width: 46ch; }
 .chapter .contact-grid form {
-  background: rgba(16, 18, 22, 0.72);
+  background: rgb(255 255 255 / 0.94);
   backdrop-filter: blur(10px);
   border: 1px solid var(--line);
   padding: clamp(24px, 3vw, 38px);
@@ -793,7 +834,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .chapter-rail .tick {
   width: 22px;
   height: 2px;
-  background: rgba(236, 233, 226, 0.26);
+  background: rgba(20, 22, 26, 0.24);
   transition: width .35s var(--ease), background .35s var(--ease);
 }
 .chapter-rail a.is-active { color: var(--ink); }
@@ -844,54 +885,112 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
    photograph to be worth having. */
 .chapter-scrim {
   background:
-    linear-gradient(90deg, rgba(11, 12, 14, 0.95) 0%, rgba(11, 12, 14, 0.8) 42%, rgba(11, 12, 14, 0.42) 100%),
-    linear-gradient(180deg, rgba(11, 12, 14, 0.8) 0%, rgba(11, 12, 14, 0.4) 34%, rgba(11, 12, 14, 0.88) 100%);
+    linear-gradient(90deg, rgb(var(--bg-rgb) / 0.96) 0%, rgb(var(--bg-rgb) / 0.8) 46%, rgb(var(--bg-rgb) / 0.2) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.5) 0%, rgb(var(--bg-rgb) / 0.14) 34%, rgb(var(--bg-rgb) / 0.55) 100%);
 }
 .chapter.is-centred .chapter-scrim {
-  background: radial-gradient(90% 80% at 50% 50%, rgba(11, 12, 14, 0.66) 0%, rgba(11, 12, 14, 0.93) 72%);
+  background: radial-gradient(90% 80% at 50% 50%, rgb(var(--bg-rgb) / 0.8) 0%, rgb(var(--bg-rgb) / 0.95) 72%);
 }
 
 .hero-readout .v { font-size: clamp(17px, 1.9vw, 24px); }
 .hero-readout .cell { padding: 18px var(--gutter); min-width: 0; }
 
-/* Scrims for photography ------------------------------------------------
-   The site is now backed by bright daylight site photography rather than
-   dark drawings, so every layer that carries type over an image needs more
-   cover than a blueprint asked for. Type contrast first, picture second. */
+/* Washes for photography ------------------------------------------------
+   The site is light and the photographs run at full strength. Where type has
+   to sit over an image, the ground fades in behind the type rather than a
+   dark sheet being laid over the picture: the left of a section reads as page,
+   the right reads as photograph, and the two meet in the middle. */
 
 .chapter-scrim {
   background:
-    linear-gradient(90deg, rgba(9, 10, 12, 0.96) 0%, rgba(9, 10, 12, 0.9) 38%, rgba(9, 10, 12, 0.58) 72%, rgba(9, 10, 12, 0.42) 100%),
-    linear-gradient(180deg, rgba(9, 10, 12, 0.86) 0%, rgba(9, 10, 12, 0.5) 38%, rgba(9, 10, 12, 0.92) 100%);
+    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0.97) 34%, rgb(var(--bg-rgb) / 0.72) 56%, rgb(var(--bg-rgb) / 0.06) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.6) 0%, rgb(var(--bg-rgb) / 0.08) 34%, rgb(var(--bg-rgb) / 0.5) 100%);
 }
 .chapter.is-centred .chapter-scrim {
   background:
-    radial-gradient(85% 75% at 50% 52%, rgba(9, 10, 12, 0.86) 0%, rgba(9, 10, 12, 0.95) 72%),
-    linear-gradient(180deg, rgba(9, 10, 12, 0.72) 0%, rgba(9, 10, 12, 0.5) 45%, rgba(9, 10, 12, 0.9) 100%);
+    radial-gradient(78% 68% at 50% 50%, rgb(var(--bg-rgb) / 0.95) 0%, rgb(var(--bg-rgb) / 0.82) 62%, rgb(var(--bg-rgb) / 0.5) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.7) 0%, rgb(var(--bg-rgb) / 0.35) 45%, rgb(var(--bg-rgb) / 0.75) 100%);
 }
 
 .hero-scrim {
   background:
-    linear-gradient(90deg, rgba(9, 10, 12, 0.94) 0%, rgba(9, 10, 12, 0.84) 40%, rgba(9, 10, 12, 0.5) 78%, rgba(9, 10, 12, 0.4) 100%),
-    linear-gradient(180deg, rgba(9, 10, 12, 0.7) 0%, rgba(9, 10, 12, 0.42) 34%, rgba(9, 10, 12, 0.88) 100%);
+    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0.96) 30%, rgb(var(--bg-rgb) / 0.66) 54%, rgb(var(--bg-rgb) / 0.04) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.55) 0%, rgb(var(--bg-rgb) / 0.06) 36%, rgb(var(--bg-rgb) / 0.45) 100%);
 }
 .hero-slides .slide { background-position: 50% 60%; }
 
 .page-header-media { background-position: 50% 58%; }
 .page-header::after {
   background:
-    linear-gradient(90deg, rgba(9, 10, 12, 0.94) 0%, rgba(9, 10, 12, 0.82) 45%, rgba(9, 10, 12, 0.55) 100%),
-    linear-gradient(180deg, rgba(9, 10, 12, 0.6) 0%, rgba(9, 10, 12, 0.45) 40%, rgba(9, 10, 12, 0.95) 100%);
+    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0.95) 32%, rgb(var(--bg-rgb) / 0.6) 60%, rgb(var(--bg-rgb) / 0.05) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.45) 0%, rgb(var(--bg-rgb) / 0.1) 40%, rgb(var(--bg-rgb) / 0.7) 100%);
 }
 
-/* Panels sitting on a photograph need to be opaque enough to read as panels. */
+/* Panels over a photograph are solid, so the picture never fights the text
+   inside them. */
 .chapter .services-grid,
-.chapter .cards-grid .card { background: rgba(13, 15, 18, 0.86); }
-.chapter.is-centred .stats-grid { background: rgba(13, 15, 18, 0.8); }
-.chapter .contact-grid form { background: rgba(13, 15, 18, 0.88); }
+.chapter .cards-grid .card { background: #ffffff; }
+.chapter.is-centred .stats-grid { background: rgb(255 255 255 / 0.94); }
+.chapter .contact-grid form { background: #ffffff; box-shadow: 0 24px 60px -30px rgba(20, 22, 26, 0.4); }
 
 /* The rail gets its own lane on wide screens, so an active label never lands
    on the edge of a panel. */
 @media (min-width: 1101px) {
   .page-home .wrap { max-width: min(var(--maxw), calc(100vw - 260px)); }
 }
+
+/* Contrast over photography ---------------------------------------------
+   The nav and the chapter rail float over whatever the image happens to be
+   doing behind them, so both carry their own ground rather than trusting it. */
+
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgb(var(--bg-rgb) / 0.92) 0%, rgb(var(--bg-rgb) / 0.62) 60%, rgb(var(--bg-rgb) / 0) 100%);
+  transition: opacity .4s var(--ease);
+}
+.nav.scrolled::before { opacity: 0; }
+.nav-links a { color: var(--ink-soft); }
+.nav-links a:hover { color: var(--accent); }
+.nav-links a.is-active { color: var(--ink); border-bottom: 1px solid var(--accent-2); }
+.nav-cta { background: rgb(255 255 255 / 0.86); border-color: rgba(20, 22, 26, 0.28); }
+
+.chapter-rail a { color: var(--muted); }
+.chapter-rail .label {
+  background: rgb(var(--bg-rgb) / 0.92);
+  padding: 3px 7px;
+  border-radius: 2px;
+}
+.chapter-rail .tick { background: rgba(20, 22, 26, 0.3); box-shadow: 0 0 0 1px rgb(var(--bg-rgb) / 0.6); }
+.chapter-rail a.is-active { color: var(--ink); }
+.chapter-rail a.is-active .tick { background: var(--accent-2); }
+
+/* Section artwork carries the page rather than hiding under it. */
+.services-media img,
+.leadership-media img,
+.project-figure img { filter: none; }
+
+/* Motion over photography -----------------------------------------------
+   Section artwork moves more slowly than the words in front of it, which is
+   what gives a full-height section depth rather than the feel of a slide. */
+
+.chapter-media {
+  transform: translate3d(0, var(--media-shift, 0px), 0);
+  will-change: transform;
+}
+.chapter-media img { transform: scale(1.14); }
+.chapter.is-onstage .chapter-media img { transform: scale(1.04); }
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-media { transform: none; }
+  .chapter-media img,
+  .chapter.is-onstage .chapter-media img { transform: none; }
+}
+
+/* Cards lift on a light ground with shadow rather than a colour change. */
+.service { transition: background .4s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease); }
+.service:hover { background: var(--panel); box-shadow: 0 22px 50px -34px rgba(20, 22, 26, 0.55); }
+.btn { box-shadow: 0 10px 24px -16px rgba(31, 79, 168, 0.9); }
+.btn.ghost { box-shadow: none; }

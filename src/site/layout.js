@@ -66,7 +66,7 @@ function head({ title, description, noindex = false, styles = [] }) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title}</title>
   <meta name="description" content="${description}" />${noindex ? '\n  <meta name="robots" content="noindex, nofollow" />' : ''}
-  <meta name="theme-color" content="#0b0c0e" />
+  <meta name="theme-color" content="#fafaf9" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -81,7 +81,7 @@ function nav(active = '') {
   return `
   <header class="nav" id="nav">
     <a class="brand" href="/" aria-label="Merkel Engineering home">
-      <img class="brand-logo" src="/assets/brand/merkel-wordmark.png" alt="Merkel Engineering" width="1062" height="215" />
+      <img class="brand-logo" src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Engineering" width="1048" height="202" />
     </a>
     <nav class="nav-links" id="navlinks">
       ${link('/projects', 'Projects', 'projects')}
@@ -101,7 +101,7 @@ function footer() {
   <footer class="footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
-        <img class="brand-logo footer-logo" src="/assets/brand/merkel-wordmark.png" alt="Merkel Engineering" width="1062" height="215" />
+        <img class="brand-logo footer-logo" src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Engineering" width="1048" height="202" />
         <p>Engineering for buildings and infrastructure.</p>
       </div>
       <div class="col">

@@ -7,18 +7,33 @@
     "year": 2025,
     "metric": "184 m",
     "metricLabel": "structural height",
-    "image": "/assets/img/proj-helix-tower.svg",
+    "image": "/assets/img/merkel3.webp",
     "client": "Kop van Zuid Development",
     "status": "Completed 2025",
     "duration": "38 months",
-    "services": ["Structural Engineering", "Digital Engineering"],
+    "services": [
+      "Structural Engineering",
+      "Digital Engineering"
+    ],
     "blurb": "A diagrid super-structure that cut steel tonnage by 22 percent against a conventional frame.",
     "overview": "Helix Tower is a 44-storey commercial high-rise on the Maas waterfront. The brief asked for column-free floor plates and a slender profile, so we developed a perimeter diagrid that carries both gravity and lateral load without an internal core wall. Every node was resolved parametrically and checked under full non-linear seismic and wind analysis. The result is a frame that uses 22 percent less steel than an equivalent moment frame, cast against a live construction programme with no rework.",
     "facts": [
-      { "k": "Height", "v": "184 m" },
-      { "k": "Floors", "v": "44" },
-      { "k": "Structure", "v": "Steel diagrid" },
-      { "k": "Steel saved", "v": "22%" }
+      {
+        "k": "Height",
+        "v": "184 m"
+      },
+      {
+        "k": "Floors",
+        "v": "44"
+      },
+      {
+        "k": "Structure",
+        "v": "Steel diagrid"
+      },
+      {
+        "k": "Steel saved",
+        "v": "22%"
+      }
     ]
   },
   {
@@ -29,18 +44,33 @@
     "year": 2024,
     "metric": "410 m",
     "metricLabel": "cable-stayed span",
-    "image": "/assets/img/proj-north-crossing.svg",
+    "image": "/assets/img/merkel1.webp",
     "client": "Aarhus Havn Authority",
     "status": "Opened 2024",
     "duration": "52 months",
-    "services": ["Civil & Infrastructure", "Structural Engineering"],
+    "services": [
+      "Civil & Infrastructure",
+      "Structural Engineering"
+    ],
     "blurb": "A twin-pylon bridge engineered for extreme fjord wind loading and marine durability.",
     "overview": "North Crossing carries road and light rail across the Aarhus fjord on a twin-pylon cable-stayed deck. The site sees severe cross-winds and an aggressive marine environment, so the deck was shaped aerodynamically and every steel element specified for a hundred-year design life. We ran full aeroelastic analysis and staged-construction models so the cantilever could be built out from both pylons and closed at midspan within millimetres.",
     "facts": [
-      { "k": "Main span", "v": "410 m" },
-      { "k": "Pylons", "v": "2 × 132 m" },
-      { "k": "Design life", "v": "100 years" },
-      { "k": "Loading", "v": "Road + rail" }
+      {
+        "k": "Main span",
+        "v": "410 m"
+      },
+      {
+        "k": "Pylons",
+        "v": "2 \u00d7 132 m"
+      },
+      {
+        "k": "Design life",
+        "v": "100 years"
+      },
+      {
+        "k": "Loading",
+        "v": "Road + rail"
+      }
     ]
   },
   {
@@ -51,18 +81,33 @@
     "year": 2024,
     "metric": "38%",
     "metricLabel": "energy reduction",
-    "image": "/assets/img/proj-atlas-plant.svg",
+    "image": "/assets/img/merkel4.webp",
     "client": "Atlas Chemistries GmbH",
     "status": "Recommissioned 2024",
     "duration": "20 months",
-    "services": ["Mechanical Systems", "Digital Engineering"],
+    "services": [
+      "Mechanical Systems",
+      "Digital Engineering"
+    ],
     "blurb": "A heat-recovery redesign of a continuous process line, recommissioned with zero downtime.",
     "overview": "Atlas asked us to cut the energy load of an ageing continuous process line without stopping production. We built a digital twin of the plant, modelled the thermal flows, and designed a heat-recovery loop that feeds waste heat back into the feedstock preheat. The retrofit was staged around the plant's own maintenance windows, so the line never went cold, and it now runs on 38 percent less energy.",
     "facts": [
-      { "k": "Energy cut", "v": "38%" },
-      { "k": "Downtime", "v": "Zero" },
-      { "k": "Payback", "v": "3.1 years" },
-      { "k": "Method", "v": "Digital twin" }
+      {
+        "k": "Energy cut",
+        "v": "38%"
+      },
+      {
+        "k": "Downtime",
+        "v": "Zero"
+      },
+      {
+        "k": "Payback",
+        "v": "3.1 years"
+      },
+      {
+        "k": "Method",
+        "v": "Digital twin"
+      }
     ]
   },
   {
@@ -73,18 +118,33 @@
     "year": 2023,
     "metric": "60k / day",
     "metricLabel": "passenger capacity",
-    "image": "/assets/img/proj-meridian-transit.svg",
-    "client": "SYTRAL Mobilités",
+    "image": "/assets/img/merkel2.webp",
+    "client": "SYTRAL Mobilit\u00e9s",
     "status": "Opened 2023",
     "duration": "44 months",
-    "services": ["Structural Engineering", "Civil & Infrastructure"],
+    "services": [
+      "Structural Engineering",
+      "Civil & Infrastructure"
+    ],
     "blurb": "A long-span steel canopy and below-grade concourse delivered on a live rail corridor.",
     "overview": "Meridian is an interchange that had to be built over and around live tracks. The signature is a 96-metre clear-span canopy that shelters the platforms without a single column touching the operational zone. Below grade, a new concourse threads between existing tunnels. We sequenced the whole build around night possessions so trains kept running throughout.",
     "facts": [
-      { "k": "Canopy span", "v": "96 m" },
-      { "k": "Capacity", "v": "60k / day" },
-      { "k": "Built over", "v": "Live rail" },
-      { "k": "Levels", "v": "3" }
+      {
+        "k": "Canopy span",
+        "v": "96 m"
+      },
+      {
+        "k": "Capacity",
+        "v": "60k / day"
+      },
+      {
+        "k": "Built over",
+        "v": "Live rail"
+      },
+      {
+        "k": "Levels",
+        "v": "3"
+      }
     ]
   }
 ]

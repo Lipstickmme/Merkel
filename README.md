@@ -164,12 +164,22 @@ npm run test:browser                    # CHROME_PATH=... if it is not on the de
 
 - Pages share one layout (`src/site/layout.js`) rendered to static HTML at build
   time, so the nav, footer and chat widget stay consistent with no client-side flash.
-- The home hero runs a **blueprint slideshow** (crossfade plus a subtle Ken Burns
-  zoom) behind a black overlay, with clickable indicators; motion drops under
-  `prefers-reduced-motion`.
+- The site is light: off-white ground, ink type, one signal blue. Photography runs
+  at full strength, and where words sit over a picture the ground fades in behind
+  them rather than a dark sheet being laid over the picture. `--bg-rgb` is the one
+  token every one of those washes reads from, so the whole site's brightness is a
+  single edit.
+- The home hero runs a **photographic slideshow** (crossfade plus a slow Ken Burns
+  zoom) with clickable indicators; motion drops under `prefers-reduced-motion`.
 - Projects, careers and leadership content are rendered from the API, with embedded
   seed data as a fallback so pages never render empty.
-- The brand wordmark is a transparent PNG keyed from the black-background logo.
+- The brand wordmark is a transparent PNG keyed from the supplied logo card, with
+  the navy in the mark preserved by un-premultiplying it off the paper colour
+  rather than flattening every ink pixel to black.
+- Headings reveal with transform and opacity, never a `clip-path` wipe: clipping a
+  heading to nothing leaves it with no rendered area, and IntersectionObserver then
+  never reports it visible, so the reveal never fires. A browser test asserts every
+  `[data-reveal]` on the landing page ends up visible.
 - Section and project imagery lives in `public/assets/img/` as blueprint-style SVGs;
   swap these for real photography when available.
 
