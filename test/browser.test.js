@@ -82,10 +82,14 @@ async function until(check, what, timeout = 10000) {
     const session = sb.db.chat_sessions.rows[0];
     assert.ok(session.visitor_id, 'session carries the anonymous auth uid');
     const visitorRows = sb.db.chat_messages.rows.filter((r) => r.sender === 'visitor');
-    const agentRows = sb.db.chat_messages.rows.filter((r) => r.sender === 'agent');
     assert.strictEqual(visitorRows.length, 1, 'visitor row written by the browser');
     assert.strictEqual(visitorRows[0].body, 'We need a 40m span assessed.');
-    assert.strictEqual(agentRows.length, 1, 'holding reply written by the server');
+    // The holding reply is written by the server after the browser's own row,
+    // so wait for it rather than assuming the two land together.
+    await until(
+      () => sb.db.chat_messages.rows.filter((r) => r.sender === 'agent').length === 1,
+      'the server to write the holding reply'
+    );
     console.log('  ok  visitor wrote their own row under an anonymous login');
 
     const drawn = await visitor.$$eval('#chat-log .chat-msg', (nodes) => nodes.map((n) => n.textContent));
@@ -202,6 +206,33 @@ async function until(check, what, timeout = 10000) {
     await staff.waitForFunction(() => document.querySelector('[data-tally="enquiries"]').textContent === '1');
     assert.strictEqual(sb.db.enquiries.rows.filter((r) => r.status === 'closed').length, 1);
     console.log('  ok  triage writes back');
+
+    /* ---------------- every reveal actually reveals ---------------- */
+    const reader = await newPage(visitorCtx);
+    await reader.goto(`${base}/`, { waitUntil: 'networkidle' });
+    await reader.evaluate(async () => {
+      // Walk the page so every section enters the viewport at least once.
+      // instant, not smooth: the page sets scroll-behavior: smooth, and a
+      // smooth scroll cancels the one before it, so a walk in steps never
+      // actually reaches the bottom.
+      for (let y = 0; y < document.body.scrollHeight; y += Math.round(window.innerHeight * 0.6)) {
+        window.scrollTo({ top: y, behavior: 'instant' });
+        await new Promise((r) => setTimeout(r, 160));
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      await new Promise((r) => setTimeout(r, 1400));
+    });
+    const hidden = await reader.evaluate(() =>
+      Array.from(document.querySelectorAll('[data-reveal]'))
+        .filter((el) => getComputedStyle(el).opacity !== '1' || el.getBoundingClientRect().height === 0)
+        .map((el) => `${el.tagName}.${el.className} "${(el.textContent || '').trim().slice(0, 30)}"`)
+    );
+    assert.deepStrictEqual(hidden, [], 'every reveal must end up visible');
+    const chapters = await reader.$$eval('.chapter', (n) => n.length);
+    const staged = await reader.$$eval('.chapter.is-onstage', (n) => n.length);
+    assert.strictEqual(staged, chapters, `all ${chapters} chapters staged, got ${staged}`);
+    console.log('  ok  every reveal on the landing page ends up visible');
+    await reader.close();
 
     /* ---------------- email tab ---------------- */
     await staff.click('.admin-tab[data-tab="email"]');

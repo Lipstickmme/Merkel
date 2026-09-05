@@ -29,10 +29,10 @@
     { code: 'S-04', title: 'Digital Engineering', summary: 'BIM coordination, parametric design and digital twins that keep every discipline working from one source of truth.', capabilities: ['BIM / VDC', 'Parametric design', 'Digital twins', 'Clash & 4D scheduling'] }
   ];
   const FALLBACK_PROJECTS = [
-    { id: 'helix-tower', name: 'Helix Tower', sector: 'Commercial', location: 'Rotterdam, NL', year: 2025, metric: '184 m', metricLabel: 'structural height', image: '/assets/img/proj-helix-tower.svg', blurb: 'A diagrid super-structure that cut steel tonnage by 22 percent against a conventional frame.' },
-    { id: 'north-crossing', name: 'North Crossing', sector: 'Infrastructure', location: 'Aarhus, DK', year: 2024, metric: '410 m', metricLabel: 'cable-stayed span', image: '/assets/img/proj-north-crossing.svg', blurb: 'A twin-pylon bridge engineered for extreme fjord wind loading and marine durability.' },
-    { id: 'atlas-plant', name: 'Atlas Process Plant', sector: 'Industrial', location: 'Duisburg, DE', year: 2024, metric: '38%', metricLabel: 'energy reduction', image: '/assets/img/proj-atlas-plant.svg', blurb: 'A heat-recovery redesign of a continuous process line, recommissioned with zero downtime.' },
-    { id: 'meridian-transit', name: 'Meridian Transit Hub', sector: 'Transit', location: 'Lyon, FR', year: 2023, metric: '60k / day', metricLabel: 'passenger capacity', image: '/assets/img/proj-meridian-transit.svg', blurb: 'A long-span steel canopy and below-grade concourse delivered on a live rail corridor.' }
+    { id: 'helix-tower', name: 'Helix Tower', sector: 'Commercial', location: 'Rotterdam, NL', year: 2025, metric: '184 m', metricLabel: 'structural height', image: '/assets/img/merkel3.webp', blurb: 'A diagrid super-structure that cut steel tonnage by 22 percent against a conventional frame.' },
+    { id: 'north-crossing', name: 'North Crossing', sector: 'Infrastructure', location: 'Aarhus, DK', year: 2024, metric: '410 m', metricLabel: 'cable-stayed span', image: '/assets/img/merkel1.webp', blurb: 'A twin-pylon bridge engineered for extreme fjord wind loading and marine durability.' },
+    { id: 'atlas-plant', name: 'Atlas Process Plant', sector: 'Industrial', location: 'Duisburg, DE', year: 2024, metric: '38%', metricLabel: 'energy reduction', image: '/assets/img/merkel4.webp', blurb: 'A heat-recovery redesign of a continuous process line, recommissioned with zero downtime.' },
+    { id: 'meridian-transit', name: 'Meridian Transit Hub', sector: 'Transit', location: 'Lyon, FR', year: 2023, metric: '60k / day', metricLabel: 'passenger capacity', image: '/assets/img/merkel2.webp', blurb: 'A long-span steel canopy and below-grade concourse delivered on a live rail corridor.' }
   ];
 
   function projectCard(p) {
@@ -65,7 +65,7 @@
         const section = el.closest('.chapter, section, header') || document.body;
         const peers = $$('[data-reveal]', section);
         const step = Math.min(peers.indexOf(el), 5);
-        el.style.setProperty('--reveal-delay', (step * 110) + 'ms');
+        el.style.setProperty('--reveal-delay', (step * 90) + 'ms');
         el.classList.add('in');
         io.unobserve(el);
       });
@@ -86,6 +86,8 @@
   /* The underlay drifts across the whole document rather than with raw scroll,
      so the travel is the same on a short page and a long one. */
   const UNDERLAY_TRAVEL = 70;
+  const MEDIA_TRAVEL = 80;
+  const media = $$('.chapter-media');
 
   function frame() {
     ticking = false;
@@ -97,6 +99,19 @@
     if (progress) progress.style.width = (pct * 100) + '%';
     if (underlay && !reduceMotion) {
       underlay.style.setProperty('--underlay-shift', (-UNDERLAY_TRAVEL * pct).toFixed(1) + 'px');
+    }
+
+    /* Artwork drifts against its section: at the top of the section the image
+       sits low, at the bottom it has risen, so the picture and the words are
+       never travelling at the same speed. */
+    if (!reduceMotion) {
+      for (let i = 0; i < media.length; i += 1) {
+        const layer = media[i];
+        const box = layer.parentElement.getBoundingClientRect();
+        if (box.bottom < -200 || box.top > window.innerHeight + 200) continue;
+        const progress = (window.innerHeight - box.top) / (window.innerHeight + box.height);
+        layer.style.setProperty('--media-shift', ((progress - 0.5) * MEDIA_TRAVEL).toFixed(1) + 'px');
+      }
     }
 
     if (railLinks.length) {

@@ -41,7 +41,7 @@ const heroSection = `
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
     <div class="hero-inner wrap">
-      <span class="eyebrow hero-tag" data-reveal>Structural &middot; Civil &middot; Mechanical &middot; Digital</span>
+      <span class="eyebrow hero-tag" data-reveal>Structural, civil, mechanical and digital engineering</span>
       <h1 data-reveal>Built to stand.</h1>
       <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
       <div class="hero-actions" data-reveal>
@@ -68,7 +68,7 @@ const capabilitiesSection = chapter({
       <div class="section-head" data-reveal>
         <span class="eyebrow">01 / Capabilities</span>
         <h2>Four disciplines, one coordinated model.</h2>
-        <p>Every project runs across structure, ground, systems and data, coordinated so nothing falls into the gap between drawings.</p>
+        <p>Structure, ground, systems and data are coordinated in one model, so nothing is lost in the gap between two sets of drawings.</p>
       </div>
       <div class="services-grid" id="services-grid" data-reveal></div>`,
 });
@@ -82,7 +82,7 @@ const metricsSection = chapter({
       <div class="section-head centred" data-reveal>
         <span class="eyebrow">02 / The practice</span>
         <h2>Twenty seven years of load paths.</h2>
-        <p>Numbers we are held to, not marketing ones.</p>
+        <p>Figures our clients can check against the projects they name.</p>
       </div>
       <div class="stats-grid" data-reveal>
         <div class="stat"><div class="num" data-count="640" data-suffix="+">0</div><div class="lbl">Projects delivered</div></div>
@@ -120,7 +120,7 @@ const workSection = chapter({
         <div>
           <span class="eyebrow">04 / Selected work</span>
           <h2>Recent projects.</h2>
-          <p>A cross-section of recent commissions across sectors.</p>
+          <p>Four commissions from the last three years.</p>
         </div>
         <a href="/projects" class="btn ghost">All projects <span class="arw">&rsaquo;</span></a>
       </div>
@@ -136,7 +136,7 @@ const contactSection = chapter({
         <div class="contact-info" data-reveal>
           <span class="eyebrow">05 / Start a project</span>
           <h2>Bring us the hard part.</h2>
-          <p class="contact-lede">Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days, and every message reaches the studio desk directly.</p>
+          <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
           <div class="contact-detail">
             <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
             <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a></div></div>
@@ -159,7 +159,7 @@ const indexContent = [
 
 /* ---------- Projects listing ---------- */
 const projectsContent = `
-  ${pageHeader({ eyebrow: 'Selected work', title: 'Projects.', sub: 'Towers, bridges, industrial plant and transit, engineered to perform and built to last.', image: images.projectsHeader })}
+  ${pageHeader({ eyebrow: 'Selected work', title: 'Projects.', sub: 'Towers, bridges, industrial plant and transit, from first scheme to handover.', image: images.projectsHeader })}
   <section class="section-pad">
     <div class="wrap">
       <div class="proj-filters" id="proj-filters" data-reveal></div>
@@ -175,14 +175,14 @@ const projectContent = `
 
 /* ---------- Careers ---------- */
 const careersContent = `
-  ${pageHeader({ eyebrow: 'Careers', title: 'Build things that stand.', sub: 'We are a studio of senior engineers who stay on the work. If you want your name on projects that matter, we should talk.', image: images.careersHeader })}
+  ${pageHeader({ eyebrow: 'Careers', title: 'Build things that stand.', sub: 'We are a studio of senior engineers who stay on the work rather than moving to management. If that is the career you want, write to us.', image: images.careersHeader })}
   <section class="section-pad">
     <div class="wrap careers-intro" data-reveal>
       <div>
         <span class="eyebrow">Life at Merkel</span>
         <h2>Engineering as a design discipline.</h2>
       </div>
-      <p>We put engineers in the room from the first sketch, not the final check. That means real ownership, senior mentorship, and a seat at the table with architects and clients from day one. We work across borders on landmark structures, and we invest in the tools, from parametric design to digital twins, that let our people do their best work.</p>
+      <p>Our engineers join a project at the first sketch rather than the final check, so the person who sizes a member is in the room when the idea is still being drawn. Juniors sit with principals and take their own packages early. We work across borders on landmark structures, and we buy the tools our people ask for, from parametric modelling to digital twins.</p>
     </div>
   </section>
   <section class="section-pad alt">
@@ -190,7 +190,7 @@ const careersContent = `
       <div class="section-head" data-reveal>
         <span class="eyebrow">Open roles</span>
         <h2>Where we are hiring.</h2>
-        <p>Don't see your role? Tell us where you fit and we will make the introduction.</p>
+        <p>If your discipline is not listed, write to us anyway and say what you would want to work on.</p>
       </div>
       <div class="roles" id="roles" data-reveal></div>
     </div>
@@ -198,7 +198,7 @@ const careersContent = `
 
 /* ---------- Contact ---------- */
 const contactContent = `
-  ${pageHeader({ eyebrow: 'Start a project', title: 'Contact us.', sub: 'Tell us what you are building and where it gets difficult. A principal engineer will reply within two working days.', image: images.contactHeader })}
+  ${pageHeader({ eyebrow: 'Start a project', title: 'Contact us.', sub: 'Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer replies within two working days.', image: images.contactHeader })}
   <section class="section-pad">
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
@@ -206,10 +206,10 @@ const contactContent = `
           <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
           <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a></div></div>
           <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
-          <div class="row"><div class="k">Hours</div><div class="val">Mon&ndash;Fri, 09:00&ndash;18:00 CET</div></div>
+          <div class="row"><div class="k">Hours</div><div class="val">Monday to Friday, 09:00 to 18:00 CET</div></div>
         </div>
         <div class="contact-note">
-          <p>Every enquiry lands on the studio desk, and a principal engineer picks it up. Prefer to talk now? Use the live chat in the corner.</p>
+          <p>Every enquiry lands on the studio desk and a principal engineer picks it up. If you would rather talk now, the live chat in the corner reaches the same people.</p>
         </div>
       </div>
 
@@ -250,7 +250,7 @@ const adminContent = `
     <div class="admin-shell" id="admin-shell" hidden>
       <header class="admin-bar">
         <a class="admin-brand" href="/">
-          <img src="/assets/brand/merkel-wordmark.png" alt="Merkel Engineering" width="1062" height="215" />
+          <img src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Engineering" width="1048" height="202" />
           <span>Studio desk</span>
         </a>
         <div class="admin-bar-end">
@@ -298,7 +298,7 @@ const notFoundContent = `
     <div class="wrap">
       <span class="eyebrow">Error 404</span>
       <h1>Off the drawings.</h1>
-      <p>The page you are looking for is not here. Let's get you back on plan.</p>
+      <p>This page has moved or never existed. The links below will get you back.</p>
       <div class="hero-actions"><a href="/" class="btn">Back to home <span class="arw">&rsaquo;</span></a><a href="/projects" class="btn ghost">View projects</a></div>
     </div>
   </section>`;
