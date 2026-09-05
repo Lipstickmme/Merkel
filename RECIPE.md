@@ -88,3 +88,8 @@ ready for both.
   webhook refuses to forward to any address the site sends or receives as.
 - A lockfile from a hosted builder can pin a **private registry** the deploy
   cannot authenticate to. *(This lockfile is public npm, `express` only.)*
+- **`.vercelignore` matches at any depth.** A pattern like `data/` excludes
+  `src/data/` too, so content the build reads never reaches the deploy and it
+  dies on a file that is present locally. Anchor with a leading slash: `/data/`.
+  `npm run check:vercel` simulates the upload and fails if anything the build
+  requires would be excluded. This one bit us for real.
