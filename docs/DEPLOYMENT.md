@@ -96,10 +96,16 @@ come next.
 1. Create a project at <https://supabase.com> (free tier), or connect Supabase from
    the Vercel **Storage** tab.
 
-2. Create the tables. In the Supabase dashboard open **SQL Editor, New query**, paste
-   the contents of [`db/schema.sql`](../db/schema.sql) and **Run**. That creates
-   `enquiries`, `chat_messages` and `inbound_emails` with indexes, and enables row
-   level security with no public policies.
+2. Create the tables. In the Supabase dashboard open **SQL Editor, New query**, and
+   run these in order. Each file is guarded, so re-running one is safe.
+
+   | File | Creates |
+   | ---- | ------- |
+   | [`supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) | `admins`, `is_admin()`, `enquiries`, `chat_sessions`, `chat_messages`, the activity trigger and the realtime publication |
+   | [`supabase/migrations/0002_email.sql`](../supabase/migrations/0002_email.sql) | `email_threads`, `email_messages` (skip if you are not receiving mail) |
+
+   Everything is behind row level security. `enquiries` has no anon policy at all:
+   writes arrive through the API using the service role.
 
 3. In Supabase open **Project Settings, API** and copy:
    - the **Project URL**
@@ -118,7 +124,15 @@ come next.
 
 5. **Redeploy** so the function picks the variables up.
 
-The function logs `[merkel] storage: Supabase` on the next request.
+The function logs `[merkel] storage: Supabase` on the next request. Confirm what the
+running server can actually see with:
+
+```bash
+curl -s https://<your-app>.vercel.app/api/health
+```
+
+It reports which variables are set (never their values) and warns about combinations
+that are configured but wrong.
 
 **About the keys.** Use the **`service_role`** key, not `anon`. Row level security is
 on with no policies, so `anon` gets permission denied on every write. The service-role
@@ -186,9 +200,13 @@ What happens on each delivery:
 
 - The signature is verified (HMAC-SHA256 over `id.timestamp.body`). Anything
   unsigned, tampered with, or older than five minutes is rejected with `401`.
-- The message is archived in the `inbound_emails` table.
+- The message is filed onto a thread in `email_threads` / `email_messages`,
+  matching on correspondent plus subject with `Re:` and `Fwd:` stripped, so a reply
+  lands on the conversation it belongs to.
 - It is forwarded to `FORWARD_TO` with a `Fwd:` subject and `reply_to` set to the
-  original sender, so replying goes straight back to them.
+  original sender, so replying goes straight back to them. Forwarding is **skipped**
+  when `FORWARD_TO`, or the sender, is one of this site's own addresses, because that
+  would loop mail back into this webhook until the sending quota is gone.
 - Non-inbound events (delivery receipts and similar) are acknowledged and ignored,
   as is mail addressed to anything other than `MAILBOX_ADDRESS`.
 
@@ -295,7 +313,7 @@ Step 4, that the variables exist in the **Production** environment, and that you
 redeployed afterwards.
 
 **Database writes fail.** Check the function logs. A `42P01` (relation does not
-exist) means `db/schema.sql` has not been run. A `401` or `42501` means the anon key
+exist) means `supabase/migrations/0001_init.sql` has not been run. A `401` or `42501` means the anon key
 is being used instead of `service_role`, because row level security is on with no
 public policies.
 

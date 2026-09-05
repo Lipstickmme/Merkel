@@ -41,8 +41,10 @@ A live-chat widget is available on every page.
 │   └── build-pages.js        # assembles public/*.html from shared partials
 ├── docs/
 │   └── DEPLOYMENT.md         # fork -> images -> Vercel -> database -> inbox
-├── db/
-│   └── schema.sql            # Supabase tables for enquiries, chat, inbound mail
+├── RECIPE.md                 # how to rebuild this stack on another site
+├── supabase/
+│   ├── migrations/           # 0001_init.sql, 0002_email.sql
+│   └── grant-admin.sql       # one-off: make yourself an admin
 ├── src/
 │   ├── app.js                # local Express app: pages + API + static
 │   ├── api-app.js            # API-only Express app (used on Vercel)
@@ -50,6 +52,7 @@ A live-chat widget is available on every page.
 │   ├── controllers/          # projects, careers, leadership, contact, chat
 │   ├── middleware/           # error handling + in-memory rate limiter
 │   ├── utils/
+│   │   ├── config.js         # env resolution + own-address / loop detection
 │   │   ├── supabase.js       # Supabase (PostgREST) client over fetch
 │   │   ├── paths.js          # where local file storage writes
 │   │   ├── storage.js        # contact-enquiry persistence
@@ -69,7 +72,8 @@ A live-chat widget is available on every page.
 
 | Method | Route                     | Description                                   |
 | ------ | ------------------------- | --------------------------------------------- |
-| GET    | `/api/health`             | Liveness probe                                |
+| GET    | `/api/health`             | Which config the server sees, plus warnings   |
+| GET    | `/api/public-config`      | Supabase URL + anon key for the browser       |
 | GET    | `/api/services`           | List engineering disciplines                  |
 | GET    | `/api/projects?sector=`   | Project listing, optional sector filter       |
 | GET    | `/api/projects/:id`       | Single project + the next project             |
@@ -132,8 +136,9 @@ Contact enquiries and live-chat messages are both routed to a human inbox by
 
 Inbound mail is handled by `POST /api/inbound/resend`. Requests must carry a valid
 Svix-style signature (`RESEND_WEBHOOK_SECRET`); unsigned, tampered or replayed requests
-get a `401`. Verified mail addressed to `MAILBOX_ADDRESS` is archived and forwarded to
-`FORWARD_TO`.
+get a `401`. Verified mail addressed to `MAILBOX_ADDRESS` is filed onto a thread in
+`email_threads` / `email_messages` and forwarded to `FORWARD_TO`, unless that address
+(or the sender) is one of this site's own, which would loop mail back into the webhook.
 
 Delivery is best effort and is awaited before responding, so a serverless invocation
 never exits early. A notification failure is logged and never fails the visitor's
@@ -146,7 +151,7 @@ and `SUPABASE_SERVICE_ROLE_KEY` are set; **local JSON files** under `DATA_DIR`
 otherwise, so development works offline with no setup.
 
 Tables are `enquiries`, `chat_messages` and `inbound_emails`. Create them by running
-[`db/schema.sql`](db/schema.sql) once in the Supabase SQL Editor. It enables row level
+[`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) once in the Supabase SQL Editor. It enables row level
 security with no public policies, so the `service_role` key is required; the `anon` key
 cannot read or write. Keep that key server side and never behind a `VITE_` or
 `NEXT_PUBLIC_` prefix, which are inlined into browser bundles.

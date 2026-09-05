@@ -6,9 +6,10 @@
 
 const router = require('express').Router();
 
-router.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'merkel-engineering', time: new Date().toISOString() });
-});
+const system = require('../controllers/systemController');
+
+router.get('/health', system.health);
+router.get('/public-config', system.publicConfig);
 
 router.use('/services', require('./services'));
 router.use('/projects', require('./projects'));

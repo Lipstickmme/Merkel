@@ -29,7 +29,7 @@ function toRow(r) {
     service: r.service,
     message: r.message,
     ip: r.ip,
-    received_at: r.receivedAt,
+    created_at: r.receivedAt,
   };
 }
 
@@ -43,7 +43,7 @@ function fromRow(row) {
     service: row.service,
     message: row.message,
     ip: row.ip,
-    receivedAt: asIso(row.received_at),
+    receivedAt: asIso(row.created_at),
   };
 }
 
@@ -61,7 +61,7 @@ async function readFromFile() {
 async function readAll() {
   const supabase = getSupabase();
   if (supabase) {
-    const rows = await supabase.select(TABLE, 'select=*&order=received_at.desc');
+    const rows = await supabase.select(TABLE, 'select=*&order=created_at.desc');
     return rows.map(fromRow);
   }
   return readFromFile();

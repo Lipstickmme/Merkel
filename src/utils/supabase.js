@@ -11,6 +11,8 @@
  * can reuse the same value.
  */
 
+const config = require('./config');
+
 let client;
 let resolved = false;
 
@@ -18,11 +20,8 @@ function getSupabase() {
   if (resolved) return client;
   resolved = true;
 
-  const rawUrl =
-    process.env.SUPABASE_URL ||
-    process.env.VITE_SUPABASE_URL ||
-    process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const rawUrl = config.supabaseUrl();
+  const key = config.supabaseServiceKey();
 
   if (!rawUrl || !key) {
     client = null;
@@ -47,6 +46,19 @@ function getSupabase() {
         throw new Error(`supabase insert ${table} failed: ${res.status} ${await res.text().catch(() => '')}`);
       }
       return true;
+    },
+
+    /** Insert and return the created rows (needed when we want the new id). */
+    async insertReturning(table, rows) {
+      const res = await fetch(`${base}/${table}`, {
+        method: 'POST',
+        headers: { ...headers, Prefer: 'return=representation' },
+        body: JSON.stringify(Array.isArray(rows) ? rows : [rows]),
+      });
+      if (!res.ok) {
+        throw new Error(`supabase insert ${table} failed: ${res.status} ${await res.text().catch(() => '')}`);
+      }
+      return res.json();
     },
 
     async select(table, query = '') {
