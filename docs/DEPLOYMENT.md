@@ -61,7 +61,16 @@ size 760 x 950 (4:5 portrait).
 
 Notes:
 
-- Keep files under about 400 KB each. The underlay is fetched on every page.
+- Names are matched without regard to case, so `Merkel3.png` and `merkel3.png`
+  both work. That matters: the deploy runs on Linux, where the two are
+  different files.
+- Keep files under about 400 KB each. The underlay is fetched on every page, so
+  a 1.2 MB PNG there is felt on every visit. Save a WebP copy beside the
+  original (same name, `.webp`) and it is used in preference automatically:
+  the current photographs went from about 1.2 MB each to under 125 KB that way,
+  with no visible difference behind the scrim.
+- If a number is missing, its slot borrows another supplied photograph rather
+  than dropping back to a placeholder drawing, so the site never mixes the two.
 - Everything sits behind a dark scrim, so pick images that stay readable when
   darkened; a bright sky behind white type is the usual regret.
 - `public/js/main.js` has a small `FALLBACK_PROJECTS` list used only if the API is
