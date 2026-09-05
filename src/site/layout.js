@@ -7,7 +7,56 @@
  * HTML, so there is no client-side layout flash.
  */
 
+const images = require('./images');
+
 const YEAR = new Date().getFullYear();
+
+/**
+ * The image that sits behind every page, fixed to the viewport so the whole
+ * site reads as one continuous surface rather than a stack of separate
+ * screens. Section artwork lays over it; the scrim keeps type readable at
+ * any brightness.
+ */
+function underlay() {
+  return `
+  <div class="underlay" aria-hidden="true">
+    <div class="underlay-img" style="background-image:url('${images.underlay}')"></div>
+    <div class="underlay-grain"></div>
+    <div class="underlay-scrim"></div>
+  </div>`;
+}
+
+/**
+ * The enquiry form. Shared so the landing page and /contact stay identical in
+ * behaviour: both POST to /api/contact, which writes the enquiry and raises it
+ * with the studio, and both appear in the desk at /admin.
+ */
+function contactForm(id = 'contact-form') {
+  return `
+      <form id="${id}" data-contact-form novalidate data-reveal>
+        <div class="field two">
+          <div class="field"><label for="${id}-name">Name</label><input type="text" id="${id}-name" name="name" autocomplete="name" required /><div class="err" data-err="name"></div></div>
+          <div class="field"><label for="${id}-email">Email</label><input type="email" id="${id}-email" name="email" autocomplete="email" required /><div class="err" data-err="email"></div></div>
+        </div>
+        <div class="field two">
+          <div class="field"><label for="${id}-company">Company <span class="opt">(optional)</span></label><input type="text" id="${id}-company" name="company" autocomplete="organization" /><div class="err" data-err="company"></div></div>
+          <div class="field"><label for="${id}-service">Discipline</label>
+            <select id="${id}-service" name="service">
+              <option value="">Select</option>
+              <option>Structural</option>
+              <option>Civil &amp; Infrastructure</option>
+              <option>Mechanical</option>
+              <option>Digital Engineering</option>
+              <option>Not sure yet</option>
+            </select><div class="err" data-err="service"></div>
+          </div>
+        </div>
+        <div class="field"><label for="${id}-message">Project brief</label><textarea id="${id}-message" name="message" placeholder="What are you building, and where does it get hard?" required></textarea><div class="err" data-err="message"></div></div>
+        <div class="honeypot" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <div class="form-status" data-form-status role="status" aria-live="polite"></div>
+        <button type="submit" class="btn" data-submit>Send enquiry <span class="arw">&rsaquo;</span></button>
+      </form>`;
+}
 
 function head({ title, description, noindex = false, styles = [] }) {
   return `<!doctype html>
@@ -134,6 +183,7 @@ function page(opts) {
   return [
     head(opts),
     `<body class="${bodyClass}">`,
+    underlay(),
     `  <div class="scroll-progress" id="progress"></div>`,
     nav(active),
     content,
@@ -143,4 +193,4 @@ function page(opts) {
   ].join('\n');
 }
 
-module.exports = { page, nav, footer, chatWidget, head };
+module.exports = { page, nav, footer, chatWidget, head, contactForm, underlay };

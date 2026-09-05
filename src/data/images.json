@@ -1,13 +1,21 @@
 {
-  "_comment": "Central image slots for page-level artwork. Replace the files in public/assets/ or point these at new paths. Per-project images live in projects.json; the CEO portrait lives in leadership.json.",
+  "_comment": "Page-level image slots. Each slot names the file to prefer (dropped into public/assets/img/ as merkel1..merkel5, any of .webp .avif .jpg .jpeg .png) and the placeholder to fall back on until it is there. scripts/build-pages.js resolves them at build time, so adding the real photographs needs no code change: drop the files in and redeploy. Per-project images live in projects.json; the CEO portrait lives in leadership.json.",
+
+  "slots": {
+    "underlay":     { "prefer": ["merkel1"], "fallback": "/assets/slides/blueprint-01.webp" },
+    "capabilities": { "prefer": ["merkel2"], "fallback": "/assets/slides/blueprint-02.webp" },
+    "metrics":      { "prefer": ["merkel3"], "fallback": "/assets/slides/blueprint-03.webp" },
+    "work":         { "prefer": ["merkel4"], "fallback": "/assets/img/proj-helix-tower.svg" },
+    "contact":      { "prefer": ["merkel5"], "fallback": "/assets/img/contact.svg" },
+
+    "projectsHeader": { "prefer": ["merkel4"], "fallback": "/assets/img/proj-helix-tower.svg" },
+    "careersHeader":  { "prefer": ["merkel3"], "fallback": "/assets/img/careers.svg" },
+    "contactHeader":  { "prefer": ["merkel5"], "fallback": "/assets/img/contact.svg" }
+  },
+
   "heroSlides": [
-    "/assets/slides/blueprint-01.webp",
-    "/assets/slides/blueprint-02.webp",
-    "/assets/slides/blueprint-03.webp"
-  ],
-  "servicesMedia": "/assets/slides/blueprint-01.webp",
-  "projectsHeader": "/assets/img/proj-helix-tower.svg",
-  "careersHeader": "/assets/img/careers.svg",
-  "contactHeader": "/assets/img/contact.svg",
-  "ctaBand": "/assets/img/contact.svg"
+    { "prefer": ["merkel1"], "fallback": "/assets/slides/blueprint-01.webp" },
+    { "prefer": ["merkel2"], "fallback": "/assets/slides/blueprint-02.webp" },
+    { "prefer": ["merkel3"], "fallback": "/assets/slides/blueprint-03.webp" }
+  ]
 }

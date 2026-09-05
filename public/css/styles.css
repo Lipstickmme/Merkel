@@ -37,10 +37,9 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  /* Solid, calm background (no blueprint grid) with a subtle top-down depth. */
+  /* Flat base. The fixed underlay below supplies the depth, and it has to
+     show through, so nothing here may paint over it. */
   background: var(--bg);
-  background-image: linear-gradient(180deg, #0e1015 0%, var(--bg) 42%, #08090b 100%);
-  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 16px;
@@ -136,7 +135,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
   justify-content: center;
   align-items: flex-start;
   overflow: hidden;
-  padding: 120px var(--gutter) 96px;
+  padding: 120px 0 0;
 }
 
 /* Slideshow */
@@ -171,7 +170,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
     radial-gradient(120% 90% at 78% 12%, rgba(6,7,9,0.10) 30%, rgba(6,7,9,0.80) 100%);
 }
 
-.hero-inner { position: relative; z-index: 3; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0; }
+.hero-inner { position: relative; z-index: 3; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
 .hero-tag { margin-bottom: 22px; }
 .hero h1 {
   font-size: clamp(46px, 9vw, 104px);
@@ -183,8 +182,11 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
 
 /* Slide dots */
+/* In flow under the buttons, so nothing collides with the readout strip and
+   the whole hero stays inside the frame on a short landscape phone. */
 .hero-dots {
-  position: absolute; z-index: 3; bottom: 30px; left: 50%; transform: translateX(-50%);
+  position: relative; z-index: 3;
+  margin-top: 34px;
   display: flex; gap: 12px;
 }
 .hero-dots .dot {
@@ -207,11 +209,15 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 .btn.ghost:hover { border-color: var(--ink); background: rgba(11,12,14,0.6); }
 
 /* Readout strip --------------------------------------------------------- */
+/* Sits on the floor of the hero rather than after it, so the hero is one
+   whole screen and the strip is the last thing read before scrolling. */
 .hero-readout {
-  position: relative; z-index: 2;
+  position: relative; z-index: 3;
+  width: 100%;
+  margin-top: auto;
   border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: var(--bg-2);
+  background: rgba(11, 12, 14, 0.6);
+  backdrop-filter: blur(10px);
   display: grid; grid-template-columns: repeat(4, 1fr);
 }
 .hero-readout .cell {
@@ -243,7 +249,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 .service .num { position: absolute; right: clamp(20px,3vw,40px); top: clamp(20px,3vw,40px); font-family: var(--font-display); font-size: 54px; color: var(--line); font-weight: 700; }
 
 /* Stats ----------------------------------------------------------------- */
-.stats { background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats { background: rgba(16, 18, 22, 0.74); backdrop-filter: blur(6px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
 .stat { padding: clamp(44px, 7vw, 88px) var(--gutter); border-right: 1px solid var(--line); }
 .stat:last-child { border-right: 0; }
@@ -346,7 +352,13 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .footer-bottom { border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 22px 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--faint); text-transform: uppercase; }
 
 /* Reveal ---------------------------------------------------------------- */
-[data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .9s var(--ease), transform .9s var(--ease);
+  /* Set per element by main.js so siblings arrive in sequence, not together. */
+  transition-delay: var(--reveal-delay, 0ms);
+}
 [data-reveal].in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1; transform: none; transition: none; }
@@ -375,7 +387,7 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
     border-bottom: 1px solid var(--line);
   }
   .nav-links.open a { padding: 12px 0; }
-  .hero { padding-top: 104px; padding-bottom: 84px; }
+  .hero { padding-top: 104px; }
   .hero h1 { font-size: clamp(40px, 13vw, 68px); }
   .services-grid { grid-template-columns: 1fr; }
   .projects-grid { grid-template-columns: 1fr; }
@@ -395,12 +407,12 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
    Fit the hero to the real viewport height and compress spacing so the
    eyebrow, headline, subline and buttons all stay above the fold. */
 @media (max-height: 620px) {
-  .hero { min-height: 100svh; padding: 72px var(--gutter) 40px; justify-content: center; }
+  .hero { min-height: 100svh; padding: 72px 0 0; justify-content: center; }
   .hero-tag { margin-bottom: 12px; }
   .hero h1 { font-size: clamp(30px, 7vw, 48px); }
   .hero-sub { margin-top: 10px; font-size: 15px; }
   .hero-actions { margin-top: 18px; }
-  .hero-dots { bottom: 12px; }
+  .hero-dots { margin-top: 16px; }
 }
 @media (max-height: 620px) and (max-width: 720px) {
   .hero .btn { padding: 12px 18px; }
@@ -437,7 +449,12 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
 .page-header p { color: #cfccc4; font-size: clamp(16px, 1.5vw, 20px); max-width: 54ch; margin: 18px 0 0; }
 
 /* Section variants ------------------------------------------------------ */
-.section-pad.alt { background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.section-pad.alt {
+  background: rgba(16, 18, 22, 0.74);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
 .section-head.with-action { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; max-width: none; }
 .section-head.with-action h2 { font-size: clamp(30px, 5vw, 54px); margin: 18px 0 12px; }
 .link-arrow { color: var(--accent-2); font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; display: inline-flex; gap: 8px; align-items: center; }
@@ -590,3 +607,245 @@ button[type=submit]:disabled { opacity: .5; cursor: wait; }
   .role .apply { justify-self: start; margin-top: 8px; }
   .role .role-sum { grid-column: 1; }
 }
+
+/* =========================================================================
+   Persistent underlay
+   One image behind the whole site, fixed to the viewport, so moving between
+   pages and sections reads as one continuous surface. Everything else lays
+   over it: section artwork, translucent bands, type.
+   ========================================================================= */
+
+.underlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.underlay-img {
+  position: absolute;
+  /* Overscan, so the parallax shift never exposes an edge. */
+  inset: -6% -4%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: translate3d(0, var(--underlay-shift, 0px), 0) scale(1.06);
+  will-change: transform;
+}
+
+/* A faint drafting grid, which keeps a soft photograph from reading as a blur. */
+.underlay-grain {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(236, 233, 226, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 233, 226, 0.035) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+}
+
+/* The scrim carries the site's depth and keeps every headline legible over
+   whatever photograph is behind it. */
+.underlay-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(11, 12, 14, 0.55) 0%, rgba(11, 12, 14, 0.86) 55%, rgba(8, 9, 11, 0.95) 100%),
+    linear-gradient(180deg, rgba(14, 16, 21, 0.9) 0%, rgba(11, 12, 14, 0.88) 45%, rgba(8, 9, 11, 0.96) 100%);
+}
+
+/* =========================================================================
+   Chapters: full-height landing sections
+   ========================================================================= */
+
+.chapter {
+  position: relative;
+  z-index: 2;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(96px, 12vh, 150px) 0 clamp(72px, 10vh, 120px);
+  scroll-margin-top: 0;
+}
+
+/* Proximity, not mandatory: a section taller than the viewport must still be
+   readable by scrolling through it rather than being yanked to the next one. */
+@media (min-height: 620px) and (pointer: fine) {
+  .page-home { scroll-snap-type: y proximity; }
+  .page-home .chapter { scroll-snap-align: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-home { scroll-snap-type: none; }
+}
+
+.chapter-inner { position: relative; z-index: 3; width: 100%; }
+
+.chapter-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.chapter-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Settles as the section arrives; see .is-onstage below. */
+  transform: scale(1.12);
+  opacity: 0;
+  transition: transform 1.6s var(--ease), opacity 1.2s var(--ease);
+}
+.chapter.is-onstage .chapter-media img { transform: scale(1.02); opacity: 1; }
+
+.chapter-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(11, 12, 14, 0.94) 0%, rgba(11, 12, 14, 0.82) 46%, rgba(11, 12, 14, 0.6) 100%),
+    linear-gradient(180deg, rgba(11, 12, 14, 0.85) 0%, rgba(11, 12, 14, 0.55) 30%, rgba(11, 12, 14, 0.9) 100%);
+}
+.chapter.is-centred .chapter-scrim {
+  background: radial-gradient(90% 80% at 50% 50%, rgba(11, 12, 14, 0.72) 0%, rgba(11, 12, 14, 0.93) 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-media img { transform: none; opacity: 1; transition: none; }
+  .underlay-img { transform: none; }
+}
+
+/* Centred variant, used by the metrics chapter. */
+.section-head.centred { max-width: 720px; margin-left: auto; margin-right: auto; text-align: center; }
+.section-head.centred .eyebrow { justify-content: center; }
+.chapter.is-centred .stats-grid {
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  background: rgba(16, 18, 22, 0.5);
+  backdrop-filter: blur(6px);
+}
+.chapter.is-centred .stat { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: clamp(30px, 4vw, 54px) clamp(20px, 3vw, 40px); }
+
+/* Grids inside a chapter carry their own surface so they read off the photo. */
+.chapter .services-grid,
+.chapter .cards-grid .card {
+  background: rgba(16, 18, 22, 0.62);
+  backdrop-filter: blur(8px);
+}
+.chapter .services-grid { grid-template-columns: repeat(4, 1fr); }
+.chapter .service { padding: clamp(22px, 2.2vw, 34px); }
+.chapter .service .num { font-size: 38px; }
+.chapter .service h3 { font-size: clamp(18px, 1.5vw, 22px); }
+.chapter .service p { font-size: 14.5px; margin-bottom: 16px; }
+
+.chapter .leadership-media { border-color: rgba(236, 233, 226, 0.2); }
+
+.contact-lede { color: var(--muted); font-size: clamp(16px, 1.4vw, 18px); max-width: 46ch; }
+.chapter .contact-grid form {
+  background: rgba(16, 18, 22, 0.72);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  padding: clamp(24px, 3vw, 38px);
+}
+.chapter .contact-detail { margin-top: 30px; }
+
+/* =========================================================================
+   Chapter rail: where you are on the page
+   ========================================================================= */
+
+.chapter-rail {
+  position: fixed;
+  right: clamp(14px, 2vw, 30px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-end;
+}
+.chapter-rail a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.chapter-rail .label {
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity .35s var(--ease), transform .35s var(--ease);
+  white-space: nowrap;
+}
+.chapter-rail a:hover .label,
+.chapter-rail a.is-active .label { opacity: 1; transform: none; }
+.chapter-rail .tick {
+  width: 22px;
+  height: 2px;
+  background: rgba(236, 233, 226, 0.26);
+  transition: width .35s var(--ease), background .35s var(--ease);
+}
+.chapter-rail a.is-active { color: var(--ink); }
+.chapter-rail a.is-active .tick { width: 40px; background: var(--accent-2); }
+
+@media (max-width: 1100px) { .chapter-rail { display: none; } }
+
+/* =========================================================================
+   Interior page headers sit over the underlay too
+   ========================================================================= */
+
+.page-header { min-height: 62svh; display: flex; align-items: flex-end; }
+
+@media (max-width: 980px) {
+  .chapter .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .chapter { padding: clamp(88px, 12vh, 120px) 0 64px; }
+}
+@media (max-width: 720px) {
+  .chapter { min-height: auto; padding: 84px 0 64px; }
+  .chapter .services-grid { grid-template-columns: 1fr; }
+  .page-home { scroll-snap-type: none; }
+}
+/* Short landscape phones: the hero readout is the first thing to go. */
+@media (max-height: 560px) and (orientation: landscape) {
+  .hero-readout { display: none; }
+  .chapter { min-height: auto; }
+}
+
+/* Chapter fit and legibility --------------------------------------------
+   A chapter has to hold a whole screen without spilling, so the shared
+   rhythm is tightened inside one and the artwork is allowed to read. */
+
+.chapter { padding: clamp(92px, 11vh, 130px) 0 clamp(48px, 7vh, 84px); }
+.chapter .section-head { margin-bottom: clamp(26px, 3.4vh, 44px); }
+.chapter .section-head h2 { font-size: clamp(28px, 4vw, 48px); }
+
+/* The oversized index would sit under the heading in a four-up grid, and the
+   S-0n code already numbers each discipline. */
+.chapter .service .num { display: none; }
+.chapter .service ul { gap: 6px; }
+.chapter .service li { padding: 5px 8px; }
+
+.chapter .cards-grid .thumb { aspect-ratio: 16 / 10; }
+.chapter .cards-grid .card-body { padding: clamp(18px, 2vw, 26px); }
+.chapter .cards-grid p { font-size: 14px; }
+
+/* Enough scrim for type on the left, enough light on the right for the
+   photograph to be worth having. */
+.chapter-scrim {
+  background:
+    linear-gradient(90deg, rgba(11, 12, 14, 0.95) 0%, rgba(11, 12, 14, 0.8) 42%, rgba(11, 12, 14, 0.42) 100%),
+    linear-gradient(180deg, rgba(11, 12, 14, 0.8) 0%, rgba(11, 12, 14, 0.4) 34%, rgba(11, 12, 14, 0.88) 100%);
+}
+.chapter.is-centred .chapter-scrim {
+  background: radial-gradient(90% 80% at 50% 50%, rgba(11, 12, 14, 0.66) 0%, rgba(11, 12, 14, 0.93) 72%);
+}
+
+.hero-readout .v { font-size: clamp(17px, 1.9vw, 24px); }
+.hero-readout .cell { padding: 18px var(--gutter); min-width: 0; }
