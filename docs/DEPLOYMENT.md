@@ -83,7 +83,11 @@ Notes:
 1. Go to <https://vercel.com> and sign in with GitHub.
 2. **Add New, then Project**, and import your fork.
 3. Leave the build settings alone. `vercel.json` already sets the build command,
-   the `public` output directory, clean URLs and the `/projects/:id` rewrite.
+   the `public` output directory, clean URLs and the `/projects/:id` rewrite, and
+   declares `"framework": null`. That last one matters: `express` is a dependency,
+   so without it Vercel auto-detects a Node server preset and then fails after a
+   successful build with `No entrypoint found in output directory: "public"`.
+   If the dashboard shows a Framework Preset other than **Other**, change it.
 4. Click **Deploy**.
 
 The site is live in about a minute. Pages, images and the API work; storage and email
