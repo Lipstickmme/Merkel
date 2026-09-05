@@ -136,8 +136,9 @@ Contact enquiries and live-chat messages are both routed to a human inbox by
 
 Inbound mail is handled by `POST /api/inbound/resend`. Requests must carry a valid
 Svix-style signature (`RESEND_WEBHOOK_SECRET`); unsigned, tampered or replayed requests
-get a `401`. Verified mail addressed to `MAILBOX_ADDRESS` is archived and forwarded to
-`FORWARD_TO`.
+get a `401`. Verified mail addressed to `MAILBOX_ADDRESS` is filed onto a thread in
+`email_threads` / `email_messages` and forwarded to `FORWARD_TO`, unless that address
+(or the sender) is one of this site's own, which would loop mail back into the webhook.
 
 Delivery is best effort and is awaited before responding, so a serverless invocation
 never exits early. A notification failure is logged and never fails the visitor's
