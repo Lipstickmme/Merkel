@@ -111,32 +111,44 @@ come next.
    Everything is behind row level security. `enquiries` has no anon policy at all:
    writes arrive through the API using the service role.
 
-3. In Supabase open **Project Settings, API** and copy:
-   - the **Project URL**
-   - the **`service_role`** key (under Project API keys)
+3. Turn on anonymous sign-ins: **Authentication, Providers, Anonymous**. This is
+   what lets a visitor's browser open its own chat and read nothing but its own
+   thread. Without it the chat still works, but every message goes through the
+   server instead, so a visitor loses their history when they change browser.
 
-4. In Vercel open **Settings, Environment Variables** and add:
+4. In Supabase open **Project Settings, API** and copy:
+   - the **Project URL**
+   - the **`anon`** key (public by design: the policies are what protect the data)
+   - the **`service_role`** key (secret: server side only)
+
+5. In Vercel open **Settings, Environment Variables** and add:
 
    | Name | Value |
    | ---- | ----- |
    | `SUPABASE_URL` | your Project URL |
+   | `SUPABASE_ANON_KEY` | the anon key |
    | `SUPABASE_SERVICE_ROLE_KEY` | the service_role key |
 
-   Vercel's Supabase integration usually adds both. Check they are present rather
-   than adding duplicates. `VITE_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_URL` are
-   accepted as aliases for the URL.
+   Vercel's Supabase integration usually adds all three. Check they are present
+   rather than adding duplicates. `VITE_` and `NEXT_PUBLIC_` prefixes are accepted
+   as aliases for the URL and the anon key.
 
-5. **Redeploy** so the function picks the variables up.
+6. **Redeploy** so the function picks the variables up.
 
 The function logs `[merkel] storage: Supabase` on the next request. Confirm what the
 running server can actually see with:
 
 ```bash
 curl -s https://<your-app>.vercel.app/api/health
+
+# and, once the migrations are in, ask the database itself:
+curl -s 'https://<your-app>.vercel.app/api/health?probe=1'
 ```
 
-It reports which variables are set (never their values) and warns about combinations
-that are configured but wrong.
+The first reports which variables are set (never their values) and warns about
+combinations that are configured but wrong. The second reads one row of every column
+the server uses, so a table created from an older copy of a migration shows up as a
+named missing column here rather than as chat that silently fails to save.
 
 **About the keys.** Use the **`service_role`** key, not `anon`. Row level security is
 on with no policies, so `anon` gets permission denied on every write. The service-role
@@ -149,7 +161,44 @@ those can stay set without effect.
 
 ---
 
-## Step 5: Send enquiries and chat to your inbox (Resend)
+## Step 5: Open the studio desk
+
+`/admin` is where enquiries, live chat and studio mail are read and answered. It is
+not linked from the site and carries `noindex`; access is decided by Supabase auth,
+not by the URL being unlisted.
+
+1. In Supabase open **Authentication, Users, Add user**, and create your login. Tick
+   **Auto Confirm User**, or you will be waiting on a confirmation mail.
+
+2. Put that address on the admin list. Open **SQL Editor, New query**, paste
+   [`supabase/grant-admin.sql`](../supabase/grant-admin.sql), change the one marked
+   line to your address, and run it. The file ends by listing the admins table, so
+   you can see it took.
+
+3. Visit `https://<your-app>.vercel.app/admin` and sign in.
+
+Signing in is not enough on its own: an account that is not on `admins` is refused
+with a message saying so. Revoking someone is a row delete, and it takes effect on
+their next request, because the check is a real query rather than a claim baked into
+their token.
+
+What the desk does:
+
+- **Enquiries.** Every contact form submission, newest first, with the sender's
+  brief and a mailto link that replies straight to them. Set each one to
+  new / in progress / closed as you work through them.
+- **Live chat.** Every conversation, most recently active first, with a blue dot on
+  the ones waiting. Type a reply and it appears in the visitor's widget within a few
+  seconds. Your first reply also takes the conversation off the automatic responder,
+  so the canned answer never talks over you.
+- **Email.** Threads received on your domain (Step 7), read-only, with a mailto link
+  to reply from your own client. The tab is empty until `0002_email.sql` has run.
+
+The page refreshes itself every few seconds while it is the visible tab.
+
+---
+
+## Step 6: Send enquiries and chat to your inbox (Resend)
 
 1. Sign up at <https://resend.com> (free tier: 3,000 emails a month).
 2. **API Keys, Create API Key**, and copy it.
@@ -174,7 +223,7 @@ likely to be treated as spam.
 
 ---
 
-## Step 6: Receive mail on your domain and forward it
+## Step 7: Receive mail on your domain and forward it
 
 This gives you `studio@yourdomain.com` that lands in whatever inbox you actually read.
 The endpoint is `POST /api/inbound/resend`.
@@ -222,7 +271,7 @@ domain or email provider instead. The endpoint stays closed until
 
 ---
 
-## Step 7: Optional, send to a desk provider as well
+## Step 8: Optional, send to a desk provider as well
 
 Set `NOTIFY_WEBHOOK_URL` to any endpoint that accepts a JSON `POST`:
 
@@ -243,7 +292,7 @@ Email and webhook are independent; configure either or both.
 
 ---
 
-## Step 8: Test it
+## Step 9: Test it
 
 On your live URL:
 
@@ -254,13 +303,16 @@ On your live URL:
 5. Open the chat, send a message. You get a reply and a notification.
 6. Reload and reopen the chat. The conversation is still there, which is what proves
    Step 4 is working.
-7. Email `MAILBOX_ADDRESS` and confirm it arrives at `FORWARD_TO`.
-8. Visit `/nope` and confirm the styled 404.
+7. Sign in at `/admin`, open **Live chat**, and reply to that conversation. The reply
+   appears in the widget on the public page within a few seconds, and the automatic
+   responder goes quiet from then on.
+8. Email `MAILBOX_ADDRESS` and confirm it arrives at `FORWARD_TO`.
+9. Visit `/nope` and confirm the styled 404.
 
 From a terminal:
 
 ```bash
-curl -s https://<your-app>.vercel.app/api/health
+curl -s 'https://<your-app>.vercel.app/api/health?probe=1'
 # an unsigned webhook must be refused
 curl -s -o /dev/null -w '%{http_code}\n' -X POST \
   https://<your-app>.vercel.app/api/inbound/resend -d '{}'   # expect 401
@@ -292,6 +344,7 @@ notifications, so you can work entirely offline. To test notifications locally, 
 | Variable | Required | Purpose |
 | -------- | -------- | ------- |
 | `SUPABASE_URL` | for the database | Project URL (`VITE_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_URL` accepted) |
+| `SUPABASE_ANON_KEY` | for chat and `/admin` | anon key; public by design, sent to the browser |
 | `SUPABASE_SERVICE_ROLE_KEY` | for the database | service_role key; server side only |
 | `RESEND_API_KEY` | for email | Resend API key |
 | `FORM_TO` | for email | Where enquiries and chat land |
@@ -320,6 +373,21 @@ redeployed afterwards.
 exist) means `supabase/migrations/0001_init.sql` has not been run. A `401` or `42501` means the anon key
 is being used instead of `service_role`, because row level security is on with no
 public policies.
+
+**Chat saves nothing, or `/admin` shows an error about a column.** The tables were
+created from an older copy of the migration. Run `/api/health?probe=1`: it names the
+table and column, and re-running
+[`supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) fixes it
+in place without touching existing rows.
+
+**`/admin` says the account is not on the admin list.** The login exists but
+`supabase/grant-admin.sql` has not been run for that address, or was run with a
+different one. The address must match the user in Authentication exactly.
+
+**The chat works but every visitor starts from an empty thread on another device.**
+Anonymous sign-ins are off, so the widget is using the server path, which keys the
+conversation to that browser's local storage. Turn them on under Authentication,
+Providers, Anonymous (Step 4.3). The browser console says so explicitly.
 
 **No emails arriving.** Check the function logs for `notify email failed`. Usual causes
 are a missing `FORM_TO`, or a `FORM_FROM` on a domain not verified in Resend.

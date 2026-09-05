@@ -37,6 +37,13 @@ function autoReply(text) {
   return "Thanks for the message. A member of the studio will follow up. If you leave your email and a one-line brief, we'll route it to the right engineer.";
 }
 
+/**
+ * POST /api/chat/message
+ *
+ * Fallback path: used when the browser cannot reach Supabase itself (not
+ * configured, or the client library failed to load). The server holds the
+ * service role, so it writes both sides of the exchange.
+ */
 exports.postMessage = async (req, res, next) => {
   try {
     const sessionId = clean(req.body.sessionId, 64);
@@ -50,30 +57,90 @@ exports.postMessage = async (req, res, next) => {
     }
 
     const now = new Date().toISOString();
-    const userMsg = { role: 'user', text, at: now };
-    const botMsg = { role: 'agent', text: autoReply(text), at: new Date(Date.now() + 1).toISOString() };
+    const messages = [{ role: 'user', text, at: now }];
 
+    // Stay quiet once a member of the studio has picked the conversation up.
+    let handedOver = false;
     try {
-      await chatStore.append(sessionId, [userMsg, botMsg]);
+      handedOver = await chatStore.isHandedOver(sessionId);
     } catch (err) {
+      console.error('[merkel] chat handover check failed:', err.message);
+    }
+
+    const reply = handedOver ? null : { role: 'agent', text: autoReply(text), at: new Date(Date.now() + 1).toISOString() };
+    if (reply) messages.push(reply);
+
+    let stored = true;
+    try {
+      await chatStore.append(sessionId, messages);
+    } catch (err) {
+      stored = false;
       console.error('[merkel] failed to persist chat message:', err.message);
     }
-    // Route the visitor's message to the inbox so a human can pick it up.
-    await notify.chatMessage(sessionId, text);
 
-    return res.status(201).json({ ok: true, reply: botMsg });
+    // Route the visitor's message to the inbox so a human can pick it up.
+    await notify.chatMessage(chatStore.sessionUuid(sessionId), text);
+
+    // Both sides come back, so the widget draws the visitor's own message from
+    // the same source it draws everything else and cannot double it up.
+    return res.status(201).json({ ok: true, stored, messages });
   } catch (err) {
     return next(err);
   }
 };
 
+/**
+ * POST /api/chat/notify
+ *
+ * Companion to the browser-written path. The visitor's own message is already
+ * in the database, written by their browser under row level security; this
+ * raises the flag by email and, until a human takes over, posts the holding
+ * reply with the service role so it reaches them over realtime.
+ */
+exports.notifyMessage = async (req, res, next) => {
+  try {
+    const sessionId = clean(req.body.sessionId, 64);
+    const text = clean(req.body.text, 2000);
+
+    if (!chatStore.isUuid(sessionId)) {
+      return res.status(422).json({ error: 'invalid_session', message: 'Missing or malformed session id.' });
+    }
+    if (text.length < 1) {
+      return res.status(422).json({ error: 'empty_message', message: 'Message cannot be empty.' });
+    }
+
+    let replied = false;
+    try {
+      if (!(await chatStore.isHandedOverById(sessionId))) {
+        await chatStore.appendById(sessionId, [{ role: 'agent', text: autoReply(text), at: new Date().toISOString() }]);
+        replied = true;
+      }
+    } catch (err) {
+      console.error('[merkel] failed to post chat reply:', err.message);
+    }
+
+    await notify.chatMessage(sessionId, text);
+
+    return res.status(202).json({ ok: true, replied });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/** GET /api/chat/:sessionId */
 exports.getHistory = async (req, res, next) => {
   try {
     const sessionId = clean(req.params.sessionId, 64);
     if (!chatStore.isValidId(sessionId)) {
       return res.status(422).json({ error: 'invalid_session', message: 'Malformed session id.' });
     }
-    const convo = await chatStore.load(sessionId);
+    let convo = { messages: [] };
+    try {
+      convo = await chatStore.load(sessionId);
+    } catch (err) {
+      // A storage fault should cost the visitor their history, not the widget.
+      console.error('[merkel] failed to load chat history:', err.message);
+    }
     return res.json({ sessionId, messages: convo.messages });
   } catch (err) {
     return next(err);

@@ -49,30 +49,57 @@ api/[...path].js             Vercel serverless entry (the whole API)
    service-role key. A leaked anon key cannot stuff the inbox. **Done.**
 
 3. **Chat rows are written from the browser**, under the visitor's own session,
-   because RLS can express "your own session" precisely. The server is only
-   used to send the staff notification. *Policies exist; the widget still posts
-   through the server (see Status).*
+   because RLS can express "your own session" precisely. The server is used for
+   the staff notification and the holding reply, which is the one thing the
+   browser cannot decide: whether a person has already taken the thread over.
+   **Done.**
 
 4. **The browser's Supabase config is served at runtime** by
    `/api/public-config`, not inlined at build time, so no key needs a public
    prefix and no change needs a rebuild. **Done.**
 
-5. **Realtime is `postgres_changes` under the same RLS**, so a visitor's
-   subscription only ever delivers rows from their own session. *Tables are in
-   the `supabase_realtime` publication; no client subscribes yet (see Status).*
+5. **Live updates run under the same RLS**, so a visitor only ever receives rows
+   from their own session. Here that is a four-second poll of the same query
+   rather than a `postgres_changes` subscription: this site has no bundler and
+   no runtime dependencies, and `@supabase/supabase-js` is the only way to
+   subscribe. The tables are in the `supabase_realtime` publication, so
+   swapping the poll for a subscription is a client change alone.
 
 ## Status
 
-Done and verified: the schema, the env contract, `/api/public-config`,
-`/api/health` with its warnings, enquiry storage, and inbound mail filed onto
-threads with the forward-loop guard.
+Both halves are built and verified end to end in Chromium against a mock that
+enforces the schema and the policies: a visitor opens a chat and writes their
+own rows, staff sign in at `/admin`, read it and reply, the reply reaches the
+visitor without a reload, and the canned responder stands down. Enquiries,
+triage, studio mail, the schema probe, and the two fallbacks (anonymous
+sign-ins off; no database at all) are covered by the same suites.
 
-Not yet built: the browser half. The chat widget still talks to
-`/api/chat/message` and gets a rule-based reply, and there is no `/admin`
-dashboard, so nobody can answer a visitor live. The database and endpoints are
-ready for both.
+`npm test` runs the API and schema checks with no dependencies at all.
+`npm run test:browser` runs the end-to-end pair and needs `playwright-core`.
+
+Not built: replying to studio mail from the dashboard. Sending needs the Resend
+key, which is server side, so it wants an authenticated API route rather than a
+direct PostgREST write. The threads are read-only until then, with a mailto
+link out to your own client.
+
+One thing to know when porting: this stack has no browser bundler, so
+`supabase-js` is replaced by `public/js/supabase-lite.js`, roughly 150 lines
+calling the same GoTrue and PostgREST endpoints. On a site that already has a
+bundler, use the real client and take realtime with it.
 
 ## Traps this hit, worth pre-empting
+
+- **Porting a schema is only half a port.** This repo took the two-table chat
+  (`chat_sessions` + `chat_messages`, `sender`/`body`) and left the writer
+  sending the old flat shape (`role`/`text`). Every insert was rejected, and
+  because the controller treats persistence as best effort, the visitor still
+  got a reply and nothing looked broken until the table stayed empty. Two
+  guards now: `/api/health?probe=1` reads every column the code uses, and the
+  test mock rejects an unknown column exactly as Postgres does.
+- **`visitor_id uuid not null default auth.uid()`** is null under the service
+  role, so any server-side insert into `chat_sessions` must supply it. The
+  fallback path derives a stable uuid from the widget's token rather than
+  generating a random one, so a returning visitor lands on the same row.
 
 - A bare `import "./x"` for its side effect is **tree-shaken away** when
   `package.json` has `"sideEffects": false`. Export a function and call it.

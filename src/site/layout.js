@@ -9,19 +9,20 @@
 
 const YEAR = new Date().getFullYear();
 
-function head({ title, description }) {
+function head({ title, description, noindex = false, styles = [] }) {
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title}</title>
-  <meta name="description" content="${description}" />
+  <meta name="description" content="${description}" />${noindex ? '\n  <meta name="robots" content="noindex, nofollow" />' : ''}
   <meta name="theme-color" content="#0b0c0e" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
+  ${styles.map((href) => `<link rel="stylesheet" href="${href}" />`).join('\n  ')}
 </head>`;
 }
 
@@ -104,19 +105,32 @@ function chatWidget() {
   </div>`;
 }
 
-function scripts(extra = []) {
-  const tags = ['/js/main.js', '/js/chat.js', ...extra]
-    .map((s) => `<script src="${s}"></script>`)
+/**
+ * Script tags. An entry may be a path, or `{ src, type }` when it needs to
+ * load as a module (the admin dashboard imports the Supabase client).
+ */
+function scripts(list) {
+  const tags = list
+    .map((s) => (typeof s === 'string' ? { src: s } : s))
+    .map(({ src, type }) => `<script${type ? ` type="${type}"` : ''} src="${src}"></script>`)
     .join('\n  ');
   return `  ${tags}\n</body>\n</html>`;
 }
 
 /**
  * Compose a full page.
- * @param {{title,description,active,bodyClass,content,extraScripts}} opts
+ *
+ * `bare` pages get the same shell styling but none of the site furniture:
+ * no nav, no footer and no chat widget. The admin dashboard is one, since a
+ * member of staff answering the chat should not also be offered it.
+ *
+ * @param {{title,description,active,bodyClass,content,extraScripts,bare,noindex,styles}} opts
  */
 function page(opts) {
-  const { active = '', bodyClass = '', content = '', extraScripts = [] } = opts;
+  const { active = '', bodyClass = '', content = '', extraScripts = [], bare = false } = opts;
+  if (bare) {
+    return [head(opts), `<body class="${bodyClass}">`, content, scripts(extraScripts)].join('\n');
+  }
   return [
     head(opts),
     `<body class="${bodyClass}">`,
@@ -125,7 +139,7 @@ function page(opts) {
     content,
     footer(),
     chatWidget(),
-    scripts(extraScripts),
+    scripts(['/js/main.js', '/js/supabase-lite.js', '/js/chat.js', ...extraScripts]),
   ].join('\n');
 }
 
