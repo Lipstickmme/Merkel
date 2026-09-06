@@ -28,7 +28,7 @@
   const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const POLL_MS = 4000;
   const COLUMNS = 'id,created_at,sender,body';
-  const GREETING = "Hi, you're through to Merkel Engineering. What are you building, and how can we help?";
+  const GREETING = "Hi, you're through to Merkel Constructions. What are you building, and how can we help?";
 
   const store = {
     get(key) {
@@ -290,7 +290,7 @@
         }, 900);
       }
     } catch (err) {
-      bubble('agent', 'That message did not send. Please email studio@merkel.engineering.');
+      bubble('agent', 'That message did not send. Please email studio@merkelconstructions.com.');
     }
   });
 })();

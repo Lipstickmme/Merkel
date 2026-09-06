@@ -1,7 +1,7 @@
 'use strict';
 
 /* =========================================================================
-   Merkel Engineering shared frontend.
+   Merkel Constructions shared frontend.
    Exposes helpers on window.MERKEL for per-page scripts, drives shared UI
    (nav, hero slideshow, reveals, counters, contact form) and hydrates the
    home page. Data comes from the Express API with seed-data fallbacks.
@@ -37,7 +37,7 @@
 
   function projectCard(p) {
     return `
-      <a class="card" href="/projects/${esc(p.id)}">
+      <a class="card" href="/projects/${esc(p.id)}" data-reveal>
         <div class="thumb"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" /></div>
         <div class="card-body">
           <div class="meta"><span class="sector">${esc(p.sector)}</span><span>${esc(p.year)}</span></div>
@@ -69,7 +69,7 @@
         el.classList.add('in');
         io.unobserve(el);
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0.06, rootMargin: '0px 0px -6% 0px' });
     els.forEach((el) => io.observe(el));
   }
 
@@ -164,14 +164,18 @@
   const toggle = $('#navtoggle');
   const links = $('#navlinks');
   if (toggle && links) {
-    toggle.addEventListener('click', () => {
-      const open = links.classList.toggle('open');
+    const setSheet = (open) => {
+      links.classList.toggle('open', open);
+      nav.classList.toggle('open-sheet', open);
+      // The page behind a full-screen sheet must not scroll under it.
+      document.body.classList.toggle('nav-open', open);
       toggle.setAttribute('aria-expanded', String(open));
+    };
+    toggle.addEventListener('click', () => setSheet(!links.classList.contains('open')));
+    $$('#navlinks a').forEach((a) => a.addEventListener('click', () => setSheet(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && links.classList.contains('open')) setSheet(false);
     });
-    $$('#navlinks a').forEach((a) => a.addEventListener('click', () => {
-      links.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }));
   }
 
   /* Hero slideshow ------------------------------------------------------- */
@@ -225,7 +229,7 @@
       let services = FALLBACK_SERVICES;
       try { const d = await fetchJSON('/api/services'); services = d.services || services; } catch (e) {}
       svcGrid.innerHTML = services.map((s, i) => `
-        <article class="service">
+        <article class="service" data-reveal>
           <div class="num">${String(i + 1).padStart(2, '0')}</div>
           <div class="code">${esc(s.code || 'S-' + (i + 1))}</div>
           <h3>${esc(s.title)}</h3>
@@ -298,8 +302,8 @@
         if (res.ok) { form.reset(); statusEl.className = 'form-status ok'; statusEl.textContent = data.message || 'Thank you. Your enquiry has reached our engineers.'; }
         else if (res.status === 422 && data.fields) { Object.entries(data.fields).forEach(([k, v]) => setErr(k, v)); statusEl.className = 'form-status bad'; statusEl.textContent = 'Please correct the highlighted fields.'; }
         else if (res.status === 429) { statusEl.className = 'form-status bad'; statusEl.textContent = 'Too many attempts. Please wait a moment and try again.'; }
-        else { statusEl.className = 'form-status bad'; statusEl.textContent = data.message || 'Something went wrong. Please email studio@merkel.engineering.'; }
-      } catch (err) { statusEl.className = 'form-status bad'; statusEl.textContent = 'Network error. Please email studio@merkel.engineering.'; }
+        else { statusEl.className = 'form-status bad'; statusEl.textContent = data.message || 'Something went wrong. Please email studio@merkelconstructions.com.'; }
+      } catch (err) { statusEl.className = 'form-status bad'; statusEl.textContent = 'Network error. Please email studio@merkelconstructions.com.'; }
       finally { btn.disabled = false; btn.innerHTML = original; }
     });
   }

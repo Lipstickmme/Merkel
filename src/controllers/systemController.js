@@ -20,6 +20,7 @@ const { getSupabase } = require('../utils/supabase');
  */
 const PROBES = [
   { table: 'enquiries', columns: 'id,created_at,name,email,company,service,message,ip,status' },
+  { table: 'applications', columns: 'id,created_at,name,email,phone,role_id,role_title,portfolio,experience,message,ip,status' },
   { table: 'chat_sessions', columns: 'id,created_at,visitor_id,last_message_at,status,handled_by_agent' },
   { table: 'chat_messages', columns: 'id,created_at,session_id,sender,body' },
   { table: 'admins', columns: 'user_id,email' },
@@ -117,7 +118,7 @@ exports.health = async (req, res) => {
 
   res.json({
     status: warnings.length ? 'degraded' : 'ok',
-    service: 'merkel-engineering',
+    service: 'merkel-constructions',
     time: new Date().toISOString(),
     config: {
       supabaseUrl: Boolean(url),

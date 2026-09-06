@@ -1,10 +1,10 @@
--- Merkel Engineering backend schema.
+-- Merkel Constructions backend schema.
 --
 -- Safe to run more than once: every statement is guarded, so re-running the
 -- file after an edit updates what changed rather than erroring half way.
 --
--- Three areas: the contact inbox (enquiries), a two-table live chat, and the
--- admin list. Everything is behind row level security. The only writes the
+-- Four areas: the contact inbox (enquiries), job applications, a two-table
+-- live chat, and the admin list. Everything is behind row level security. The only writes the
 -- browser makes directly are a visitor creating their own chat session and
 -- posting into it. Contact submissions never touch the database from the
 -- browser: they go through POST /api/contact, which holds the service role key
@@ -105,6 +105,42 @@ create policy "admins read enquiries"
 drop policy if exists "admins update enquiries" on public.enquiries;
 create policy "admins update enquiries"
   on public.enquiries for update to authenticated
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ---------------------------------------------------------------------------
+-- Job applications
+-- ---------------------------------------------------------------------------
+
+create table if not exists public.applications (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  name       text not null,
+  email      text not null,
+  phone      text,
+  role_id    text,
+  role_title text,
+  portfolio  text,
+  experience text,
+  message    text not null,
+  ip         text,
+  status     public.item_status not null default 'new',
+  notes      text
+);
+
+create index if not exists applications_created_at_idx
+  on public.applications (created_at desc);
+
+alter table public.applications enable row level security;
+
+-- Same rule as enquiries: no anon policy at all. Applications arrive through
+-- POST /api/applications using the service role, and only admins can read them.
+drop policy if exists "admins read applications" on public.applications;
+create policy "admins read applications"
+  on public.applications for select to authenticated using (public.is_admin());
+
+drop policy if exists "admins update applications" on public.applications;
+create policy "admins update applications"
+  on public.applications for update to authenticated
   using (public.is_admin()) with check (public.is_admin());
 
 -- ---------------------------------------------------------------------------
@@ -244,6 +280,13 @@ begin
     where pubname = 'supabase_realtime' and tablename = 'enquiries'
   ) then
     alter publication supabase_realtime add table public.enquiries;
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and tablename = 'applications'
+  ) then
+    alter publication supabase_realtime add table public.applications;
   end if;
 end
 $$;

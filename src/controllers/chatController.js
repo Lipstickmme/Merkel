@@ -14,7 +14,7 @@ function autoReply(text) {
   const has = (...words) => words.some((w) => t.includes(w));
 
   if (has('hello', 'hi ', 'hey', 'good morning', 'good afternoon') || t === 'hi') {
-    return "Hi, you're through to Merkel Engineering. What are you building, and how can we help?";
+    return "Hi, you're through to Merkel Constructions. What are you building, and how can we help?";
   }
   if (has('career', 'job', 'hiring', 'vacancy', 'apply', 'position', 'role')) {
     return 'We are hiring across structural, civil, mechanical and digital teams. You can see open roles on our Careers page, or tell me which discipline interests you.';
@@ -29,7 +29,7 @@ function autoReply(text) {
     return 'That is squarely in our wheelhouse. Share a few details about the project and where it gets difficult, and we will point you to the right engineer.';
   }
   if (has('contact', 'call', 'phone', 'email', 'meet', 'speak')) {
-    return 'The fastest route is the contact page, or email studio@merkel.engineering. Leave your email here and we will reach out within two working days.';
+    return 'The fastest route is the contact page, or email studio@merkelconstructions.com. Leave your email here and we will reach out within two working days.';
   }
   if (has('thanks', 'thank you', 'cheers', 'great')) {
     return 'Any time. Anything else I can help with?';

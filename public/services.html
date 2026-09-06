@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contact us | Merkel Constructions</title>
-  <meta name="description" content="Contact Merkel Constructions to start a project. A principal engineer replies within two working days." />
+  <title>Services | Merkel Constructions</title>
+  <meta name="description" content="Structural, civil, mechanical, digital, steel, groundworks, plant construction and commissioning." />
   <meta name="theme-color" content="#fafaf9" />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="/css/styles.css" />
   
 </head>
-<body class="page-contact">
+<body class="page-services">
 
   <div class="underlay" aria-hidden="true">
     <div class="underlay-img" style="background-image:url('/assets/img/merkel1.webp')"></div>
@@ -30,9 +30,9 @@
     </a>
     <nav class="nav-links" id="navlinks">
       <a href="/projects">Projects</a>
-      <a href="/services">Services</a>
+      <a href="/services" class="is-active">Services</a>
       <a href="/careers">Careers</a>
-      <a href="/contact" class="is-active">Contact us</a>
+      <a href="/contact">Contact us</a>
     </nav>
     <a href="/contact" class="nav-cta">Contact us</a>
     <button class="nav-toggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
@@ -41,52 +41,17 @@
   </header>
 
   
-  <header class="page-header" style="--ph-image:url('/assets/img/merkel1.webp')">
+  <header class="page-header" style="--ph-image:url('/assets/img/merkel2.webp')">
     <div class="page-header-media" aria-hidden="true"></div>
     <div class="wrap page-header-inner">
-      <span class="eyebrow">Start a project</span>
-      <h1 data-reveal>Contact us.</h1>
-      <p data-reveal>Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer replies within two working days.</p>
+      <span class="eyebrow">What we do</span>
+      <h1 data-reveal>Services.</h1>
+      <p data-reveal>Eight disciplines under one roof, from the ground investigation to the day the plant runs.</p>
     </div>
   </header>
   <section class="section-pad">
-    <div class="wrap contact-grid">
-      <div class="contact-info" data-reveal>
-        <div class="contact-detail">
-          <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
-          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a></div></div>
-          <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
-          <div class="row"><div class="k">Hours</div><div class="val">Monday to Friday, 09:00 to 18:00 CET</div></div>
-        </div>
-        <div class="contact-note">
-          <p>Every enquiry lands on the studio desk and a principal engineer picks it up. If you would rather talk now, the live chat in the corner reaches the same people.</p>
-        </div>
-      </div>
-
-      
-      <form id="contact-form" data-contact-form novalidate data-reveal>
-        <div class="field two">
-          <div class="field"><label for="contact-form-name">Name</label><input type="text" id="contact-form-name" name="name" autocomplete="name" required /><div class="err" data-err="name"></div></div>
-          <div class="field"><label for="contact-form-email">Email</label><input type="email" id="contact-form-email" name="email" autocomplete="email" required /><div class="err" data-err="email"></div></div>
-        </div>
-        <div class="field two">
-          <div class="field"><label for="contact-form-company">Company <span class="opt">(optional)</span></label><input type="text" id="contact-form-company" name="company" autocomplete="organization" /><div class="err" data-err="company"></div></div>
-          <div class="field"><label for="contact-form-service">Discipline</label>
-            <select id="contact-form-service" name="service">
-              <option value="">Select</option>
-              <option>Structural</option>
-              <option>Civil &amp; Infrastructure</option>
-              <option>Mechanical</option>
-              <option>Digital Engineering</option>
-              <option>Not sure yet</option>
-            </select><div class="err" data-err="service"></div>
-          </div>
-        </div>
-        <div class="field"><label for="contact-form-message">Project brief</label><textarea id="contact-form-message" name="message" placeholder="What are you building, and where does it get hard?" required></textarea><div class="err" data-err="message"></div></div>
-        <div class="honeypot" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
-        <div class="form-status" data-form-status role="status" aria-live="polite"></div>
-        <button type="submit" class="btn" data-submit>Send enquiry <span class="arw">&rsaquo;</span></button>
-      </form>
+    <div class="wrap">
+      <div class="service-index" id="service-index"></div>
     </div>
   </section>
 
@@ -144,5 +109,6 @@
   <script src="/js/main.js"></script>
   <script src="/js/supabase-lite.js"></script>
   <script src="/js/chat.js"></script>
+  <script src="/js/services.js"></script>
 </body>
 </html>

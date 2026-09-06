@@ -183,6 +183,57 @@ async function withApp(env, fn) {
     sb.close();
   }
 
+  /* ---- 6. job applications reach the same database ---- */
+  {
+    const sb = await mock.start({});
+    await withApp(
+      { SUPABASE_URL: `http://127.0.0.1:${sb.address().port}`, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, SUPABASE_ANON_KEY: mock.ANON_KEY },
+      async (base) => {
+        const roles = require(ROOT + '/src/data/careers.json');
+
+        const good = await req(base, 'POST', '/api/applications', {
+          name: 'Sanne Vermeer', email: 'sanne@example.nl', phone: '+31 6 1234 5678',
+          roleId: roles[0].id, experience: '4 to 8', portfolio: 'https://example.nl/sanne',
+          message: 'Six years on tall buildings, mostly post-tensioned flat slabs and one diagrid.',
+        });
+        assert.strictEqual(good.status, 201, JSON.stringify(good.body));
+        assert.strictEqual(sb.db.applications.rows.length, 1);
+        const row = sb.db.applications.rows[0];
+        assert.strictEqual(row.email, 'sanne@example.nl');
+        assert.strictEqual(row.role_id, roles[0].id);
+        assert.strictEqual(row.role_title, roles[0].title);
+        assert.strictEqual(row.status, 'new');
+        console.log('  ok  application stored against the role it names');
+
+        const spec = await req(base, 'POST', '/api/applications', {
+          name: 'Tom Bakker', email: 'tom@example.nl',
+          message: 'No open role fits but I detail connections and would like to talk.',
+        });
+        assert.strictEqual(spec.status, 201);
+        assert.strictEqual(sb.db.applications.rows[1].role_title, 'Speculative application');
+        console.log('  ok  a speculative application is still an application');
+
+        const bad = await req(base, 'POST', '/api/applications', { name: 'X', email: 'nope', message: 'short' });
+        assert.strictEqual(bad.status, 422);
+        assert.deepStrictEqual(Object.keys(bad.body.fields).sort(), ['email', 'message', 'name']);
+        console.log('  ok  validation reports every bad field at once');
+
+        const stale = await req(base, 'POST', '/api/applications', {
+          name: 'Ada Kolen', email: 'ada@example.com', roleId: 'a-role-we-closed',
+          message: 'Applying for a role that is no longer listed on the careers page.',
+        });
+        assert.strictEqual(stale.status, 422);
+        assert.ok(stale.body.fields.roleId, 'a closed role is rejected');
+        console.log('  ok  a role that is no longer open is refused');
+
+        const probe = await req(base, 'GET', '/api/health?probe=1');
+        assert.strictEqual(probe.body.schema.applications, 'ok');
+        console.log('  ok  the schema probe covers applications');
+      }
+    );
+    sb.close();
+  }
+
   console.log('\nserver suite passed');
   process.exit(0);
 })().catch((err) => {

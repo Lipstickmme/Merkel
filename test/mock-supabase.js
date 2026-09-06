@@ -26,6 +26,12 @@ function schema() {
       notNull: ['name', 'email', 'message'],
       rows: [],
     },
+    applications: {
+      columns: ['id', 'created_at', 'name', 'email', 'phone', 'role_id', 'role_title', 'portfolio', 'experience', 'message', 'ip', 'status', 'notes'],
+      defaults: () => ({ id: uuid(), created_at: new Date().toISOString(), status: 'new' }),
+      notNull: ['name', 'email', 'message'],
+      rows: [],
+    },
     chat_sessions: {
       columns: ['id', 'created_at', 'visitor_id', 'visitor_name', 'visitor_email', 'last_message_at', 'status', 'handled_by_agent'],
       defaults: () => ({

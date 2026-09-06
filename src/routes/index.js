@@ -17,6 +17,7 @@ router.use('/team', require('./team'));
 router.use('/careers', require('./careers'));
 router.use('/leadership', require('./leadership'));
 router.use('/contact', require('./contact'));
+router.use('/applications', require('./applications'));
 router.use('/chat', require('./chat'));
 
 module.exports = router;

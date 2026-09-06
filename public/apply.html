@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contact us | Merkel Constructions</title>
-  <meta name="description" content="Contact Merkel Constructions to start a project. A principal engineer replies within two working days." />
+  <title>Apply | Merkel Constructions</title>
+  <meta name="description" content="Apply to Merkel Constructions. One form, read by the people you would work with." />
   <meta name="theme-color" content="#fafaf9" />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="/css/styles.css" />
   
 </head>
-<body class="page-contact">
+<body class="page-apply">
 
   <div class="underlay" aria-hidden="true">
     <div class="underlay-img" style="background-image:url('/assets/img/merkel1.webp')"></div>
@@ -31,8 +31,8 @@
     <nav class="nav-links" id="navlinks">
       <a href="/projects">Projects</a>
       <a href="/services">Services</a>
-      <a href="/careers">Careers</a>
-      <a href="/contact" class="is-active">Contact us</a>
+      <a href="/careers" class="is-active">Careers</a>
+      <a href="/contact">Contact us</a>
     </nav>
     <a href="/contact" class="nav-cta">Contact us</a>
     <button class="nav-toggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
@@ -41,51 +41,53 @@
   </header>
 
   
-  <header class="page-header" style="--ph-image:url('/assets/img/merkel1.webp')">
+  <header class="page-header" style="--ph-image:url('/assets/img/merkel3.webp')">
     <div class="page-header-media" aria-hidden="true"></div>
     <div class="wrap page-header-inner">
-      <span class="eyebrow">Start a project</span>
-      <h1 data-reveal>Contact us.</h1>
-      <p data-reveal>Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer replies within two working days.</p>
+      <span class="eyebrow">Careers</span>
+      <h1 data-reveal>Apply.</h1>
+      <p data-reveal>One form, read by the people you would work with. We reply to everyone.</p>
     </div>
   </header>
   <section class="section-pad">
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
-        <div class="contact-detail">
-          <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
-          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a></div></div>
-          <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
-          <div class="row"><div class="k">Hours</div><div class="val">Monday to Friday, 09:00 to 18:00 CET</div></div>
-        </div>
+        <h2 id="apply-role-title">Speculative application</h2>
+        <p class="contact-lede" id="apply-role-sub">Tell us what you have built and where you want to take it next.</p>
+        <div class="contact-detail" id="apply-role-meta"></div>
         <div class="contact-note">
-          <p>Every enquiry lands on the studio desk and a principal engineer picks it up. If you would rather talk now, the live chat in the corner reaches the same people.</p>
+          <p>We read every application ourselves. If your experience does not line up with an open role we will say so, and say what would change that.</p>
         </div>
+        <a class="link-arrow" href="/careers">All open roles <span class="arw">&rsaquo;</span></a>
       </div>
 
-      
-      <form id="contact-form" data-contact-form novalidate data-reveal>
+      <form id="apply-form" novalidate data-reveal>
         <div class="field two">
-          <div class="field"><label for="contact-form-name">Name</label><input type="text" id="contact-form-name" name="name" autocomplete="name" required /><div class="err" data-err="name"></div></div>
-          <div class="field"><label for="contact-form-email">Email</label><input type="email" id="contact-form-email" name="email" autocomplete="email" required /><div class="err" data-err="email"></div></div>
+          <div class="field"><label for="apply-name">Name</label><input type="text" id="apply-name" name="name" autocomplete="name" required /><div class="err" data-err="name"></div></div>
+          <div class="field"><label for="apply-email">Email</label><input type="email" id="apply-email" name="email" autocomplete="email" required /><div class="err" data-err="email"></div></div>
         </div>
         <div class="field two">
-          <div class="field"><label for="contact-form-company">Company <span class="opt">(optional)</span></label><input type="text" id="contact-form-company" name="company" autocomplete="organization" /><div class="err" data-err="company"></div></div>
-          <div class="field"><label for="contact-form-service">Discipline</label>
-            <select id="contact-form-service" name="service">
+          <div class="field"><label for="apply-phone">Phone <span class="opt">(optional)</span></label><input type="tel" id="apply-phone" name="phone" autocomplete="tel" /><div class="err" data-err="phone"></div></div>
+          <div class="field"><label for="apply-experience">Years in practice</label>
+            <select id="apply-experience" name="experience">
               <option value="">Select</option>
-              <option>Structural</option>
-              <option>Civil &amp; Infrastructure</option>
-              <option>Mechanical</option>
-              <option>Digital Engineering</option>
-              <option>Not sure yet</option>
-            </select><div class="err" data-err="service"></div>
+              <option>Graduate</option>
+              <option>1 to 3</option>
+              <option>4 to 8</option>
+              <option>9 to 15</option>
+              <option>15 or more</option>
+            </select><div class="err" data-err="experience"></div>
           </div>
         </div>
-        <div class="field"><label for="contact-form-message">Project brief</label><textarea id="contact-form-message" name="message" placeholder="What are you building, and where does it get hard?" required></textarea><div class="err" data-err="message"></div></div>
+        <div class="field"><label for="apply-role">Role</label>
+          <select id="apply-role" name="roleId"><option value="">Speculative application</option></select>
+          <div class="err" data-err="roleId"></div>
+        </div>
+        <div class="field"><label for="apply-portfolio">Portfolio or profile <span class="opt">(optional)</span></label><input type="url" id="apply-portfolio" name="portfolio" placeholder="https://" /><div class="err" data-err="portfolio"></div></div>
+        <div class="field"><label for="apply-message">What have you worked on?</label><textarea id="apply-message" name="message" placeholder="The projects you would want us to ask about, and what you did on them." required></textarea><div class="err" data-err="message"></div></div>
         <div class="honeypot" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
-        <div class="form-status" data-form-status role="status" aria-live="polite"></div>
-        <button type="submit" class="btn" data-submit>Send enquiry <span class="arw">&rsaquo;</span></button>
+        <div class="form-status" id="apply-status" role="status" aria-live="polite"></div>
+        <button type="submit" class="btn" id="apply-submit">Send application <span class="arw">&rsaquo;</span></button>
       </form>
     </div>
   </section>
@@ -144,5 +146,6 @@
   <script src="/js/main.js"></script>
   <script src="/js/supabase-lite.js"></script>
   <script src="/js/chat.js"></script>
+  <script src="/js/apply.js"></script>
 </body>
 </html>
