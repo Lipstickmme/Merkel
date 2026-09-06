@@ -12,6 +12,59 @@ function clean(str, max) {
 }
 
 /**
+ * An application written as an enquiry, for a database that predates the
+ * applications table. Everything the form collected survives; the discipline
+ * field carries the marker the dashboard reads it back by.
+ */
+const APPLICATION_MARKER = 'Application: ';
+
+function asEnquiry(record) {
+  const lines = [
+    record.experience ? `Years in practice: ${record.experience}` : null,
+    record.phone ? `Phone: ${record.phone}` : null,
+    record.portfolio ? `Portfolio: ${record.portfolio}` : null,
+    '',
+    record.message,
+  ].filter((line) => line !== null);
+
+  return {
+    id: record.id,
+    name: record.name,
+    email: record.email,
+    company: record.portfolio || null,
+    service: `${APPLICATION_MARKER}${record.roleTitle}`,
+    message: lines.join('\n'),
+    receivedAt: record.receivedAt,
+    ip: record.ip,
+  };
+}
+
+/**
+ * Write the application down, wherever it can go.
+ *
+ * The applications table arrives with 0001_init.sql, and a project set up
+ * before that simply does not have it. Rather than accept the form, thank the
+ * applicant and drop the row, fall back to the enquiries table, which every
+ * deployment with a database already has. Returns where it landed.
+ */
+async function persist(record) {
+  try {
+    await storage.applications.append(record);
+    return 'applications';
+  } catch (err) {
+    console.warn('[merkel] applications table unavailable, filing as an enquiry:', err.message);
+  }
+
+  try {
+    await storage.enquiries.append(asEnquiry(record));
+    return 'enquiries';
+  } catch (err) {
+    console.error('[merkel] failed to persist application:', err.message);
+    return null;
+  }
+}
+
+/**
  * POST /api/applications
  *
  * The apply link on /careers lands here. Same contract as the contact form:
@@ -58,21 +111,21 @@ exports.create = async (req, res, next) => {
       ip: req.ip || null,
     };
 
+    let stored = null;
     if (!trap) {
-      try {
-        await storage.applications.append(record);
-      } catch (err) {
-        console.error('[merkel] failed to persist application:', err.message);
-      }
+      stored = await persist(record);
       await notify.application(record);
     }
 
     return res.status(201).json({
       ok: true,
       id: record.id,
+      stored,
       message: 'Thank you. Your application is with the studio and we will come back to you.',
     });
   } catch (err) {
     return next(err);
   }
 };
+
+exports.APPLICATION_MARKER = APPLICATION_MARKER;

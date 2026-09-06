@@ -147,8 +147,17 @@ come next.
    | Name | Value |
    | ---- | ----- |
    | `SUPABASE_URL` | your Project URL |
-   | `SUPABASE_ANON_KEY` | the anon key |
+   | `SUPABASE_ANON_KEY` | the anon key (or `SUPABASE_PUBLISHABLE_KEY`, see below) |
    | `SUPABASE_SERVICE_ROLE_KEY` | the service_role key |
+
+   **On the browser key, read this before assuming it is set.** Supabase has
+   called it two different things. Projects created under the older scheme have
+   an **anon** key; projects created under the newer API keys scheme have a
+   **publishable** key (`sb_publishable_...`), and the Vercel integration
+   injects that one as `SUPABASE_PUBLISHABLE_KEY`. Both work, along with the
+   `NEXT_PUBLIC_` and `VITE_` spellings of either. If `/admin` says the backend
+   is not connected, it now names the value it is missing and every name it
+   would accept for it.
 
    Vercel's Supabase integration usually adds all three. Check they are present
    rather than adding duplicates. `VITE_` and `NEXT_PUBLIC_` prefixes are accepted
@@ -402,6 +411,13 @@ created from an older copy of the migration. Run `/api/health?probe=1`: it names
 table and column, and re-running
 [`supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) fixes it
 in place without touching existing rows.
+
+**`/admin` says the backend is not connected, but the variables are set.** The
+card names which value is missing and the env names that satisfy it. The usual
+cause is the browser key being present under a name the deployment does not
+look for, and the second most common is the variable existing in Preview but
+not Production, or existing but with no redeploy since. `/api/health` settles
+it: it reports a boolean for each value the server can actually see.
 
 **`/admin` says the account is not on the admin list.** The login exists but
 `supabase/grant-admin.sql` has not been run for that address, or was run with a

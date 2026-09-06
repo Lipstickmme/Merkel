@@ -20,6 +20,7 @@ const { getSupabase } = require('../utils/supabase');
  */
 const PROBES = [
   { table: 'enquiries', columns: 'id,created_at,name,email,company,service,message,ip,status' },
+  { table: 'site_settings', columns: 'id,updated_at,address,email,phone,hours', optional: true },
   { table: 'applications', columns: 'id,created_at,name,email,phone,role_id,role_title,portfolio,experience,message,ip,status' },
   { table: 'chat_sessions', columns: 'id,created_at,visitor_id,last_message_at,status,handled_by_agent' },
   { table: 'chat_messages', columns: 'id,created_at,session_id,sender,body' },
@@ -52,12 +53,20 @@ exports.publicConfig = (req, res) => {
 
   // Short cache: this changes rarely, but a stale key should not outlive a
   // rotation for long.
+  // Which of the two is absent, and the names this server would have accepted
+  // for it. Names only, never values, so the page can say what is wrong
+  // instead of a bare "not connected" that leaves you guessing.
+  const missing = [];
+  if (!url) missing.push({ value: 'supabaseUrl', accepts: config.ACCEPTED_NAMES.supabaseUrl });
+  if (!anonKey) missing.push({ value: 'supabaseAnonKey', accepts: config.ACCEPTED_NAMES.supabaseAnonKey });
+
   res.setHeader('Cache-Control', 'public, max-age=60');
   res.json({
     supabaseUrl: url,
     supabaseAnonKey: anonKey,
     // The widget degrades to the server-side chat when this is false.
     chatEnabled: Boolean(url && anonKey),
+    missing,
   });
 };
 
@@ -85,7 +94,12 @@ exports.health = async (req, res) => {
   }
   if (url && service && !anon) {
     warnings.push(
-      'SUPABASE_ANON_KEY is not set, so the browser cannot open a chat session. The chat widget falls back to the server-side responder.'
+      `No browser key is set, so /admin reports the backend as not connected and the chat widget falls back to the server-side responder. Set one of: ${config.ACCEPTED_NAMES.supabaseAnonKey.join(', ')}.`
+    );
+  }
+  if (!url && (anon || service)) {
+    warnings.push(
+      `A Supabase key is set but no project URL. Set one of: ${config.ACCEPTED_NAMES.supabaseUrl.join(', ')}.`
     );
   }
   if (resend && !to) {

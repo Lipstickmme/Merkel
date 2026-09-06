@@ -8,6 +8,7 @@
  */
 
 const images = require('./images');
+const site = require('../data/site.json');
 
 const YEAR = new Date().getFullYear();
 
@@ -116,8 +117,8 @@ function footer() {
       </div>
       <div class="col">
         <h5>Contact</h5>
-        <a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a>
-        <a href="tel:+31102400198">+31 (0)10 240 0198</a>
+        <a href="mailto:${site.email}" data-site="email">${site.email}</a>
+        <a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a>
         <a href="/contact">Contact us</a>
       </div>
     </div>

@@ -26,6 +26,11 @@ function schema() {
       notNull: ['name', 'email', 'message'],
       rows: [],
     },
+    site_settings: {
+      columns: ['id', 'updated_at', 'address', 'email', 'phone', 'hours'],
+      defaults: () => ({ id: 'default', updated_at: new Date().toISOString() }),
+      rows: [{ id: 'default', updated_at: new Date().toISOString(), address: null, email: null, phone: null, hours: null }],
+    },
     applications: {
       columns: ['id', 'created_at', 'name', 'email', 'phone', 'role_id', 'role_title', 'portfolio', 'experience', 'message', 'ip', 'status', 'notes'],
       defaults: () => ({ id: uuid(), created_at: new Date().toISOString(), status: 'new' }),

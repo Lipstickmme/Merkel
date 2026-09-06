@@ -107,11 +107,11 @@
         statusEl.textContent = 'Too many attempts. Please wait a moment and try again.';
       } else {
         statusEl.className = 'form-status bad';
-        statusEl.textContent = data.message || 'Something went wrong. Please email studio@merkelconstructions.com.';
+        statusEl.textContent = data.message || `Something went wrong. Please email ${M.site.email}.`;
       }
     } catch (err) {
       statusEl.className = 'form-status bad';
-      statusEl.textContent = 'Network error. Please email studio@merkelconstructions.com.';
+      statusEl.textContent = `Network error. Please email ${M.site.email}.`;
     } finally {
       btn.disabled = false;
       btn.innerHTML = original;

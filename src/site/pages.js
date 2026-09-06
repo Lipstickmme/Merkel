@@ -2,6 +2,7 @@
 
 const leadership = require('../data/leadership.json');
 const images = require('./images');
+const site = require('../data/site.json');
 const { contactForm } = require('./layout');
 
 /* Reusable interior page header with an image band. */
@@ -138,9 +139,9 @@ const contactSection = chapter({
           <h2>Bring us the hard part.</h2>
           <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
           <div class="contact-detail">
-            <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
-            <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a></div></div>
-            <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
+            <div class="row"><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
+            <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:${site.email}" data-site="email">${site.email}</a></div></div>
+            <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
           </div>
         </div>
         ${contactForm('home-contact-form')}
@@ -267,10 +268,10 @@ const contactContent = `
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
         <div class="contact-detail">
-          <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
-          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a></div></div>
-          <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
-          <div class="row"><div class="k">Hours</div><div class="val">Monday to Friday, 09:00 to 18:00 CET</div></div>
+          <div class="row"><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
+          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:${site.email}" data-site="email">${site.email}</a></div></div>
+          <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
+          <div class="row"><div class="k">Hours</div><div class="val" data-site="hours">${site.hours}</div></div>
         </div>
         <div class="contact-note">
           <p>Every enquiry lands on the studio desk and a principal engineer picks it up. If you would rather talk now, the live chat in the corner reaches the same people.</p>
@@ -292,8 +293,9 @@ const adminContent = `
       <div class="admin-card">
         <span class="eyebrow">Merkel / Studio desk</span>
         <h1>Backend not connected.</h1>
-        <p class="admin-note">Set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> on the deployment, then reload. Nothing needs rebuilding.</p>
-        <p class="admin-note"><a href="/api/health">/api/health</a> lists what the server can see.</p>
+        <div id="admin-missing"></div>
+        <p class="admin-note">Set it in the deployment's environment variables and reload. Nothing needs rebuilding, but the change only reaches a running deployment after a redeploy.</p>
+        <p class="admin-note"><a href="/api/health">/api/health</a> lists everything the server can see.</p>
         <a class="admin-back" href="/">Back to site</a>
       </div>
     </section>
@@ -314,7 +316,7 @@ const adminContent = `
     <div class="admin-shell" id="admin-shell" hidden>
       <header class="admin-bar">
         <a class="admin-brand" href="/">
-          <img src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Constructions" width="1048" height="202" />
+          <img src="/assets/brand/merkel-constructions-wordmark.png" alt="Merkel Constructions" width="1048" height="203" />
           <span>Studio desk</span>
         </a>
         <div class="admin-bar-end">
@@ -328,6 +330,7 @@ const adminContent = `
         <button type="button" class="admin-tab" role="tab" data-tab="applications" aria-selected="false">Applications<span class="tally" data-tally="applications">0</span></button>
         <button type="button" class="admin-tab" role="tab" data-tab="chat" aria-selected="false">Live chat<span class="tally" data-tally="chat">0</span></button>
         <button type="button" class="admin-tab" role="tab" data-tab="email" aria-selected="false">Email<span class="tally" data-tally="email">0</span></button>
+        <button type="button" class="admin-tab" role="tab" data-tab="settings" aria-selected="false">Settings</button>
       </nav>
 
       <p class="admin-alert" id="admin-alert" role="alert" hidden></p>
@@ -359,6 +362,9 @@ const adminContent = `
             <ul class="admin-list" id="email-list"><li class="admin-empty">Loading&hellip;</li></ul>
             <div class="admin-detail" id="email-detail"><p class="admin-empty">Pick a thread to read it.</p></div>
           </div>
+        </section>
+        <section class="admin-panel" data-panel="settings" hidden>
+          <div class="admin-settings" id="settings-panel"><p class="admin-empty">Loading&hellip;</p></div>
         </section>
       </div>
     </div>

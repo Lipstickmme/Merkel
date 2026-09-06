@@ -24,11 +24,27 @@ const pick = (...names) => {
 const supabaseUrl = () =>
   pick('SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_URL', 'VITE_SUPABASE_URL');
 
+/**
+ * The browser key, under every name Supabase and its integrations have used
+ * for it. Projects created under the older scheme call it the anon key;
+ * projects created under the newer API keys scheme call it the publishable
+ * key, and the Vercel integration injects SUPABASE_PUBLISHABLE_KEY for those.
+ * Missing that name is why a correctly configured deployment can still tell
+ * you the backend is not connected.
+ */
 const supabaseAnonKey = () =>
-  pick('SUPABASE_ANON_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY');
+  pick(
+    'SUPABASE_ANON_KEY',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'VITE_SUPABASE_ANON_KEY',
+    'SUPABASE_PUBLISHABLE_KEY',
+    'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
+    'VITE_SUPABASE_PUBLISHABLE_KEY'
+  );
 
+/** The secret key. `sb_secret_...` under the newer scheme, service_role under the older. */
 const supabaseServiceKey = () =>
-  pick('SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY');
+  pick('SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY', 'NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY');
 
 const resendApiKey = () => pick('RESEND_API_KEY');
 const resendWebhookSecret = () => pick('RESEND_WEBHOOK_SECRET');
@@ -65,7 +81,21 @@ function forwardWouldLoop() {
   return Boolean(target) && ownAddresses().has(target);
 }
 
+const ACCEPTED_NAMES = {
+  supabaseUrl: ['SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_URL', 'VITE_SUPABASE_URL'],
+  supabaseAnonKey: [
+    'SUPABASE_ANON_KEY',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'VITE_SUPABASE_ANON_KEY',
+    'SUPABASE_PUBLISHABLE_KEY',
+    'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
+    'VITE_SUPABASE_PUBLISHABLE_KEY',
+  ],
+  supabaseServiceRoleKey: ['SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY'],
+};
+
 module.exports = {
+  ACCEPTED_NAMES,
   pick,
   supabaseUrl,
   supabaseAnonKey,
