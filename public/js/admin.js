@@ -26,6 +26,13 @@
     });
   }
 
+  /** True while the cursor is in any field on the page. */
+  function isTyping() {
+    const node = document.activeElement;
+    if (!node) return false;
+    return node.tagName === 'TEXTAREA' || node.tagName === 'INPUT' || node.isContentEditable === true;
+  }
+
   function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
@@ -63,6 +70,7 @@
     emailAvailable: true,
     settings: null,
     effective: null,
+    drafts: {},
     settingsEditable: true,
   };
 
@@ -396,6 +404,11 @@
     box.rows = 2;
     box.placeholder = 'Type a reply';
     box.setAttribute('aria-label', 'Reply');
+    // Survives a re-render from any other source, per conversation.
+    box.value = state.drafts[row.id] || '';
+    box.addEventListener('input', () => {
+      state.drafts[row.id] = box.value;
+    });
     const send = el('button', 'btn', 'Send');
     send.type = 'submit';
     form.appendChild(box);
@@ -406,6 +419,7 @@
       const body = box.value.trim();
       if (!body) return;
       box.value = '';
+      delete state.drafts[row.id];
       send.disabled = true;
       try {
         const rows = await client.insert(
@@ -430,6 +444,7 @@
         tallies();
       } catch (err) {
         box.value = body;
+        state.drafts[row.id] = body;
         alertBar(err.message);
       } finally {
         send.disabled = false;
@@ -546,6 +561,10 @@
 
   function renderSettings() {
     const panel = $('settings-panel');
+    // Built once. Rebuilding it would discard whatever is half typed and put
+    // the stored values back in the boxes.
+    if (panel.dataset.built === '1') return;
+    panel.dataset.built = '1';
     panel.textContent = '';
 
     const head = el('div', 'admin-detail-head');
@@ -717,6 +736,10 @@
     setInterval(() => {
       if (document.visibilityState !== 'visible') return;
       if (screens.shell.hidden) return;
+      // Never rebuild the page under someone's cursor. Refreshing while a
+      // field has focus replaces the element being typed into, which reads as
+      // the text vanishing, or as a value you just deleted coming back.
+      if (isTyping()) return;
       refreshLists();
       refreshThread();
     }, POLL_MS);

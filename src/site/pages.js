@@ -47,7 +47,7 @@ const heroSection = `
       <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
       <div class="hero-actions" data-reveal>
         <a href="/projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
-        <a href="#contact" class="btn ghost">Contact us</a>
+        <a href="#contact" class="btn ghost">Contact us <span class="arw">&rsaquo;</span></a>
       </div>
       <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
         ${images.heroSlides.map((src, i) => `<button class="dot${i === 0 ? ' is-active' : ''}" data-slide="${i}" aria-label="Slide ${i + 1}"></button>`).join('\n        ')}

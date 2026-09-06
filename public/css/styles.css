@@ -134,11 +134,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
   transition: color .25s var(--ease);
 }
 .nav-links a:hover { color: var(--ink); }
-.nav-cta {
-  border: 1px solid var(--line); padding: 9px 18px; color: var(--ink) !important;
-  transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
-}
-.nav-cta:hover { background: var(--accent); color: var(--accent-ink) !important; border-color: var(--accent); }
+/* Styled with .btn.ghost further down: it is the same button as the rest. The
+   old solid-accent hover lived here and set white text with !important, which
+   beat the glass pane and made the label vanish on hover. */
 
 .nav-toggle { display: none; background: none; border: 1px solid var(--line); color: var(--ink); width: 42px; height: 38px; cursor: pointer; }
 .nav-toggle span { display:block; width:18px; height:1.5px; background: var(--ink); margin: 3px auto; transition: .3s var(--ease); }
@@ -190,12 +188,12 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 .hero-inner { position: relative; z-index: 3; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
 .hero-tag { margin-bottom: 22px; }
 .hero h1 {
-  font-size: clamp(46px, 9vw, 104px);
-  line-height: 0.96;
+  font-size: clamp(54px, 10.5vw, 132px);
+  line-height: 0.94;
   letter-spacing: -0.035em;
   font-weight: 600;
 }
-.hero-sub { margin-top: 22px; max-width: 46ch; color: var(--ink-soft); font-size: clamp(16px, 1.6vw, 21px); }
+.hero-sub { margin-top: 24px; max-width: 42ch; color: var(--ink-soft); font-size: clamp(18px, 1.9vw, 26px); }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
 
 /* Slide dots */
@@ -433,7 +431,7 @@ h1[data-reveal].in, h2[data-reveal].in,
   }
   .nav-links.open a { padding: 12px 0; }
   .hero { padding-top: 104px; }
-  .hero h1 { font-size: clamp(40px, 13vw, 68px); }
+  .hero h1 { font-size: clamp(44px, 14vw, 78px); }
   .services-grid { grid-template-columns: 1fr; }
   .projects-grid { grid-template-columns: 1fr; }
   .field.two { grid-template-columns: 1fr; }
@@ -445,7 +443,7 @@ h1[data-reveal].in, h2[data-reveal].in,
   .stat { border-right: 0; border-bottom: 1px solid var(--line); }
   .team-grid { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr; }
-  .hero-sub { font-size: 16px; }
+  .hero-sub { font-size: 18px; }
 }
 
 /* Short-viewport safety: keep hero CTAs in frame on landscape phones.
@@ -454,8 +452,8 @@ h1[data-reveal].in, h2[data-reveal].in,
 @media (max-height: 620px) {
   .hero { min-height: 100svh; padding: 72px 0 0; justify-content: center; }
   .hero-tag { margin-bottom: 12px; }
-  .hero h1 { font-size: clamp(30px, 7vw, 48px); }
-  .hero-sub { margin-top: 10px; font-size: 15px; }
+  .hero h1 { font-size: clamp(32px, 7.6vw, 52px); }
+  .hero-sub { margin-top: 10px; font-size: 16px; }
   .hero-actions { margin-top: 18px; }
   .hero-dots { margin-top: 16px; }
 }
@@ -1087,15 +1085,8 @@ h1[data-reveal].in, h2[data-reveal].in,
   border-color: var(--pane-edge-hover);
   box-shadow: var(--pane-shadow-hover);
 }
-.nav-cta {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 13px 22px;
-  transition: transform .35s var(--ease-out), background .35s var(--ease-out), border-color .35s var(--ease-out), box-shadow .35s var(--ease-out);
-}
-.nav-cta:hover { transform: translateY(-2px); }
+/* Same button, smaller, because it sits in the bar. */
+.nav-cta { padding: 12px 20px; font-size: 12px; }
 
 .chip, .role .apply, .project-services span {
   border-radius: 3px;
@@ -1267,7 +1258,7 @@ h1[data-reveal].in, h2[data-reveal].in,
      on a phone it starts from the top and the readout takes the floor. */
   .hero { justify-content: flex-start; padding: 124px 0 0; }
   .hero-inner { padding-bottom: 30px; }
-  .hero h1 { font-size: clamp(38px, 12vw, 60px); }
+  .hero h1 { font-size: clamp(42px, 13vw, 66px); }
   .hero-dots { margin-top: 22px; }
 
   .hero-readout { grid-template-columns: repeat(2, 1fr); }
