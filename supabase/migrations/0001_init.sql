@@ -3,8 +3,8 @@
 -- Safe to run more than once: every statement is guarded, so re-running the
 -- file after an edit updates what changed rather than erroring half way.
 --
--- Four areas: the contact inbox (enquiries), job applications, a two-table
--- live chat, and the admin list. Everything is behind row level security. The only writes the
+-- Five areas: the contact inbox (enquiries), job applications, a two-table
+-- live chat, the admin list, and the studio's own contact details. Everything is behind row level security. The only writes the
 -- browser makes directly are a visitor creating their own chat session and
 -- posting into it. Contact submissions never touch the database from the
 -- browser: they go through POST /api/contact, which holds the service role key
@@ -105,6 +105,37 @@ create policy "admins read enquiries"
 drop policy if exists "admins update enquiries" on public.enquiries;
 create policy "admins update enquiries"
   on public.enquiries for update to authenticated
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ---------------------------------------------------------------------------
+-- Site settings
+-- ---------------------------------------------------------------------------
+
+-- The studio's contact details, so they can be changed from the dashboard and
+-- take effect on the next page load rather than the next deploy. One row.
+create table if not exists public.site_settings (
+  id         text primary key default 'default',
+  updated_at timestamptz not null default now(),
+  address    text,
+  email      text,
+  phone      text,
+  hours      text
+);
+
+insert into public.site_settings (id) values ('default')
+    on conflict (id) do nothing;
+
+alter table public.site_settings enable row level security;
+
+-- Read goes through GET /api/site using the service role, which is why there
+-- is no anon policy here even though the values are public. Only admins write.
+drop policy if exists "admins read site settings" on public.site_settings;
+create policy "admins read site settings"
+  on public.site_settings for select to authenticated using (public.is_admin());
+
+drop policy if exists "admins update site settings" on public.site_settings;
+create policy "admins update site settings"
+  on public.site_settings for update to authenticated
   using (public.is_admin()) with check (public.is_admin());
 
 -- ---------------------------------------------------------------------------

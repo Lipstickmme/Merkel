@@ -1,0 +1,7 @@
+{
+  "_comment": "The studio's contact details, in one place. These are the values the pages are built with; the studio desk can change them at /admin, and every page picks the change up on the next load without a rebuild.",
+  "address": "Wijnhaven 3, 3011 WG Rotterdam, NL",
+  "email": "studio@merkelconstructions.com",
+  "phone": "+31 (0)10 240 0198",
+  "hours": "Monday to Friday, 09:00 to 18:00 CET"
+}

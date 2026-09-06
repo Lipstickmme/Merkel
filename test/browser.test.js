@@ -249,6 +249,32 @@ async function until(check, what, timeout = 10000) {
     assert.match(await staff.textContent('#application-detail .admin-message'), /post-tensioned flat slabs/);
     console.log('  ok  the application shows up on the desk');
 
+    /* ---------------- contact details are editable from the desk ---------------- */
+    await staff.click('.admin-tab[data-tab="settings"]');
+    await staff.waitForSelector('#setting-email');
+    await staff.fill('#setting-email', 'desk@merkelconstructions.com');
+    await staff.fill('#setting-phone', '+31 (0)20 111 2222');
+    await staff.click('.admin-settings-form .btn');
+    await until(
+      () => sb.db.site_settings.rows[0].email === 'desk@merkelconstructions.com',
+      'the desk to save the new contact details'
+    );
+    console.log('  ok  the desk saves new contact details');
+
+    const reader2 = await newPage(visitorCtx);
+    await reader2.goto(`${base}/contact`, { waitUntil: 'networkidle' });
+    await reader2.waitForFunction(
+      () => document.querySelector('[data-site="email"]').textContent.trim() === 'desk@merkelconstructions.com',
+      null,
+      { timeout: 10000 }
+    );
+    const href = await reader2.getAttribute('a[data-site="email"]', 'href');
+    assert.strictEqual(href, 'mailto:desk@merkelconstructions.com', 'the mailto follows the address');
+    const phone = await reader2.textContent('[data-site="phone"]');
+    assert.strictEqual(phone.trim(), '+31 (0)20 111 2222');
+    console.log('  ok  the change reaches the public pages with no rebuild');
+    await reader2.close();
+
     /* ---------------- every reveal actually reveals ---------------- */
     const reader = await newPage(visitorCtx);
     for (const path of ['/', '/services', '/projects', '/careers']) {

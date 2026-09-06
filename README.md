@@ -64,6 +64,17 @@ appear on the studio desk under their own tab, with the same triage states as an
 enquiry. A speculative application, with no role chosen, is accepted the same way; a
 role that has since closed is refused with a message rather than silently accepted.
 
+## Contact details
+
+The studio address, email, telephone and opening hours live in
+`src/data/site.json`, so the pages are built with the right values and are
+correct with no JavaScript at all. The studio desk can then change them under
+**Settings**, which writes to `site_settings`, and every page picks the change
+up on its next load through `/api/site`. No rebuild, no deploy. Anything
+carrying `data-site="email"` and friends is hydrated, including the `mailto:`
+and `tel:` hrefs, and a database with no `site_settings` table simply keeps the
+values the site was built with.
+
 ## Live chat
 
 Two halves of one conversation:
@@ -134,6 +145,7 @@ Two halves of one conversation:
 | GET    | `/api/leadership`         | Studio leadership (CEO)                        |
 | GET    | `/api/team`               | Studio principals                             |
 | POST   | `/api/contact`            | Submit an enquiry (validated + rate-limited)  |
+| GET    | `/api/site`               | The studio's contact details, editable from the desk |
 | POST   | `/api/applications`       | Submit a job application (validated + rate-limited) |
 | POST   | `/api/chat/message`       | Send a chat message, get an auto-reply (fallback path) |
 | POST   | `/api/chat/notify`        | Flag a browser-written message and post the holding reply |

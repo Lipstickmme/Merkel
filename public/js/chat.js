@@ -290,7 +290,8 @@
         }, 900);
       }
     } catch (err) {
-      bubble('agent', 'That message did not send. Please email studio@merkelconstructions.com.');
+      const inbox = (window.MERKEL && window.MERKEL.site.email) || 'the studio';
+      bubble('agent', `That message did not send. Please email ${inbox}.`);
     }
   });
 })();

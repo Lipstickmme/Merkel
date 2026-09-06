@@ -73,7 +73,44 @@
     els.forEach((el) => io.observe(el));
   }
 
-  window.MERKEL = { $, $$, esc, fetchJSON, reduceMotion, projectCard, observeReveals, FALLBACK_PROJECTS };
+  /* Studio contact details -------------------------------------------------
+     Pages are built with the values in src/data/site.json, so the static HTML
+     is already right. This only replaces them when the studio desk has changed
+     them, which is what lets an address change reach every page without a
+     deploy. */
+  const site = { email: '', phone: '', address: '', hours: '' };
+
+  const telHref = (value) => 'tel:' + String(value).replace(/[^+\d]/g, '');
+
+  function applySite(values) {
+    Object.assign(site, values);
+    $$('[data-site]').forEach((el) => {
+      const key = el.getAttribute('data-site');
+      const value = values[key];
+      if (!value) return;
+      el.textContent = value;
+      if (el.tagName === 'A') {
+        if (key === 'email') el.href = 'mailto:' + value;
+        if (key === 'phone') el.href = telHref(value);
+      }
+    });
+  }
+
+  async function hydrateSite() {
+    // Seed from the page itself, so a message that quotes the studio address
+    // is right even before the request comes back.
+    $$('[data-site]').forEach((el) => {
+      const key = el.getAttribute('data-site');
+      if (!site[key]) site[key] = el.textContent.trim();
+    });
+    try {
+      applySite(await fetchJSON('/api/site'));
+    } catch (e) {
+      /* the built-in values stand */
+    }
+  }
+
+  window.MERKEL = { $, $$, esc, fetchJSON, reduceMotion, projectCard, observeReveals, FALLBACK_PROJECTS, site };
 
   /* Nav, scroll progress, underlay parallax, chapter rail ----------------- */
   const nav = $('#nav');
@@ -302,14 +339,15 @@
         if (res.ok) { form.reset(); statusEl.className = 'form-status ok'; statusEl.textContent = data.message || 'Thank you. Your enquiry has reached our engineers.'; }
         else if (res.status === 422 && data.fields) { Object.entries(data.fields).forEach(([k, v]) => setErr(k, v)); statusEl.className = 'form-status bad'; statusEl.textContent = 'Please correct the highlighted fields.'; }
         else if (res.status === 429) { statusEl.className = 'form-status bad'; statusEl.textContent = 'Too many attempts. Please wait a moment and try again.'; }
-        else { statusEl.className = 'form-status bad'; statusEl.textContent = data.message || 'Something went wrong. Please email studio@merkelconstructions.com.'; }
-      } catch (err) { statusEl.className = 'form-status bad'; statusEl.textContent = 'Network error. Please email studio@merkelconstructions.com.'; }
+        else { statusEl.className = 'form-status bad'; statusEl.textContent = data.message || `Something went wrong. Please email ${site.email}.`; }
+      } catch (err) { statusEl.className = 'form-status bad'; statusEl.textContent = `Network error. Please email ${site.email}.`; }
       finally { btn.disabled = false; btn.innerHTML = original; }
     });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
+    hydrateSite();
     buildRail();
     stageChapters();
     setupSlides();

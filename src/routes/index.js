@@ -10,6 +10,7 @@ const system = require('../controllers/systemController');
 
 router.get('/health', system.health);
 router.get('/public-config', system.publicConfig);
+router.get('/site', require('../controllers/siteController').get);
 
 router.use('/services', require('./services'));
 router.use('/projects', require('./projects'));

@@ -54,12 +54,16 @@
     tab: 'enquiries',
     enquiries: [],
     applications: [],
+    applicationsSource: 'applications',
     sessions: [],
     threads: [],
     active: { enquiries: null, applications: null, chat: null, email: null },
     messages: [],
     mail: [],
     emailAvailable: true,
+    settings: null,
+    effective: null,
+    settingsEditable: true,
   };
 
   const STATUSES = [
@@ -73,8 +77,41 @@
   const loadEnquiries = () =>
     client.select('enquiries', 'select=*&order=created_at.desc&limit=200');
 
-  const loadApplications = () =>
-    client.select('applications', 'select=*&order=created_at.desc&limit=200');
+  // Applications filed as enquiries carry this in their discipline field.
+  const APPLICATION_MARKER = 'Application: ';
+
+  /**
+   * Applications, from wherever they landed.
+   *
+   * A database created before the applications table existed takes them in
+   * `enquiries` instead, so read that back rather than showing an empty tab
+   * and losing sight of people who applied.
+   */
+  async function loadApplications() {
+    try {
+      const rows = await client.select('applications', 'select=*&order=created_at.desc&limit=200');
+      state.applicationsSource = 'applications';
+      return rows;
+    } catch (err) {
+      const rows = await client.select(
+        'enquiries',
+        `select=*&service=like.${encodeURIComponent(APPLICATION_MARKER)}*&order=created_at.desc&limit=200`
+      );
+      state.applicationsSource = 'enquiries';
+      return rows.map((row) => ({
+        id: row.id,
+        created_at: row.created_at,
+        name: row.name,
+        email: row.email,
+        phone: null,
+        role_title: String(row.service || '').slice(APPLICATION_MARKER.length) || 'Speculative application',
+        portfolio: row.company,
+        experience: null,
+        message: row.message,
+        status: row.status,
+      }));
+    }
+  }
 
   const loadSessions = () =>
     client.select('chat_sessions', 'select=*&order=last_message_at.desc&limit=200');
@@ -240,6 +277,12 @@
       'No applications yet. The apply form on /careers opens them.'
     );
 
+    if (state.applicationsSource === 'enquiries' && state.applications.length) {
+      const note = el('li', 'admin-empty',
+        'These arrived before this database had an applications table, so they are filed as enquiries. Run supabase/migrations/0001_init.sql to give them their own table; nothing already here is lost.');
+      list.appendChild(note);
+    }
+
     const detail = $('application-detail');
     const row = state.applications.find((r) => r.id === state.active.applications);
     detail.textContent = '';
@@ -253,7 +296,7 @@
     head.appendChild(
       statusPicker(row.status, async (status) => {
         try {
-          await client.update('applications', `id=eq.${row.id}`, { status });
+          await client.update(state.applicationsSource, `id=eq.${row.id}`, { status });
           row.status = status;
           renderApplications();
           tallies();
@@ -473,6 +516,101 @@
     detail.appendChild(thread);
   }
 
+  /* ---------------------------------------------------------- settings --- */
+
+  const SETTINGS_FIELDS = [
+    ['address', 'Studio address', 'text'],
+    ['email', 'Email', 'email'],
+    ['phone', 'Telephone', 'tel'],
+    ['hours', 'Opening hours', 'text'],
+  ];
+
+  async function loadSettings() {
+    // What the site is actually serving right now, stored value or built-in.
+    try {
+      state.effective = await (await fetch('/api/site', { headers: { Accept: 'application/json' } })).json();
+    } catch (err) {
+      state.effective = {};
+    }
+    try {
+      const rows = await client.select('site_settings', 'select=*&id=eq.default&limit=1');
+      state.settingsEditable = true;
+      state.settings = rows[0] || {};
+    } catch (err) {
+      // The table arrives with 0001_init.sql. Without it the site keeps the
+      // details it was built with; they just cannot be changed from here.
+      state.settingsEditable = false;
+      state.settings = null;
+    }
+  }
+
+  function renderSettings() {
+    const panel = $('settings-panel');
+    panel.textContent = '';
+
+    const head = el('div', 'admin-detail-head');
+    head.appendChild(el('h2', null, 'Contact details'));
+    panel.appendChild(head);
+    panel.appendChild(el('p', 'admin-sub',
+      'These appear in the footer, on the contact page and in the enquiry section of the home page. A change here reaches every page on its next load. No redeploy.'));
+
+    if (!state.settingsEditable) {
+      panel.appendChild(el('p', 'admin-empty',
+        'This database has no site_settings table, so the details stay as the site was built with. Run supabase/migrations/0001_init.sql in the Supabase SQL Editor and reload this page to edit them here.'));
+      return;
+    }
+
+    const form = el('form', 'admin-settings-form');
+    const inputs = {};
+    SETTINGS_FIELDS.forEach(([key, label, type]) => {
+      const field = el('div', 'field');
+      const id = `setting-${key}`;
+      const lab = el('label', null, label);
+      lab.htmlFor = id;
+      const input = document.createElement('input');
+      input.type = type;
+      input.id = id;
+      input.name = key;
+      // Show what is live, whether it came from this table or the build.
+      input.value = (state.settings && state.settings[key]) || (state.effective && state.effective[key]) || '';
+      input.placeholder = 'Leave blank to use the value the site was built with';
+      inputs[key] = input;
+      field.appendChild(lab);
+      field.appendChild(input);
+      form.appendChild(field);
+    });
+
+    const status = el('div', 'form-status');
+    const save = el('button', 'btn', 'Save changes');
+    save.type = 'submit';
+    form.appendChild(status);
+    form.appendChild(save);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      save.disabled = true;
+      status.className = 'form-status';
+      status.textContent = '';
+      const patch = { updated_at: new Date().toISOString() };
+      SETTINGS_FIELDS.forEach(([key]) => {
+        patch[key] = inputs[key].value.trim() || null;
+      });
+      try {
+        await client.update('site_settings', 'id=eq.default', patch);
+        state.settings = Object.assign({}, state.settings, patch);
+        status.className = 'form-status ok';
+        status.textContent = 'Saved. Every page picks these up on its next load.';
+      } catch (err) {
+        status.className = 'form-status bad';
+        status.textContent = err.message;
+      } finally {
+        save.disabled = false;
+      }
+    });
+
+    panel.appendChild(form);
+  }
+
   function render() {
     document.querySelectorAll('[data-panel]').forEach((panel) => {
       panel.hidden = panel.getAttribute('data-panel') !== state.tab;
@@ -486,6 +624,7 @@
     if (state.tab === 'applications') renderApplications();
     if (state.tab === 'chat') renderChat();
     if (state.tab === 'email') renderEmail();
+    if (state.tab === 'settings') renderSettings();
     tallies();
   }
 
@@ -494,7 +633,9 @@
   async function refreshLists() {
     try {
       const [enquiries, sessions] = await Promise.all([loadEnquiries(), loadSessions()]);
-      state.enquiries = enquiries || [];
+      state.enquiries = (enquiries || []).filter(
+        (row) => !String(row.service || '').startsWith(APPLICATION_MARKER)
+      );
       state.sessions = sessions || [];
       try {
         state.applications = (await loadApplications()) || [];
@@ -512,6 +653,7 @@
           state.threads = [];
         }
       }
+      if (state.settings === null && state.settingsEditable) await loadSettings();
       alertBar('');
     } catch (err) {
       alertBar(err.message);
@@ -607,15 +749,48 @@
     await refreshThread();
   }
 
+  /** Say which value is missing and what the server would accept for it. */
+  function explainUnconfigured(cfg, reason) {
+    const target = $('admin-missing');
+    if (!target) return show('unconfigured');
+    target.textContent = '';
+
+    if (reason) {
+      target.appendChild(el('p', 'admin-note', reason));
+      return show('unconfigured');
+    }
+
+    (cfg.missing || []).forEach((item) => {
+      const p = el('p', 'admin-note');
+      p.appendChild(document.createTextNode(
+        item.value === 'supabaseUrl'
+          ? 'The project URL is not set on this deployment. Accepted names: '
+          : 'The browser key is not set on this deployment. Accepted names: '
+      ));
+      (item.accepts || []).forEach((name, i) => {
+        if (i) p.appendChild(document.createTextNode(', '));
+        p.appendChild(el('code', null, name));
+      });
+      p.appendChild(document.createTextNode('.'));
+      target.appendChild(p);
+    });
+
+    if (!(cfg.missing || []).length) {
+      target.appendChild(el('p', 'admin-note', 'The server did not return a Supabase URL or browser key.'));
+    }
+    return show('unconfigured');
+  }
+
   async function boot() {
     let cfg = {};
     try {
       const res = await fetch('/api/public-config', { headers: { Accept: 'application/json' } });
+      if (!res.ok) return explainUnconfigured(cfg, `The API answered ${res.status} for /api/public-config.`);
       cfg = await res.json();
     } catch (err) {
-      return show('unconfigured');
+      return explainUnconfigured(cfg, 'The API could not be reached from this page.');
     }
-    if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return show('unconfigured');
+    if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return explainUnconfigured(cfg);
 
     client = window.MerkelSupabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
       // Its own key, so a member of staff signing in here does not displace

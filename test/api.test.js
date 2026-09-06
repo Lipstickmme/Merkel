@@ -234,6 +234,129 @@ async function withApp(env, fn) {
     sb.close();
   }
 
+  /* ---- 7. the browser key, under every name Supabase has given it ---- */
+  {
+    const sb = await mock.start({});
+    const url = `http://127.0.0.1:${sb.address().port}`;
+
+    // A project created under the newer API keys scheme: the Vercel
+    // integration injects a publishable key, not an anon key. Missing this
+    // name is why /admin can report "backend not connected" on a deployment
+    // that is in fact configured.
+    for (const name of [
+      'SUPABASE_ANON_KEY',
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+      'VITE_SUPABASE_ANON_KEY',
+      'SUPABASE_PUBLISHABLE_KEY',
+      'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
+      'VITE_SUPABASE_PUBLISHABLE_KEY',
+    ]) {
+      ['SUPABASE_ANON_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY',
+       'SUPABASE_PUBLISHABLE_KEY', 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'VITE_SUPABASE_PUBLISHABLE_KEY',
+      ].forEach((k) => delete process.env[k]);
+
+      await withApp(
+        { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, [name]: 'browser-key-value' },
+        async (base) => {
+          const cfg = await req(base, 'GET', '/api/public-config');
+          assert.strictEqual(cfg.body.supabaseAnonKey, 'browser-key-value', `${name} must be accepted`);
+          assert.strictEqual(cfg.body.chatEnabled, true, `${name} must enable the browser half`);
+          assert.deepStrictEqual(cfg.body.missing, [], `${name} leaves nothing missing`);
+        }
+      );
+    }
+    console.log('  ok  every name Supabase uses for the browser key is accepted');
+
+    ['SUPABASE_ANON_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY',
+     'SUPABASE_PUBLISHABLE_KEY', 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'VITE_SUPABASE_PUBLISHABLE_KEY',
+    ].forEach((k) => delete process.env[k]);
+
+    await withApp(
+      { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY },
+      async (base) => {
+        const cfg = await req(base, 'GET', '/api/public-config');
+        assert.strictEqual(cfg.body.chatEnabled, false);
+        assert.strictEqual(cfg.body.missing.length, 1);
+        assert.strictEqual(cfg.body.missing[0].value, 'supabaseAnonKey');
+        assert.ok(cfg.body.missing[0].accepts.includes('SUPABASE_PUBLISHABLE_KEY'));
+        // Names only. A diagnosis must never hand out a key.
+        assert.ok(!JSON.stringify(cfg.body.missing).includes(mock.SERVICE_KEY));
+        console.log('  ok  a missing browser key is named, with the env names that would satisfy it');
+
+        const health = await req(base, 'GET', '/api/health');
+        assert.ok(
+          health.body.warnings.some((w) => /SUPABASE_PUBLISHABLE_KEY/.test(w)),
+          JSON.stringify(health.body.warnings)
+        );
+        console.log('  ok  health says the same thing');
+      }
+    );
+    sb.close();
+  }
+
+  /* ---- 8. an application never vanishes, and the details are editable ---- */
+  {
+    const sb = await mock.start({});
+    const url = `http://127.0.0.1:${sb.address().port}`;
+
+    // A database created before the applications table existed.
+    delete sb.db.applications;
+    await withApp(
+      { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, SUPABASE_ANON_KEY: mock.ANON_KEY },
+      async (base) => {
+        const res = await req(base, 'POST', '/api/applications', {
+          name: 'Sanne Vermeer', email: 'sanne@example.nl', roleId: 'bridge-engineer',
+          phone: '+31 6 1234 5678', experience: '4 to 8',
+          message: 'Six years on bridges, mostly cable stayed and one lock gate.',
+        });
+        assert.strictEqual(res.status, 201);
+        assert.strictEqual(res.body.stored, 'enquiries', 'it must land somewhere');
+        assert.strictEqual(sb.db.enquiries.rows.length, 1);
+        const filed = sb.db.enquiries.rows[0];
+        assert.match(filed.service, /^Application: /);
+        assert.match(filed.message, /Six years on bridges/);
+        assert.match(filed.message, /\+31 6 1234 5678/, 'the phone survives the fallback');
+        console.log('  ok  an application is filed as an enquiry when its own table is missing');
+      }
+    );
+    sb.close();
+  }
+
+  {
+    const sb = await mock.start({});
+    const url = `http://127.0.0.1:${sb.address().port}`;
+    await withApp(
+      { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, SUPABASE_ANON_KEY: mock.ANON_KEY },
+      async (base) => {
+        const defaults = require(ROOT + '/src/data/site.json');
+
+        const before = await req(base, 'GET', '/api/site');
+        assert.strictEqual(before.body.email, defaults.email, 'an empty row falls back to the built-in values');
+        assert.strictEqual(before.body.source, 'database');
+
+        sb.db.site_settings.rows[0].email = 'desk@example.com';
+        sb.db.site_settings.rows[0].phone = '+31 (0)20 111 2222';
+        const after = await req(base, 'GET', '/api/site');
+        assert.strictEqual(after.body.email, 'desk@example.com');
+        assert.strictEqual(after.body.phone, '+31 (0)20 111 2222');
+        assert.strictEqual(after.body.address, defaults.address, 'a field left blank keeps the built-in value');
+        console.log('  ok  edited contact details are served, blanks fall back');
+      }
+    );
+    // And with no table at all the site still knows its own address.
+    delete sb.db.site_settings;
+    await withApp(
+      { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, SUPABASE_ANON_KEY: mock.ANON_KEY },
+      async (base) => {
+        const res = await req(base, 'GET', '/api/site');
+        assert.strictEqual(res.body.source, 'defaults');
+        assert.strictEqual(res.body.email, require(ROOT + '/src/data/site.json').email);
+        console.log('  ok  without the table the built-in details stand');
+      }
+    );
+    sb.close();
+  }
+
   console.log('\nserver suite passed');
   process.exit(0);
 })().catch((err) => {
