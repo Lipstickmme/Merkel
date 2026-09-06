@@ -18,7 +18,7 @@
   }
 
   function render(project, next) {
-    document.title = project.name + ' | Merkel Engineering';
+    document.title = project.name + ' | Merkel Constructions';
     const facts = (project.facts || []).map((f) => `<div class="fact"><span class="k">${esc(f.k)}</span><span class="v">${esc(f.v)}</span></div>`).join('');
     const services = (project.services || []).map((s) => `<span>${esc(s)}</span>`).join('');
     root.innerHTML = `

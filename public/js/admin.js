@@ -53,9 +53,10 @@
   const state = {
     tab: 'enquiries',
     enquiries: [],
+    applications: [],
     sessions: [],
     threads: [],
-    active: { enquiries: null, chat: null, email: null },
+    active: { enquiries: null, applications: null, chat: null, email: null },
     messages: [],
     mail: [],
     emailAvailable: true,
@@ -71,6 +72,9 @@
 
   const loadEnquiries = () =>
     client.select('enquiries', 'select=*&order=created_at.desc&limit=200');
+
+  const loadApplications = () =>
+    client.select('applications', 'select=*&order=created_at.desc&limit=200');
 
   const loadSessions = () =>
     client.select('chat_sessions', 'select=*&order=last_message_at.desc&limit=200');
@@ -95,6 +99,7 @@
   function tallies() {
     const counts = {
       enquiries: state.enquiries.filter((r) => r.status === 'new').length,
+      applications: state.applications.filter((r) => r.status === 'new').length,
       chat: state.sessions.filter((r) => r.status === 'new').length,
       email: state.threads.filter((r) => r.status === 'new').length,
     };
@@ -205,9 +210,80 @@
       }
       facts.appendChild(dd);
     };
-    fact('Email', row.email, `mailto:${row.email}?subject=${encodeURIComponent('Re: your enquiry to Merkel Engineering')}`);
+    fact('Email', row.email, `mailto:${row.email}?subject=${encodeURIComponent('Re: your enquiry to Merkel Constructions')}`);
     fact('Company', row.company);
     fact('Discipline', row.service);
+    fact('Received', when(row.created_at));
+    detail.appendChild(facts);
+
+    detail.appendChild(el('p', 'admin-message', row.message));
+  }
+
+  function renderApplications() {
+    const list = $('application-list');
+    fill(
+      list,
+      state.applications.map((row) =>
+        listRow({
+          id: row.id,
+          title: row.name || 'Applicant',
+          sub: row.role_title || 'Speculative application',
+          meta: when(row.created_at),
+          status: row.status,
+          activeId: state.active.applications,
+          onPick: () => {
+            state.active.applications = row.id;
+            renderApplications();
+          },
+        })
+      ),
+      'No applications yet. The apply form on /careers opens them.'
+    );
+
+    const detail = $('application-detail');
+    const row = state.applications.find((r) => r.id === state.active.applications);
+    detail.textContent = '';
+    if (!row) {
+      detail.appendChild(el('p', 'admin-empty', 'Pick an application to read it.'));
+      return;
+    }
+
+    const head = el('div', 'admin-detail-head');
+    head.appendChild(el('h2', null, row.name || 'Applicant'));
+    head.appendChild(
+      statusPicker(row.status, async (status) => {
+        try {
+          await client.update('applications', `id=eq.${row.id}`, { status });
+          row.status = status;
+          renderApplications();
+          tallies();
+        } catch (err) {
+          alertBar(err.message);
+        }
+      })
+    );
+    detail.appendChild(head);
+
+    const facts = el('dl', 'admin-facts');
+    const fact = (k, v, href) => {
+      if (!v) return;
+      facts.appendChild(el('dt', null, k));
+      const dd = el('dd');
+      if (href) {
+        const a = el('a', null, v);
+        a.href = href;
+        if (/^https?:/i.test(href)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        dd.appendChild(a);
+      } else {
+        dd.textContent = v;
+      }
+      facts.appendChild(dd);
+    };
+    fact('Role', row.role_title);
+    fact('Email', row.email, `mailto:${row.email}?subject=${encodeURIComponent(`Your application: ${row.role_title || 'Merkel Constructions'}`)}`);
+    fact('Phone', row.phone, row.phone ? `tel:${row.phone}` : null);
+    fact('Experience', row.experience);
+    fact('Portfolio', row.portfolio, row.portfolio);
     fact('Received', when(row.created_at));
     detail.appendChild(facts);
 
@@ -407,6 +483,7 @@
       tab.setAttribute('aria-selected', String(on));
     });
     if (state.tab === 'enquiries') renderEnquiries();
+    if (state.tab === 'applications') renderApplications();
     if (state.tab === 'chat') renderChat();
     if (state.tab === 'email') renderEmail();
     tallies();
@@ -419,6 +496,13 @@
       const [enquiries, sessions] = await Promise.all([loadEnquiries(), loadSessions()]);
       state.enquiries = enquiries || [];
       state.sessions = sessions || [];
+      try {
+        state.applications = (await loadApplications()) || [];
+      } catch (err) {
+        // The table arrives with 0001_init.sql; a database built before it
+        // simply has no applications rather than a broken dashboard.
+        state.applications = [];
+      }
       if (state.emailAvailable) {
         try {
           state.threads = (await loadThreads()) || [];

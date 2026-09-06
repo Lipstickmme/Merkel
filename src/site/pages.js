@@ -70,7 +70,7 @@ const capabilitiesSection = chapter({
         <h2>Four disciplines, one coordinated model.</h2>
         <p>Structure, ground, systems and data are coordinated in one model, so nothing is lost in the gap between two sets of drawings.</p>
       </div>
-      <div class="services-grid" id="services-grid" data-reveal></div>`,
+      <div class="services-grid" id="services-grid"></div>`,
 });
 
 const metricsSection = chapter({
@@ -124,7 +124,7 @@ const workSection = chapter({
         </div>
         <a href="/projects" class="btn ghost">All projects <span class="arw">&rsaquo;</span></a>
       </div>
-      <div class="cards-grid" id="featured-projects" data-reveal></div>`,
+      <div class="cards-grid" id="featured-projects"></div>`,
 });
 
 const contactSection = chapter({
@@ -139,7 +139,7 @@ const contactSection = chapter({
           <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
           <div class="contact-detail">
             <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
-            <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a></div></div>
+            <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a></div></div>
             <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
           </div>
         </div>
@@ -163,7 +163,7 @@ const projectsContent = `
   <section class="section-pad">
     <div class="wrap">
       <div class="proj-filters" id="proj-filters" data-reveal></div>
-      <div class="cards-grid" id="projects-grid" data-reveal></div>
+      <div class="cards-grid" id="projects-grid"></div>
     </div>
   </section>`;
 
@@ -172,6 +172,67 @@ const projectContent = `
   <article id="project-detail" class="project-detail" data-loading="true">
     <div class="wrap project-loading">Loading project&hellip;</div>
   </article>`;
+
+/* ---------- Services listing ---------- */
+const servicesContent = `
+  ${pageHeader({ eyebrow: 'What we do', title: 'Services.', sub: 'Eight disciplines under one roof, from the ground investigation to the day the plant runs.', image: images.capabilities })}
+  <section class="section-pad">
+    <div class="wrap">
+      <div class="service-index" id="service-index"></div>
+    </div>
+  </section>`;
+
+/* ---------- Service detail (hydrated by id) ---------- */
+const serviceContent = `
+  <article id="service-detail" class="service-detail" data-loading="true">
+    <div class="wrap project-loading">Loading service&hellip;</div>
+  </article>`;
+
+/* ---------- Apply ---------- */
+const applyContent = `
+  ${pageHeader({ eyebrow: 'Careers', title: 'Apply.', sub: 'One form, read by the people you would work with. We reply to everyone.', image: images.metrics })}
+  <section class="section-pad">
+    <div class="wrap contact-grid">
+      <div class="contact-info" data-reveal>
+        <h2 id="apply-role-title">Speculative application</h2>
+        <p class="contact-lede" id="apply-role-sub">Tell us what you have built and where you want to take it next.</p>
+        <div class="contact-detail" id="apply-role-meta"></div>
+        <div class="contact-note">
+          <p>We read every application ourselves. If your experience does not line up with an open role we will say so, and say what would change that.</p>
+        </div>
+        <a class="link-arrow" href="/careers">All open roles <span class="arw">&rsaquo;</span></a>
+      </div>
+
+      <form id="apply-form" novalidate data-reveal>
+        <div class="field two">
+          <div class="field"><label for="apply-name">Name</label><input type="text" id="apply-name" name="name" autocomplete="name" required /><div class="err" data-err="name"></div></div>
+          <div class="field"><label for="apply-email">Email</label><input type="email" id="apply-email" name="email" autocomplete="email" required /><div class="err" data-err="email"></div></div>
+        </div>
+        <div class="field two">
+          <div class="field"><label for="apply-phone">Phone <span class="opt">(optional)</span></label><input type="tel" id="apply-phone" name="phone" autocomplete="tel" /><div class="err" data-err="phone"></div></div>
+          <div class="field"><label for="apply-experience">Years in practice</label>
+            <select id="apply-experience" name="experience">
+              <option value="">Select</option>
+              <option>Graduate</option>
+              <option>1 to 3</option>
+              <option>4 to 8</option>
+              <option>9 to 15</option>
+              <option>15 or more</option>
+            </select><div class="err" data-err="experience"></div>
+          </div>
+        </div>
+        <div class="field"><label for="apply-role">Role</label>
+          <select id="apply-role" name="roleId"><option value="">Speculative application</option></select>
+          <div class="err" data-err="roleId"></div>
+        </div>
+        <div class="field"><label for="apply-portfolio">Portfolio or profile <span class="opt">(optional)</span></label><input type="url" id="apply-portfolio" name="portfolio" placeholder="https://" /><div class="err" data-err="portfolio"></div></div>
+        <div class="field"><label for="apply-message">What have you worked on?</label><textarea id="apply-message" name="message" placeholder="The projects you would want us to ask about, and what you did on them." required></textarea><div class="err" data-err="message"></div></div>
+        <div class="honeypot" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <div class="form-status" id="apply-status" role="status" aria-live="polite"></div>
+        <button type="submit" class="btn" id="apply-submit">Send application <span class="arw">&rsaquo;</span></button>
+      </form>
+    </div>
+  </section>`;
 
 /* ---------- Careers ---------- */
 const careersContent = `
@@ -192,7 +253,10 @@ const careersContent = `
         <h2>Where we are hiring.</h2>
         <p>If your discipline is not listed, write to us anyway and say what you would want to work on.</p>
       </div>
-      <div class="roles" id="roles" data-reveal></div>
+      <div class="roles" id="roles"></div>
+      <div class="roles-cta" data-reveal>
+        <a href="/apply" class="btn ghost">Send a speculative application <span class="arw">&rsaquo;</span></a>
+      </div>
     </div>
   </section>`;
 
@@ -204,7 +268,7 @@ const contactContent = `
       <div class="contact-info" data-reveal>
         <div class="contact-detail">
           <div class="row"><div class="k">Studio</div><div class="val">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
-          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a></div></div>
+          <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a></div></div>
           <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+31102400198">+31 (0)10 240 0198</a></div></div>
           <div class="row"><div class="k">Hours</div><div class="val">Monday to Friday, 09:00 to 18:00 CET</div></div>
         </div>
@@ -250,7 +314,7 @@ const adminContent = `
     <div class="admin-shell" id="admin-shell" hidden>
       <header class="admin-bar">
         <a class="admin-brand" href="/">
-          <img src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Engineering" width="1048" height="202" />
+          <img src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Constructions" width="1048" height="202" />
           <span>Studio desk</span>
         </a>
         <div class="admin-bar-end">
@@ -261,6 +325,7 @@ const adminContent = `
 
       <nav class="admin-tabs" id="admin-tabs" role="tablist" aria-label="Sections">
         <button type="button" class="admin-tab is-active" role="tab" data-tab="enquiries" aria-selected="true">Enquiries<span class="tally" data-tally="enquiries">0</span></button>
+        <button type="button" class="admin-tab" role="tab" data-tab="applications" aria-selected="false">Applications<span class="tally" data-tally="applications">0</span></button>
         <button type="button" class="admin-tab" role="tab" data-tab="chat" aria-selected="false">Live chat<span class="tally" data-tally="chat">0</span></button>
         <button type="button" class="admin-tab" role="tab" data-tab="email" aria-selected="false">Email<span class="tally" data-tally="email">0</span></button>
       </nav>
@@ -272,6 +337,13 @@ const adminContent = `
           <div class="admin-split">
             <ul class="admin-list" id="enquiry-list"><li class="admin-empty">Loading&hellip;</li></ul>
             <div class="admin-detail" id="enquiry-detail"><p class="admin-empty">Pick an enquiry to read it.</p></div>
+          </div>
+        </section>
+
+        <section class="admin-panel" data-panel="applications" hidden>
+          <div class="admin-split">
+            <ul class="admin-list" id="application-list"><li class="admin-empty">Loading&hellip;</li></ul>
+            <div class="admin-detail" id="application-detail"><p class="admin-empty">Pick an application to read it.</p></div>
           </div>
         </section>
 
@@ -304,14 +376,17 @@ const notFoundContent = `
   </section>`;
 
 module.exports = [
-  { file: 'index.html', active: '', bodyClass: 'page-home', title: 'Merkel Engineering', description: 'Merkel Engineering is a multidisciplinary consultancy delivering structural, civil, mechanical and digital engineering for buildings and infrastructure.', content: indexContent },
-  { file: 'projects.html', active: 'projects', bodyClass: 'page-projects', title: 'Projects | Merkel Engineering', description: 'Selected engineering projects: towers, bridges, industrial plant and transit.', content: projectsContent, extraScripts: ['/js/projects.js'] },
-  { file: 'project.html', active: 'projects', bodyClass: 'page-project', title: 'Project | Merkel Engineering', description: 'Project detail.', content: projectContent, extraScripts: ['/js/project.js'] },
-  { file: 'careers.html', active: 'careers', bodyClass: 'page-careers', title: 'Careers | Merkel Engineering', description: 'Open engineering roles at Merkel Engineering across structural, civil, mechanical and digital teams.', content: careersContent, extraScripts: ['/js/careers.js'] },
-  { file: 'contact.html', active: 'contact', bodyClass: 'page-contact', title: 'Contact us | Merkel Engineering', description: 'Contact Merkel Engineering to start a project. A principal engineer replies within two working days.', content: contactContent },
+  { file: 'index.html', active: '', bodyClass: 'page-home', title: 'Merkel Constructions', description: 'Merkel Constructions is a multidisciplinary consultancy delivering structural, civil, mechanical and digital engineering for buildings and infrastructure.', content: indexContent },
+  { file: 'projects.html', active: 'projects', bodyClass: 'page-projects', title: 'Projects | Merkel Constructions', description: 'Selected engineering projects: towers, bridges, industrial plant and transit.', content: projectsContent, extraScripts: ['/js/projects.js'] },
+  { file: 'project.html', active: 'projects', bodyClass: 'page-project', title: 'Project | Merkel Constructions', description: 'Project detail.', content: projectContent, extraScripts: ['/js/project.js'] },
+  { file: 'services.html', active: 'services', bodyClass: 'page-services', title: 'Services | Merkel Constructions', description: 'Structural, civil, mechanical, digital, steel, groundworks, plant construction and commissioning.', content: servicesContent, extraScripts: ['/js/services.js'] },
+  { file: 'service.html', active: 'services', bodyClass: 'page-service', title: 'Service | Merkel Constructions', description: 'Service detail.', content: serviceContent, extraScripts: ['/js/service.js'] },
+  { file: 'apply.html', active: 'careers', bodyClass: 'page-apply', title: 'Apply | Merkel Constructions', description: 'Apply to Merkel Constructions. One form, read by the people you would work with.', content: applyContent, extraScripts: ['/js/apply.js'] },
+  { file: 'careers.html', active: 'careers', bodyClass: 'page-careers', title: 'Careers | Merkel Constructions', description: 'Open engineering roles at Merkel Constructions across structural, civil, mechanical and digital teams.', content: careersContent, extraScripts: ['/js/careers.js'] },
+  { file: 'contact.html', active: 'contact', bodyClass: 'page-contact', title: 'Contact us | Merkel Constructions', description: 'Contact Merkel Constructions to start a project. A principal engineer replies within two working days.', content: contactContent },
   { file: 'admin.html', active: '', bodyClass: 'page-admin', bare: true, noindex: true,
     styles: ['/css/admin.css'],
-    title: 'Studio desk | Merkel Engineering', description: 'Staff dashboard.',
+    title: 'Studio desk | Merkel Constructions', description: 'Staff dashboard.',
     content: adminContent, extraScripts: ['/js/supabase-lite.js', '/js/admin.js'] },
-  { file: '404.html', active: '', bodyClass: 'page-404', title: 'Page not found | Merkel Engineering', description: 'Page not found.', content: notFoundContent },
+  { file: '404.html', active: '', bodyClass: 'page-404', title: 'Page not found | Merkel Constructions', description: 'Page not found.', content: notFoundContent },
 ];

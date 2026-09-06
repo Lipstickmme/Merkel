@@ -104,6 +104,24 @@ function enquiry(record) {
   return notify(`New enquiry from ${record.name}`, lines, record, { replyTo: record.email });
 }
 
+/** A job application from /careers. Replies go straight back to the applicant. */
+function application(record) {
+  const lines = [
+    `Role:       ${record.roleTitle}`,
+    `Name:       ${record.name}`,
+    `Email:      ${record.email}`,
+    `Phone:      ${record.phone || '-'}`,
+    `Experience: ${record.experience || '-'}`,
+    `Portfolio:  ${record.portfolio || '-'}`,
+    '',
+    record.message,
+    '',
+    `Received:   ${record.receivedAt}`,
+    `Reference:  ${record.id}`,
+  ].join('\n');
+  return notify(`Application: ${record.roleTitle}`, lines, record, { replyTo: record.email });
+}
+
 /** A visitor message from the live chat. Set CHAT_NOTIFY=off to silence. */
 function chatMessage(sessionId, text) {
   if (String(process.env.CHAT_NOTIFY || 'on').toLowerCase() === 'off') return Promise.resolve(false);
@@ -111,4 +129,4 @@ function chatMessage(sessionId, text) {
   return notify('New live chat message', lines, { sessionId, text });
 }
 
-module.exports = { notify, sendEmail, enquiry, chatMessage, defaultTo, defaultFrom };
+module.exports = { notify, sendEmail, enquiry, application, chatMessage, defaultTo, defaultFrom };

@@ -1,5 +1,5 @@
 /* =========================================================================
-   Merkel Engineering
+   Merkel Constructions
    Light and precise. Off-white ground, ink type, one signal blue, monospace
    readouts, and site photography carried at full strength: where words have
    to sit over a picture the ground fades in behind them rather than a dark
@@ -84,16 +84,10 @@ section { position: relative; z-index: 2; }
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--accent-2);
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-.eyebrow::before {
-  content: "";
-  width: 26px; height: 1px;
-  background: var(--accent-2);
   display: inline-block;
 }
+/* No leading rule. A short dash before a label is the house style of every
+   generated page on the internet, and the eyebrow reads better without it. */
 
 h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; line-height: 1.02; margin: 0; }
 
@@ -349,7 +343,16 @@ form { display: grid; gap: 20px; }
 .field.invalid input, .field.invalid textarea, .field.invalid select { border-color: #ff4d4d; }
 .field .err { color: #ff7a7a; font-size: 12px; font-family: var(--font-mono); min-height: 14px; }
 .field.two { grid-template-columns: 1fr 1fr; gap: 20px; display: grid; }
-.honeypot { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+.honeypot {
+  /* Hidden without leaving the page, so it cannot widen the document the way
+     an off-screen negative offset does. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .form-status { font-family: var(--font-mono); font-size: 13px; padding: 14px 16px; border: 1px solid var(--line); display: none; }
 .form-status.ok { display: block; border-color: var(--accent-2); color: var(--ink); }
 .form-status.bad { display: block; border-color: #ff4d4d; color: #ff9b9b; }
@@ -390,19 +393,11 @@ h1[data-reveal], h2[data-reveal],
 h1[data-reveal].in, h2[data-reveal].in,
 [data-reveal].in h1, [data-reveal].in h2 { transform: none; }
 
-/* The rule beside an eyebrow draws itself in. */
-.eyebrow::before {
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform .7s var(--ease-out) 120ms;
-}
-[data-reveal].in .eyebrow::before,
-.eyebrow[data-reveal].in::before { transform: scaleX(1); }
+
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1; transform: none; transition: none; }
   h1[data-reveal], h2[data-reveal],
   [data-reveal] h1, [data-reveal] h2 { transform: none; transition: none; }
-  .eyebrow::before { transform: none; transition: none; }
 }
 
 /* Responsive ------------------------------------------------------------ */
@@ -695,8 +690,8 @@ h1[data-reveal].in, h2[data-reveal].in,
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(130% 100% at 50% 30%, rgb(255 255 255 / 0.86) 0%, rgb(var(--bg-rgb) / 0.93) 55%, rgb(var(--bg-rgb) / 0.96) 100%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.9) 0%, rgb(var(--bg-rgb) / 0.92) 45%, rgb(var(--bg-rgb) / 0.96) 100%);
+    radial-gradient(130% 100% at 50% 30%, rgb(255 255 255 / 0.72) 0%, rgb(var(--bg-rgb) / 0.84) 55%, rgb(var(--bg-rgb) / 0.9) 100%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.78) 0%, rgb(var(--bg-rgb) / 0.84) 45%, rgb(var(--bg-rgb) / 0.9) 100%);
 }
 
 /* =========================================================================
@@ -896,48 +891,58 @@ h1[data-reveal].in, h2[data-reveal].in,
 .hero-readout .cell { padding: 18px var(--gutter); min-width: 0; }
 
 /* Washes for photography ------------------------------------------------
-   The site is light and the photographs run at full strength. Where type has
-   to sit over an image, the ground fades in behind the type rather than a
-   dark sheet being laid over the picture: the left of a section reads as page,
-   the right reads as photograph, and the two meet in the middle. */
+   The photographs carry the page. A wash exists only where words actually
+   sit, and it falls away quickly, so the left of a section reads as page and
+   the right is the picture at full strength. */
 
 .chapter-scrim {
   background:
-    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0.97) 34%, rgb(var(--bg-rgb) / 0.72) 56%, rgb(var(--bg-rgb) / 0.06) 100%),
-    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.6) 0%, rgb(var(--bg-rgb) / 0.08) 34%, rgb(var(--bg-rgb) / 0.5) 100%);
+    linear-gradient(90deg,
+      rgb(var(--bg-rgb) / 0.96) 0%,
+      rgb(var(--bg-rgb) / 0.88) 26%,
+      rgb(var(--bg-rgb) / 0.42) 52%,
+      rgb(var(--bg-rgb) / 0.04) 78%,
+      rgb(var(--bg-rgb) / 0) 100%),
+    linear-gradient(180deg,
+      rgb(var(--bg-rgb) / 0.34) 0%,
+      rgb(var(--bg-rgb) / 0) 26%,
+      rgb(var(--bg-rgb) / 0) 74%,
+      rgb(var(--bg-rgb) / 0.3) 100%);
 }
 .chapter.is-centred .chapter-scrim {
   background:
-    radial-gradient(78% 68% at 50% 50%, rgb(var(--bg-rgb) / 0.95) 0%, rgb(var(--bg-rgb) / 0.82) 62%, rgb(var(--bg-rgb) / 0.5) 100%),
-    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.7) 0%, rgb(var(--bg-rgb) / 0.35) 45%, rgb(var(--bg-rgb) / 0.75) 100%);
+    radial-gradient(72% 62% at 50% 50%, rgb(var(--bg-rgb) / 0.9) 0%, rgb(var(--bg-rgb) / 0.62) 58%, rgb(var(--bg-rgb) / 0.14) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.4) 0%, rgb(var(--bg-rgb) / 0.1) 45%, rgb(var(--bg-rgb) / 0.42) 100%);
 }
 
 .hero-scrim {
   background:
-    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0.96) 30%, rgb(var(--bg-rgb) / 0.66) 54%, rgb(var(--bg-rgb) / 0.04) 100%),
-    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.55) 0%, rgb(var(--bg-rgb) / 0.06) 36%, rgb(var(--bg-rgb) / 0.45) 100%);
+    linear-gradient(90deg,
+      rgb(var(--bg-rgb) / 0.95) 0%,
+      rgb(var(--bg-rgb) / 0.84) 24%,
+      rgb(var(--bg-rgb) / 0.34) 50%,
+      rgb(var(--bg-rgb) / 0) 76%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.3) 0%, rgb(var(--bg-rgb) / 0) 28%, rgb(var(--bg-rgb) / 0.26) 100%);
 }
-.hero-slides .slide { background-position: 50% 60%; }
+.hero-slides .slide { background-position: 50% 58%; }
 
 .page-header-media { background-position: 50% 58%; }
 .page-header::after {
   background:
-    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0.95) 32%, rgb(var(--bg-rgb) / 0.6) 60%, rgb(var(--bg-rgb) / 0.05) 100%),
-    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.45) 0%, rgb(var(--bg-rgb) / 0.1) 40%, rgb(var(--bg-rgb) / 0.7) 100%);
+    linear-gradient(90deg,
+      rgb(var(--bg-rgb) / 0.95) 0%,
+      rgb(var(--bg-rgb) / 0.84) 26%,
+      rgb(var(--bg-rgb) / 0.34) 54%,
+      rgb(var(--bg-rgb) / 0) 82%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.24) 0%, rgb(var(--bg-rgb) / 0) 36%, rgb(var(--bg-rgb) / 0.55) 100%);
 }
 
-/* Panels over a photograph are solid, so the picture never fights the text
+/* Panels over a photograph stay solid, so the picture never fights the text
    inside them. */
 .chapter .services-grid,
 .chapter .cards-grid .card { background: #ffffff; }
-.chapter.is-centred .stats-grid { background: rgb(255 255 255 / 0.94); }
+.chapter.is-centred .stats-grid { background: rgb(255 255 255 / 0.95); }
 .chapter .contact-grid form { background: #ffffff; box-shadow: 0 24px 60px -30px rgba(20, 22, 26, 0.4); }
-
-/* The rail gets its own lane on wide screens, so an active label never lands
-   on the edge of a panel. */
-@media (min-width: 1101px) {
-  .page-home .wrap { max-width: min(var(--maxw), calc(100vw - 260px)); }
-}
 
 /* Contrast over photography ---------------------------------------------
    The nav and the chapter rail float over whatever the image happens to be
@@ -994,3 +999,278 @@ h1[data-reveal].in, h2[data-reveal].in,
 .service:hover { background: var(--panel); box-shadow: 0 22px 50px -34px rgba(20, 22, 26, 0.55); }
 .btn { box-shadow: 0 10px 24px -16px rgba(31, 79, 168, 0.9); }
 .btn.ghost { box-shadow: none; }
+
+/* Alignment --------------------------------------------------------------
+   Content starts on the same line as the wordmark rather than in a centred
+   column that begins a gutter further in, and the chapter rail keeps a lane
+   of its own on the right. */
+@media (min-width: 1101px) {
+  .wrap {
+    max-width: min(1460px, calc(100vw - var(--gutter) * 2));
+    margin-left: var(--gutter);
+    margin-right: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .page-home .wrap { max-width: min(1460px, calc(100vw - var(--gutter) * 2 - 170px)); }
+}
+
+/* =========================================================================
+   Buttons
+   Glass over whatever is behind them: a translucent pane, a hairline edge, a
+   highlight that sweeps across on hover, and a lift that settles rather than
+   snapping. The primary button keeps the brand blue; the ghost is the pane
+   on its own.
+   ========================================================================= */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.16) 0%, rgb(255 255 255 / 0) 55%),
+    linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.28) inset,
+    0 14px 30px -18px rgb(31 79 168 / 0.85);
+  transition:
+    transform .35s var(--ease-out),
+    box-shadow .35s var(--ease-out),
+    background-color .35s var(--ease-out);
+}
+
+/* The sweep. A single pane of light crossing the face, not a colour change. */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.3) 48%, transparent 66%);
+  transform: translateX(-120%);
+  transition: transform .7s var(--ease-out);
+}
+.btn:hover::before, .btn:focus-visible::before { transform: translateX(120%); }
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.34) inset,
+    0 22px 44px -20px rgb(31 79 168 / 0.9);
+}
+.btn:active { transform: translateY(0); transition-duration: .1s; }
+
+.btn.ghost {
+  background: rgb(255 255 255 / 0.58);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgb(20 22 26 / 0.16);
+  color: var(--ink);
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.7) inset,
+    0 14px 34px -24px rgb(20 22 26 / 0.5);
+}
+.btn.ghost::before { background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.75) 48%, transparent 66%); }
+.btn.ghost:hover {
+  background: rgb(255 255 255 / 0.8);
+  border-color: rgb(20 22 26 / 0.3);
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.85) inset,
+    0 20px 40px -22px rgb(20 22 26 / 0.55);
+}
+
+.nav-cta {
+  border-radius: 4px;
+  background: rgb(255 255 255 / 0.6);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgb(20 22 26 / 0.16);
+  box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.7) inset;
+  transition: transform .3s var(--ease-out), background .3s var(--ease-out), border-color .3s var(--ease-out);
+}
+.nav-cta:hover { transform: translateY(-1px); background: var(--accent); color: var(--accent-ink) !important; border-color: var(--accent); }
+
+.chip, .role .apply, .project-services span {
+  border-radius: 3px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgb(255 255 255 / 0.6);
+  transition: transform .3s var(--ease-out), background .3s var(--ease-out), border-color .3s var(--ease-out), color .3s var(--ease-out);
+}
+.chip:hover, .role .apply:hover { transform: translateY(-1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn:hover, .nav-cta:hover, .chip:hover, .role .apply:hover { transform: none; transition: none; }
+  .btn::before { display: none; }
+}
+
+/* =========================================================================
+   Services index and detail
+   ========================================================================= */
+
+.service-index { display: grid; gap: 14px; }
+
+.service-row {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  padding: 14px;
+  text-decoration: none;
+  color: inherit;
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out), border-color .4s var(--ease-out);
+}
+.service-row:hover {
+  transform: translateY(-3px);
+  border-color: rgb(42 95 196 / 0.4);
+  box-shadow: 0 26px 54px -34px rgb(20 22 26 / 0.55);
+}
+
+.service-row-media { aspect-ratio: 16 / 10; overflow: hidden; border-radius: 3px; background: var(--panel-2); }
+.service-row-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s var(--ease-out); }
+.service-row:hover .service-row-media img { transform: scale(1.06); }
+
+.service-row-body .code { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.14em; color: var(--accent-2); }
+.service-row-body h2 { font-size: clamp(21px, 2.2vw, 30px); margin: 8px 0 10px; }
+.service-row-body p { color: var(--muted); margin: 0 0 14px; max-width: 62ch; font-size: 15px; }
+.service-row-body ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; }
+.service-row-body li {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 5px 9px;
+}
+.service-row-go { font-size: 30px; color: var(--faint); justify-self: end; transition: transform .4s var(--ease-out), color .4s var(--ease-out); }
+.service-row:hover .service-row-go { transform: translateX(5px); color: var(--accent-2); }
+
+.roles-cta { margin-top: 40px; }
+
+/* =========================================================================
+   Mobile
+   Not a narrowed desktop. The nav becomes a full sheet, a chapter puts its
+   photograph up top as a real banner instead of a wash nobody can see at
+   390px, and every control is sized for a thumb.
+   ========================================================================= */
+
+@media (max-width: 720px) {
+  .nav { padding: 14px var(--gutter); }
+  .nav.scrolled { padding: 10px var(--gutter); }
+  .brand-logo { height: 24px; }
+  .nav-cta { display: none; }
+
+  .nav-toggle {
+    width: 46px; height: 44px;
+    border-radius: 4px;
+    background: rgb(255 255 255 / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* A sheet, not a dropdown: the whole screen, big targets, one thumb. */
+  .nav-links.open {
+    position: fixed;
+    inset: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    text-align: left;
+    gap: 4px;
+    padding: 104px var(--gutter) 40px;
+    background: rgb(var(--bg-rgb) / 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 0;
+    z-index: 95;
+    animation: sheet-in .32s var(--ease-out);
+  }
+  .nav-links.open a {
+    font-family: var(--font-display);
+    font-size: 30px;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--ink);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .nav-links.open a:last-child { border-bottom: 0; }
+  /* The bar rides above the sheet, so the wordmark and the close control stay
+     where the thumb left them. */
+  .nav.open-sheet { z-index: 97; background: transparent; backdrop-filter: none; border-bottom: 0; }
+  .nav.open-sheet::before { opacity: 0; }
+  body.nav-open { overflow: hidden; }
+
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+
+  /* Chapters: the picture is a banner, the words sit on the page under it. */
+  /* The hero keeps its clip: its slides are scaled for the Ken Burns move and
+     would widen the document without it. */
+  .chapter:not(.hero) {
+    display: block;
+    min-height: 0;
+    padding: 0 0 clamp(48px, 9vw, 72px);
+    overflow: visible;
+  }
+  .chapter:not(.hero) .chapter-media {
+    position: relative;
+    inset: auto;
+    height: 54vw;
+    min-height: 210px;
+    max-height: 320px;
+    margin-bottom: clamp(26px, 6vw, 40px);
+    transform: none;
+    border-radius: 0;
+  }
+  .chapter:not(.hero) .chapter-media img { transform: none; opacity: 1; }
+  .chapter:not(.hero) .chapter-scrim { display: none; }
+  .chapter-inner { padding: 0 var(--gutter); }
+  #services { padding-top: 0; }
+  .chapter:not(#services) { padding-top: clamp(48px, 9vw, 72px); }
+
+  .section-head h2, .chapter .section-head h2 { font-size: clamp(27px, 8vw, 36px); }
+  .chapter .section-head { margin-bottom: 26px; }
+
+  /* Full-width controls, thumb sized. */
+  .hero-actions { flex-direction: column; align-items: stretch; gap: 10px; }
+  .hero-actions .btn { justify-content: center; padding: 17px 22px; }
+  .section-head.with-action .btn { width: 100%; justify-content: center; }
+  .roles-cta .btn { width: 100%; justify-content: center; }
+  .role .apply { width: 100%; justify-content: center; text-align: center; padding: 15px 20px; }
+
+  .service-row { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 12px; }
+  .service-row-media { aspect-ratio: 16 / 9; }
+  .service-row-go { display: none; }
+
+  .cards-grid { gap: 16px; }
+  .card .thumb { aspect-ratio: 16 / 11; }
+
+  .contact-grid form { padding: 20px 18px; }
+  .field.two { grid-template-columns: 1fr; }
+  input, select, textarea { font-size: 16px; }
+
+  .chat { right: 14px; bottom: 14px; }
+  .chat-toggle { width: 54px; height: 54px; }
+  .chat-panel { height: min(74vh, 540px); }
+
+  /* Centring a hero taller than the screen pushes its head under the bar, so
+     on a phone it starts from the top and the readout takes the floor. */
+  .hero { justify-content: flex-start; padding: 124px 0 0; }
+  .hero-inner { padding-bottom: 30px; }
+  .hero h1 { font-size: clamp(38px, 12vw, 60px); }
+  .hero-dots { margin-top: 22px; }
+
+  .hero-readout { grid-template-columns: repeat(2, 1fr); }
+  .hero-readout .cell { padding: 14px var(--gutter); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .hero-readout .cell:nth-child(2n) { border-right: 0; }
+  .hero-readout .v { font-size: 18px; }
+}
+
+@media (max-width: 359px) {
+  .hero-readout { grid-template-columns: 1fr; }
+  .hero-readout .cell { border-right: 0; }
+}

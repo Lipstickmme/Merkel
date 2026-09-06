@@ -3,10 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Studio desk | Merkel Engineering</title>
+  <title>Studio desk | Merkel Constructions</title>
   <meta name="description" content="Staff dashboard." />
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#fafaf9" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -46,7 +49,7 @@
     <div class="admin-shell" id="admin-shell" hidden>
       <header class="admin-bar">
         <a class="admin-brand" href="/">
-          <img src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Engineering" width="1048" height="202" />
+          <img src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Constructions" width="1048" height="202" />
           <span>Studio desk</span>
         </a>
         <div class="admin-bar-end">
@@ -57,6 +60,7 @@
 
       <nav class="admin-tabs" id="admin-tabs" role="tablist" aria-label="Sections">
         <button type="button" class="admin-tab is-active" role="tab" data-tab="enquiries" aria-selected="true">Enquiries<span class="tally" data-tally="enquiries">0</span></button>
+        <button type="button" class="admin-tab" role="tab" data-tab="applications" aria-selected="false">Applications<span class="tally" data-tally="applications">0</span></button>
         <button type="button" class="admin-tab" role="tab" data-tab="chat" aria-selected="false">Live chat<span class="tally" data-tally="chat">0</span></button>
         <button type="button" class="admin-tab" role="tab" data-tab="email" aria-selected="false">Email<span class="tally" data-tally="email">0</span></button>
       </nav>
@@ -68,6 +72,13 @@
           <div class="admin-split">
             <ul class="admin-list" id="enquiry-list"><li class="admin-empty">Loading&hellip;</li></ul>
             <div class="admin-detail" id="enquiry-detail"><p class="admin-empty">Pick an enquiry to read it.</p></div>
+          </div>
+        </section>
+
+        <section class="admin-panel" data-panel="applications" hidden>
+          <div class="admin-split">
+            <ul class="admin-list" id="application-list"><li class="admin-empty">Loading&hellip;</li></ul>
+            <div class="admin-detail" id="application-detail"><p class="admin-empty">Pick an application to read it.</p></div>
           </div>
         </section>
 

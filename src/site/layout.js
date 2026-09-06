@@ -67,6 +67,9 @@ function head({ title, description, noindex = false, styles = [] }) {
   <title>${title}</title>
   <meta name="description" content="${description}" />${noindex ? '\n  <meta name="robots" content="noindex, nofollow" />' : ''}
   <meta name="theme-color" content="#fafaf9" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -80,12 +83,12 @@ function nav(active = '') {
     `<a href="${href}"${key === active ? ' class="is-active"' : ''}>${label}</a>`;
   return `
   <header class="nav" id="nav">
-    <a class="brand" href="/" aria-label="Merkel Engineering home">
-      <img class="brand-logo" src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Engineering" width="1048" height="202" />
+    <a class="brand" href="/" aria-label="Merkel Constructions home">
+      <img class="brand-logo" src="/assets/brand/merkel-constructions-wordmark.png" alt="Merkel Constructions" width="1048" height="203" />
     </a>
     <nav class="nav-links" id="navlinks">
       ${link('/projects', 'Projects', 'projects')}
-      ${link('/#services', 'Services', 'services')}
+      ${link('/services', 'Services', 'services')}
       ${link('/careers', 'Careers', 'careers')}
       ${link('/contact', 'Contact us', 'contact')}
     </nav>
@@ -101,25 +104,25 @@ function footer() {
   <footer class="footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
-        <img class="brand-logo footer-logo" src="/assets/brand/merkel-wordmark-black.png" alt="Merkel Engineering" width="1048" height="202" />
+        <img class="brand-logo footer-logo" src="/assets/brand/merkel-constructions-wordmark.png" alt="Merkel Constructions" width="1048" height="203" />
         <p>Engineering for buildings and infrastructure.</p>
       </div>
       <div class="col">
         <h5>Company</h5>
         <a href="/projects">Projects</a>
-        <a href="/#services">Services</a>
-        <a href="/#leadership">Leadership</a>
+        <a href="/services">Services</a>
         <a href="/careers">Careers</a>
+        <a href="/apply">Apply</a>
       </div>
       <div class="col">
         <h5>Contact</h5>
-        <a href="mailto:studio@merkel.engineering">studio@merkel.engineering</a>
+        <a href="mailto:studio@merkelconstructions.com">studio@merkelconstructions.com</a>
         <a href="tel:+31102400198">+31 (0)10 240 0198</a>
         <a href="/contact">Contact us</a>
       </div>
     </div>
     <div class="wrap footer-bottom">
-      <span>&copy; ${YEAR} Merkel Engineering B.V.</span>
+      <span>&copy; ${YEAR} Merkel Constructions B.V.</span>
       <span>Rotterdam, Netherlands</span>
     </div>
   </footer>`;

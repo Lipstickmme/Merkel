@@ -69,7 +69,11 @@ app.get('/', sendPage('index.html'));
 app.get('/projects', sendPage('projects.html'));
 // Project detail pages resolve the id client-side from the path.
 app.get('/projects/:id', sendPage('project.html'));
+app.get('/services', sendPage('services.html'));
+// Service detail pages resolve the id client-side from the path.
+app.get('/services/:id', sendPage('service.html'));
 app.get('/careers', sendPage('careers.html'));
+app.get('/apply', sendPage('apply.html'));
 app.get('/contact', sendPage('contact.html'));
 // Staff dashboard. Access is decided by Supabase auth on the page itself.
 app.get('/admin', sendPage('admin.html'));

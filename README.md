@@ -1,7 +1,7 @@
-# Merkel Engineering
+# Merkel Constructions
 
-Corporate website and API server for **Merkel Engineering**, a multidisciplinary
-engineering consultancy. A dependency-light Node/Express backend serves a
+Corporate website and API server for **Merkel Constructions**, a multidisciplinary
+construction and engineering practice. A dependency-light Node/Express backend serves a
 multi-page frontend and a small JSON API that powers the content, plus a working
 live-chat endpoint.
 
@@ -25,7 +25,10 @@ live-chat endpoint.
 | `/`              | Landing: six full-height chapters, ending in the enquiry form |
 | `/projects`      | Filterable project listing with images                  |
 | `/projects/:id`  | Full project page with image, overview and key facts    |
+| `/services`      | The eight disciplines, each linking to its own page      |
+| `/services/:id`  | One discipline: what it covers, what you get, where it shows |
 | `/careers`       | Open roles and studio culture                           |
+| `/apply`         | Recruitment form, with the role prefilled from the careers page |
 | `/contact`       | Dedicated contact page with image, form and live chat   |
 | `/admin`         | Studio desk: enquiries, live chat and studio mail (staff sign-in) |
 | `404`            | Styled not-found page                                   |
@@ -52,6 +55,14 @@ all of it stops under `prefers-reduced-motion`.
 
 The form in chapter 6 is the same component as the one on `/contact`: both post
 to `/api/contact`, so both land in `enquiries` and appear on the studio desk.
+
+## Careers and applications
+
+The apply link on `/careers` opens `/apply` with the role already selected, and the
+form posts to `/api/applications`. Applications land in the `applications` table and
+appear on the studio desk under their own tab, with the same triage states as an
+enquiry. A speculative application, with no role chosen, is accepted the same way; a
+role that has since closed is refused with a message rather than silently accepted.
 
 ## Live chat
 
@@ -123,6 +134,7 @@ Two halves of one conversation:
 | GET    | `/api/leadership`         | Studio leadership (CEO)                        |
 | GET    | `/api/team`               | Studio principals                             |
 | POST   | `/api/contact`            | Submit an enquiry (validated + rate-limited)  |
+| POST   | `/api/applications`       | Submit a job application (validated + rate-limited) |
 | POST   | `/api/chat/message`       | Send a chat message, get an auto-reply (fallback path) |
 | POST   | `/api/chat/notify`        | Flag a browser-written message and post the holding reply |
 | GET    | `/api/chat/:sessionId`    | Fetch a chat conversation                     |
@@ -217,8 +229,8 @@ request. Set `CHAT_NOTIFY=off` to silence chat notifications while keeping enqui
 and `SUPABASE_SERVICE_ROLE_KEY` are set; **local JSON files** under `DATA_DIR`
 otherwise, so development works offline with no setup.
 
-Tables are `admins`, `enquiries`, `chat_sessions`, `chat_messages` and, optionally,
-`email_threads` / `email_messages`. Create them by running
+Tables are `admins`, `enquiries`, `applications`, `chat_sessions`, `chat_messages`
+and, optionally, `email_threads` / `email_messages`. Create them by running
 [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) (and
 [`0002_email.sql`](supabase/migrations/0002_email.sql)) in the Supabase SQL Editor.
 Both are guarded, so re-running one after an edit updates what changed.
@@ -241,7 +253,9 @@ without it, writes go to `/tmp` and do not survive between requests.
 
 Page-level artwork is a file drop, not a code change: put `merkel1` to `merkel5`
 into `public/assets/img/` (any of `.webp`, `.avif`, `.jpg`, `.jpeg`, `.png`) and the
-next build uses them. `merkel1` becomes the underlay behind every page; the rest
+next build uses them. Names are matched without regard to case, and `.webp` wins
+when both a PNG and a WebP of the same name are present, so adding an optimised
+copy beside a heavy original is enough to serve it. `merkel1` becomes the underlay behind every page; the rest
 take a chapter each.
 
 `src/data/images.json` holds the mapping, where every slot names the file it prefers

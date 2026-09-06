@@ -1,4 +1,4 @@
-# Deploying Merkel Engineering to Vercel
+# Deploying Merkel Constructions to Vercel
 
 A step-by-step guide for the workflow: replace the images, fork to your GitHub,
 deploy on Vercel, then switch the backend on.
@@ -41,6 +41,9 @@ first if more than one is present.
 | `merkel3` | Practice chapter, the third hero slide, and the `/careers` header | 1920 x 1200 |
 | `merkel4` | Selected work chapter and the `/projects` header | 1920 x 1200 |
 | `merkel5` | Contact chapter and the `/contact` header | 1920 x 1200 |
+
+Project and service artwork is named per item in `src/data/projects.json` and
+`src/data/services.json`, so those take any filename you like.
 
 `merkel1` carries the most weight: it is fixed behind the whole site, so pick the
 one that reads as the studio's signature and has calm space rather than busy
@@ -123,7 +126,7 @@ come next.
 
    | File | Creates |
    | ---- | ------- |
-   | [`supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) | `admins`, `is_admin()`, `enquiries`, `chat_sessions`, `chat_messages`, the activity trigger and the realtime publication |
+   | [`supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) | `admins`, `is_admin()`, `enquiries`, `applications`, `chat_sessions`, `chat_messages`, the activity trigger and the realtime publication |
    | [`supabase/migrations/0002_email.sql`](../supabase/migrations/0002_email.sql) | `email_threads`, `email_messages` (skip if you are not receiving mail) |
 
    Everything is behind row level security. `enquiries` has no anon policy at all:
@@ -205,6 +208,8 @@ What the desk does:
 - **Enquiries.** Every contact form submission, newest first, with the sender's
   brief and a mailto link that replies straight to them. Set each one to
   new / in progress / closed as you work through them.
+- **Applications.** Everyone who applied through `/apply`, with the role they
+  named, their experience, a link to their portfolio and a mailto link back.
 - **Live chat.** Every conversation, most recently active first, with a blue dot on
   the ones waiting. Type a reply and it appears in the visitor's widget within a few
   seconds. Your first reply also takes the conversation off the automatic responder,

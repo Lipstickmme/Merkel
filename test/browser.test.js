@@ -31,13 +31,13 @@ async function until(check, what, timeout = 10000) {
   sb.db.email_threads.rows.push(thread);
   sb.db.email_messages.rows.push({
     id: 'e1', created_at: new Date().toISOString(), thread_id: thread.id, direction: 'inbound',
-    from_email: 'procurement@example.com', to_email: 'studio@merkel.engineering',
+    from_email: 'procurement@example.com', to_email: 'studio@merkelconstructions.com',
     subject: thread.subject, body_text: 'Please confirm the deadline for the tender return.',
     has_attachments: false,
   });
   const sbUrl = `http://127.0.0.1:${sb.address().port}`;
-  sb.createUser('desk@merkel.engineering', 'studio-password', { admin: true });
-  sb.createUser('nobody@merkel.engineering', 'outsider-password');
+  sb.createUser('desk@merkelconstructions.com', 'studio-password', { admin: true });
+  sb.createUser('nobody@merkelconstructions.com', 'outsider-password');
 
   process.env.SUPABASE_URL = sbUrl;
   process.env.SUPABASE_ANON_KEY = mock.ANON_KEY;
@@ -104,14 +104,14 @@ async function until(check, what, timeout = 10000) {
     await staff.waitForSelector('#admin-login:not([hidden])');
 
     // A wrong password is reported, not swallowed.
-    await staff.fill('#login-email', 'desk@merkel.engineering');
+    await staff.fill('#login-email', 'desk@merkelconstructions.com');
     await staff.fill('#login-password', 'wrong');
     await staff.click('#login-btn');
     await staff.waitForFunction(() => document.getElementById('login-error').textContent.length > 0);
     console.log('  ok  bad credentials are reported:', await staff.textContent('#login-error'));
 
     // An account that is not on the admins list gets told why.
-    await staff.fill('#login-email', 'nobody@merkel.engineering');
+    await staff.fill('#login-email', 'nobody@merkelconstructions.com');
     await staff.fill('#login-password', 'outsider-password');
     await staff.click('#login-btn');
     await staff.waitForFunction(() =>
@@ -121,11 +121,11 @@ async function until(check, what, timeout = 10000) {
     console.log('  ok  a non-admin account is refused with an explanation');
 
     // The real account gets in.
-    await staff.fill('#login-email', 'desk@merkel.engineering');
+    await staff.fill('#login-email', 'desk@merkelconstructions.com');
     await staff.fill('#login-password', 'studio-password');
     await staff.click('#login-btn');
     await staff.waitForSelector('#admin-shell:not([hidden])', { timeout: 10000 });
-    assert.strictEqual(await staff.textContent('#admin-who'), 'desk@merkel.engineering');
+    assert.strictEqual(await staff.textContent('#admin-who'), 'desk@merkelconstructions.com');
     console.log('  ok  admin signed in');
 
     await staff.click('.admin-tab[data-tab="chat"]');
@@ -207,9 +207,52 @@ async function until(check, what, timeout = 10000) {
     assert.strictEqual(sb.db.enquiries.rows.filter((r) => r.status === 'closed').length, 1);
     console.log('  ok  triage writes back');
 
+    /* ---------------- apply: careers -> form -> desk ---------------- */
+    await visitor.goto(`${base}/careers`, { waitUntil: 'networkidle' });
+    await visitor.waitForSelector('#roles .role .apply');
+    const applyHref = await visitor.getAttribute('#roles .role .apply', 'href');
+    assert.match(applyHref, /^\/apply\?role=/, `apply link goes to the form, got ${applyHref}`);
+    await Promise.all([
+      visitor.waitForURL(/\/apply\?role=/, { timeout: 15000 }),
+      visitor.click('#roles .role .apply'),
+    ]);
+    await visitor.waitForSelector('#apply-form');
+    // The role list arrives from /api/careers, so wait for it rather than
+    // reading the select before it is populated.
+    await visitor.waitForFunction(() => {
+      const sel = document.getElementById('apply-role');
+      return sel && sel.options.length > 1 && sel.value !== '';
+    }, null, { timeout: 15000 }).catch(async (err) => {
+      const state = await visitor.evaluate(() => {
+        const sel = document.getElementById('apply-role');
+        return { url: location.href, options: sel ? sel.options.length : -1, value: sel ? sel.value : null };
+      });
+      throw new Error(`${err.message} | apply select state: ${JSON.stringify(state)}`);
+    });
+    const prefilled = await visitor.inputValue('#apply-role');
+    assert.ok(prefilled, 'the role carries over from the careers page');
+    assert.match(await visitor.textContent('#apply-role-title'), /\w/);
+    console.log('  ok  the apply link opens the form with the role selected');
+
+    await visitor.fill('#apply-name', 'Sanne Vermeer');
+    await visitor.fill('#apply-email', 'sanne@example.nl');
+    await visitor.fill('#apply-message', 'Six years on tall buildings, mostly post-tensioned flat slabs and one diagrid.');
+    await visitor.click('#apply-submit');
+    await until(() => sb.db.applications.rows.length === 1, 'the application to reach the database');
+    assert.strictEqual(sb.db.applications.rows[0].email, 'sanne@example.nl');
+    console.log('  ok  the application is stored with the role it names');
+
+    await staff.click('.admin-tab[data-tab="applications"]');
+    await staff.waitForSelector('#application-list .admin-row', { timeout: 15000 });
+    await staff.click('#application-list .admin-row');
+    await staff.waitForSelector('#application-detail .admin-message');
+    assert.match(await staff.textContent('#application-detail .admin-message'), /post-tensioned flat slabs/);
+    console.log('  ok  the application shows up on the desk');
+
     /* ---------------- every reveal actually reveals ---------------- */
     const reader = await newPage(visitorCtx);
-    await reader.goto(`${base}/`, { waitUntil: 'networkidle' });
+    for (const path of ['/', '/services', '/projects', '/careers']) {
+      await reader.goto(base + path, { waitUntil: 'networkidle' });
     await reader.evaluate(async () => {
       // Walk the page so every section enters the viewport at least once.
       // instant, not smooth: the page sets scroll-behavior: smooth, and a
@@ -222,16 +265,17 @@ async function until(check, what, timeout = 10000) {
       window.scrollTo({ top: 0, behavior: 'instant' });
       await new Promise((r) => setTimeout(r, 1400));
     });
-    const hidden = await reader.evaluate(() =>
-      Array.from(document.querySelectorAll('[data-reveal]'))
-        .filter((el) => getComputedStyle(el).opacity !== '1' || el.getBoundingClientRect().height === 0)
-        .map((el) => `${el.tagName}.${el.className} "${(el.textContent || '').trim().slice(0, 30)}"`)
-    );
-    assert.deepStrictEqual(hidden, [], 'every reveal must end up visible');
-    const chapters = await reader.$$eval('.chapter', (n) => n.length);
-    const staged = await reader.$$eval('.chapter.is-onstage', (n) => n.length);
-    assert.strictEqual(staged, chapters, `all ${chapters} chapters staged, got ${staged}`);
-    console.log('  ok  every reveal on the landing page ends up visible');
+      const hidden = await reader.evaluate(() =>
+        Array.from(document.querySelectorAll('[data-reveal]'))
+          .filter((el) => getComputedStyle(el).opacity !== '1' || el.getBoundingClientRect().height === 0)
+          .map((el) => `${el.tagName}.${el.className} "${(el.textContent || '').trim().slice(0, 30)}"`)
+      );
+      assert.deepStrictEqual(hidden, [], `every reveal on ${path} must end up visible`);
+      const chapters = await reader.$$eval('.chapter', (n) => n.length);
+      const staged = await reader.$$eval('.chapter.is-onstage', (n) => n.length);
+      assert.strictEqual(staged, chapters, `${path}: all ${chapters} chapters staged, got ${staged}`);
+      console.log(`  ok  every reveal on ${path} ends up visible`);
+    }
     await reader.close();
 
     /* ---------------- email tab ---------------- */
