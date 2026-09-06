@@ -93,7 +93,7 @@ function nav(active = '') {
       ${link('/careers', 'Careers', 'careers')}
       ${link('/contact', 'Contact us', 'contact')}
     </nav>
-    <a href="/contact" class="nav-cta">Contact us</a>
+    <a href="/contact" class="btn ghost nav-cta">Contact us <span class="arw">&rsaquo;</span></a>
     <button class="nav-toggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>

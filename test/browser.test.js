@@ -249,9 +249,38 @@ async function until(check, what, timeout = 10000) {
     assert.match(await staff.textContent('#application-detail .admin-message'), /post-tensioned flat slabs/);
     console.log('  ok  the application shows up on the desk');
 
+    /* ---------------- a poll must not type over you ---------------- */
+    await staff.click('.admin-tab[data-tab="chat"]');
+    await staff.waitForSelector('#chat-list .admin-row');
+    await staff.click('#chat-list .admin-row');
+    await staff.waitForSelector('#chat-detail .admin-reply textarea');
+    await staff.click('#chat-detail .admin-reply textarea');
+    await staff.type('#chat-detail .admin-reply textarea', 'Half a sentence that must survive');
+    // The dashboard refreshes every 5s. Wait past one tick with focus held.
+    await new Promise((r) => setTimeout(r, 7000));
+    assert.strictEqual(
+      await staff.inputValue('#chat-detail .admin-reply textarea'),
+      'Half a sentence that must survive',
+      'a chat reply must not be wiped by the refresh'
+    );
+    console.log('  ok  a half-typed chat reply survives the refresh');
+
     /* ---------------- contact details are editable from the desk ---------------- */
     await staff.click('.admin-tab[data-tab="settings"]');
     await staff.waitForSelector('#setting-email');
+
+    // Clearing a field must leave it cleared, through a refresh tick.
+    await staff.fill('#setting-address', '');
+    await staff.click('#setting-address');
+    await new Promise((r) => setTimeout(r, 7000));
+    assert.strictEqual(
+      await staff.inputValue('#setting-address'),
+      '',
+      'a cleared field must not refill itself'
+    );
+    console.log('  ok  a cleared settings field stays cleared');
+
+    await staff.fill('#setting-address', 'Wijnhaven 3, 3011 WG Rotterdam, NL');
     await staff.fill('#setting-email', 'desk@merkelconstructions.com');
     await staff.fill('#setting-phone', '+31 (0)20 111 2222');
     await staff.click('.admin-settings-form .btn');
