@@ -3,6 +3,7 @@
   "slots": {
     "underlay": {
       "prefer": [
+        "m1",
         "mk1",
         "merkel1"
       ],
@@ -10,6 +11,7 @@
     },
     "capabilities": {
       "prefer": [
+        "m2",
         "mk2",
         "merkel2"
       ],
@@ -17,6 +19,7 @@
     },
     "metrics": {
       "prefer": [
+        "m3",
         "mk3",
         "merkel3"
       ],
@@ -24,6 +27,7 @@
     },
     "work": {
       "prefer": [
+        "m4",
         "mk4",
         "merkel4"
       ],
@@ -39,6 +43,7 @@
     },
     "projectsHeader": {
       "prefer": [
+        "m3",
         "mk1",
         "merkel4"
       ],
@@ -46,6 +51,7 @@
     },
     "careersHeader": {
       "prefer": [
+        "m1",
         "addd",
         "merkel3"
       ],
@@ -53,6 +59,7 @@
     },
     "contactHeader": {
       "prefer": [
+        "m4",
         "add2",
         "merkel5"
       ],
@@ -62,6 +69,7 @@
   "heroSlides": [
     {
       "prefer": [
+        "m1",
         "merkel2"
       ],
       "fallback": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/merkel2-X5a3OtwTvD1tkkyJ2iLPGsVU7Xgfqt.png"
