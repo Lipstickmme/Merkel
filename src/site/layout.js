@@ -187,7 +187,6 @@ function page(opts) {
   return [
     head(opts),
     `<body class="${bodyClass}">`,
-    underlay(),
     `  <div class="scroll-progress" id="progress"></div>`,
     nav(active),
     content,

@@ -61,27 +61,9 @@
   "heroSlides": [
     {
       "prefer": [
-        "mk1"
+        "merkel2"
       ],
-      "fallback": "/assets/slides/blueprint-01.webp"
-    },
-    {
-      "prefer": [
-        "mk2"
-      ],
-      "fallback": "/assets/slides/blueprint-02.webp"
-    },
-    {
-      "prefer": [
-        "mk3"
-      ],
-      "fallback": "/assets/slides/blueprint-03.webp"
-    },
-    {
-      "prefer": [
-        "mk4"
-      ],
-      "fallback": "/assets/slides/blueprint-01.webp"
+      "fallback": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/merkel2-X5a3OtwTvD1tkkyJ2iLPGsVU7Xgfqt.png"
     }
   ]
 }
