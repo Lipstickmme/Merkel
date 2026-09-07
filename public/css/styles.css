@@ -1720,8 +1720,15 @@ body, main { background: var(--editorial-paper) !important; color: var(--editori
 .page-header::after { display: none !important; background: none !important; }
 .page-header-inner { display: flex !important; flex-direction: column !important; justify-content: center !important; background: var(--editorial-paper) !important; color: var(--editorial-ink) !important; padding: 72px clamp(24px, 7vw, 112px) !important; }
 .page-header-inner h1 { max-width: 8ch; font-size: clamp(52px, 6vw, 88px) !important; line-height: .96 !important; }
-.page-careers .page-header-inner h1 { max-width: 6ch; font-size: clamp(48px, 5.2vw, 78px) !important; }
+.page-careers .page-header-inner h1 { max-width: 6ch; font-size: clamp(40px, 4.2vw, 64px) !important; }
 .page-careers .page-header-inner p { max-width: 38ch; }
+.nav .nav-cta,
+.nav .nav-cta:visited,
+.hero .hero-actions .btn:first-child,
+.hero .hero-actions .btn:first-child:visited { color: #fff !important; }
+.nav .nav-cta { border-color: rgb(255 255 255 / .72) !important; }
+.nav .nav-cta:hover,
+.hero .hero-actions .btn:first-child:hover { color: #fff !important; }
 .page-header-inner p { max-width: 46ch; font-size: clamp(17px, 1.8vw, 22px); line-height: 1.55; }
 .page-header-inner h1, .page-header-inner p { color: var(--editorial-ink) !important; text-shadow: none !important; }
 .page-header-inner .eyebrow { color: var(--editorial-orange) !important; }
