@@ -3,41 +3,47 @@
   "slots": {
     "underlay": {
       "prefer": [
-        "merkel1",
-        "add"
+        "m1",
+        "mk1",
+        "merkel1"
       ],
       "fallback": "/assets/slides/blueprint-01.webp"
     },
     "capabilities": {
       "prefer": [
-        "add2",
+        "m2",
+        "mk2",
         "merkel2"
       ],
       "fallback": "/assets/slides/blueprint-02.webp"
     },
     "metrics": {
       "prefer": [
-        "addd",
+        "m3",
+        "mk3",
         "merkel3"
       ],
       "fallback": "/assets/slides/blueprint-03.webp"
     },
     "work": {
       "prefer": [
-        "merkel4",
-        "mk1"
+        "m4",
+        "mk4",
+        "merkel4"
       ],
       "fallback": "/assets/img/proj-helix-tower.svg"
     },
     "contact": {
       "prefer": [
-        "add",
-        "merkel1"
+        "mk5",
+        "mk3",
+        "mk1"
       ],
       "fallback": "/assets/img/contact.svg"
     },
     "projectsHeader": {
       "prefer": [
+        "m3",
         "mk1",
         "merkel4"
       ],
@@ -45,6 +51,7 @@
     },
     "careersHeader": {
       "prefer": [
+        "m1",
         "addd",
         "merkel3"
       ],
@@ -52,6 +59,7 @@
     },
     "contactHeader": {
       "prefer": [
+        "m4",
         "add2",
         "merkel5"
       ],
@@ -61,21 +69,9 @@
   "heroSlides": [
     {
       "prefer": [
-        "merkel1"
+        "merkel2"
       ],
-      "fallback": "/assets/slides/blueprint-01.webp"
-    },
-    {
-      "prefer": [
-        "addd"
-      ],
-      "fallback": "/assets/slides/blueprint-02.webp"
-    },
-    {
-      "prefer": [
-        "add"
-      ],
-      "fallback": "/assets/slides/blueprint-03.webp"
+      "fallback": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/merkel2-X5a3OtwTvD1tkkyJ2iLPGsVU7Xgfqt.png"
     }
   ]
 }
