@@ -3,36 +3,36 @@
   "slots": {
     "underlay": {
       "prefer": [
-        "merkel1",
-        "add"
+        "mk1",
+        "merkel1"
       ],
       "fallback": "/assets/slides/blueprint-01.webp"
     },
     "capabilities": {
       "prefer": [
-        "add2",
+        "mk2",
         "merkel2"
       ],
       "fallback": "/assets/slides/blueprint-02.webp"
     },
     "metrics": {
       "prefer": [
-        "addd",
+        "mk3",
         "merkel3"
       ],
       "fallback": "/assets/slides/blueprint-03.webp"
     },
     "work": {
       "prefer": [
-        "merkel4",
-        "mk1"
+        "mk4",
+        "merkel4"
       ],
       "fallback": "/assets/img/proj-helix-tower.svg"
     },
     "contact": {
       "prefer": [
-        "add",
-        "merkel1"
+        "mk4",
+        "mk1"
       ],
       "fallback": "/assets/img/contact.svg"
     },
@@ -61,21 +61,27 @@
   "heroSlides": [
     {
       "prefer": [
-        "merkel1"
+        "mk1"
       ],
       "fallback": "/assets/slides/blueprint-01.webp"
     },
     {
       "prefer": [
-        "addd"
+        "mk2"
       ],
       "fallback": "/assets/slides/blueprint-02.webp"
     },
     {
       "prefer": [
-        "add"
+        "mk3"
       ],
       "fallback": "/assets/slides/blueprint-03.webp"
+    },
+    {
+      "prefer": [
+        "mk4"
+      ],
+      "fallback": "/assets/slides/blueprint-01.webp"
     }
   ]
 }
