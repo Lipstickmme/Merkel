@@ -6,8 +6,8 @@
   if (!wrap) return;
   const esc = M.esc;
   const FALLBACK = [
-    { id: 'senior-structural', title: 'Senior Structural Engineer', team: 'Structural', location: 'Rotterdam, NL', type: 'Full time', summary: 'Lead the structural design of tall buildings and long-span structures from concept through to site.' },
-    { id: 'bridge-engineer', title: 'Bridge Engineer', team: 'Civil & Infrastructure', location: 'Aarhus, DK', type: 'Full time', summary: 'Design bridges and marine structures for demanding wind and durability requirements.' }
+    { id: 'senior-structural', title: 'Senior Structural Engineer', team: 'Structural', location: 'Studio', type: 'Full time', summary: 'Lead the structural design of tall buildings and long-span structures from concept through to site.' },
+    { id: 'bridge-engineer', title: 'Bridge Engineer', team: 'Civil & Infrastructure', location: 'Site based', type: 'Full time', summary: 'Design bridges and marine structures for demanding wind and durability requirements.' }
   ];
 
   const role = (r) => `

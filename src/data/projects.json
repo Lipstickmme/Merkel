@@ -3,7 +3,7 @@
     "id": "helix-tower",
     "name": "Helix Tower",
     "sector": "Commercial",
-    "location": "Rotterdam, NL",
+    "location": "Hamburg, DE",
     "year": 2025,
     "metric": "184 m",
     "metricLabel": "structural height",
@@ -16,7 +16,7 @@
       "Digital Engineering"
     ],
     "blurb": "A diagrid super-structure that cut steel tonnage by 22 percent against a conventional frame.",
-    "overview": "Helix Tower is a 44 storey commercial high rise on the Maas waterfront. The brief asked for column free floor plates and a slender profile, so we developed a perimeter diagrid that carries both gravity and lateral load without an internal core wall. Every node was resolved parametrically and checked under full non linear seismic and wind analysis."
+    "overview": "Helix Tower is a 44 storey commercial high rise on the Elbe waterfront. The brief asked for column free floor plates and a slender profile, so we developed a perimeter diagrid that carries both gravity and lateral load without an internal core wall. Every node was resolved parametrically and checked under full non linear seismic and wind analysis."
   },
   {
     "id": "north-crossing",
@@ -136,7 +136,7 @@
     "id": "delta-refinery",
     "name": "Delta Refinery Upgrade",
     "sector": "Energy",
-    "location": "Rotterdam, NL",
+    "location": "Vlissingen, NL",
     "year": 2023,
     "metric": "9 days",
     "metricLabel": "total shutdown",

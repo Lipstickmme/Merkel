@@ -118,13 +118,13 @@ function footer() {
       <div class="col">
         <h5>Contact</h5>
         <a href="mailto:${site.email}" data-site="email">${site.email}</a>
-        <a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a>
+        <a href="/contact" data-site-row="phone"${site.phone ? '' : ' hidden'}><span data-site="phone">${site.phone}</span></a>
         <a href="/contact">Contact us</a>
       </div>
     </div>
     <div class="wrap footer-bottom">
       <span>&copy; ${YEAR} Merkel Constructions B.V.</span>
-      <span>Rotterdam, Netherlands</span>
+      <span data-site-row="address"${site.address ? '' : ' hidden'} data-site="address">${site.address}</span>
     </div>
   </footer>`;
 }

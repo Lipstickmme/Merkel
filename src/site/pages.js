@@ -42,22 +42,23 @@ const heroSection = `
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
     <div class="hero-inner wrap">
-      <span class="eyebrow hero-tag" data-reveal>Structural, civil, mechanical and digital engineering</span>
-      <h1 data-reveal>Built to stand.</h1>
-      <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
-      <div class="hero-actions" data-reveal>
-        <a href="/projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
-        <a href="#contact" class="btn ghost">Contact us <span class="arw">&rsaquo;</span></a>
-      </div>
-      <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
-        ${images.heroSlides.map((src, i) => `<button class="dot${i === 0 ? ' is-active' : ''}" data-slide="${i}" aria-label="Slide ${i + 1}"></button>`).join('\n        ')}
+      <div class="hero-copy">
+        <span class="eyebrow hero-tag" data-reveal>Structural, civil, mechanical and digital engineering</span>
+        <h1 data-reveal>Built to stand.</h1>
+        <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
+        <div class="hero-actions" data-reveal>
+          <a href="/projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
+          <a href="#contact" class="btn ghost">Contact us <span class="arw">&rsaquo;</span></a>
+        </div>
+        <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
+          ${images.heroSlides.map((src, i) => `<button class="dot${i === 0 ? ' is-active' : ''}" data-slide="${i}" aria-label="Slide ${i + 1}"></button>`).join('\n          ')}
+        </div>
       </div>
     </div>
     <div class="hero-readout" aria-label="Practice at a glance">
       <div class="cell"><span class="k">Founded</span><span class="v">1998</span></div>
       <div class="cell"><span class="k">Disciplines</span><span class="v">Four core</span></div>
       <div class="cell"><span class="k">Projects delivered</span><span class="v">640+</span></div>
-      <div class="cell"><span class="k">Based in</span><span class="v">Rotterdam, NL</span></div>
     </div>
   </section>`;
 
@@ -139,9 +140,9 @@ const contactSection = chapter({
           <h2>Bring us the hard part.</h2>
           <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
           <div class="contact-detail">
-            <div class="row"><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
+            <div class="row" data-site-row="address"${site.address ? '' : ' hidden'}><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
             <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:${site.email}" data-site="email">${site.email}</a></div></div>
-            <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
+            <div class="row" data-site-row="phone"${site.phone ? '' : ' hidden'}><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
           </div>
         </div>
         ${contactForm('home-contact-form')}
@@ -268,9 +269,9 @@ const contactContent = `
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
         <div class="contact-detail">
-          <div class="row"><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
+          <div class="row" data-site-row="address"${site.address ? '' : ' hidden'}><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
           <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:${site.email}" data-site="email">${site.email}</a></div></div>
-          <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
+          <div class="row" data-site-row="phone"${site.phone ? '' : ' hidden'}><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
           <div class="row"><div class="k">Hours</div><div class="val" data-site="hours">${site.hours}</div></div>
         </div>
         <div class="contact-note">

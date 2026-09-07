@@ -1,21 +1,81 @@
 {
   "_comment": "Page-level image slots. Each slot lists the files it would like, best first, and the placeholder it falls back on if none is there. Names are matched without regard to case and any of .webp .avif .jpg .jpeg .png works, with .webp preferred, so adding photography is a file drop into public/assets/img/ and needs no code change. The second and third preferences let a site with only some of merkel1..merkel5 still show photography everywhere rather than a mix of photographs and placeholder drawings. Per-project images live in projects.json; the CEO portrait lives in leadership.json.",
-
   "slots": {
-    "underlay":     { "prefer": ["merkel1", "merkel2"], "fallback": "/assets/slides/blueprint-01.webp" },
-    "capabilities": { "prefer": ["merkel2", "merkel4"], "fallback": "/assets/slides/blueprint-02.webp" },
-    "metrics":      { "prefer": ["merkel3", "merkel1"], "fallback": "/assets/slides/blueprint-03.webp" },
-    "work":         { "prefer": ["merkel4", "merkel3"], "fallback": "/assets/img/proj-helix-tower.svg" },
-    "contact":      { "prefer": ["merkel5", "merkel1"], "fallback": "/assets/img/contact.svg" },
-
-    "projectsHeader": { "prefer": ["merkel4", "merkel3"], "fallback": "/assets/img/proj-helix-tower.svg" },
-    "careersHeader":  { "prefer": ["merkel3", "merkel2"], "fallback": "/assets/img/careers.svg" },
-    "contactHeader":  { "prefer": ["merkel5", "merkel1"], "fallback": "/assets/img/contact.svg" }
+    "underlay": {
+      "prefer": [
+        "merkel1",
+        "add"
+      ],
+      "fallback": "/assets/slides/blueprint-01.webp"
+    },
+    "capabilities": {
+      "prefer": [
+        "add2",
+        "merkel2"
+      ],
+      "fallback": "/assets/slides/blueprint-02.webp"
+    },
+    "metrics": {
+      "prefer": [
+        "addd",
+        "merkel3"
+      ],
+      "fallback": "/assets/slides/blueprint-03.webp"
+    },
+    "work": {
+      "prefer": [
+        "merkel4",
+        "mk1"
+      ],
+      "fallback": "/assets/img/proj-helix-tower.svg"
+    },
+    "contact": {
+      "prefer": [
+        "add",
+        "merkel1"
+      ],
+      "fallback": "/assets/img/contact.svg"
+    },
+    "projectsHeader": {
+      "prefer": [
+        "mk1",
+        "merkel4"
+      ],
+      "fallback": "/assets/img/proj-helix-tower.svg"
+    },
+    "careersHeader": {
+      "prefer": [
+        "addd",
+        "merkel3"
+      ],
+      "fallback": "/assets/img/careers.svg"
+    },
+    "contactHeader": {
+      "prefer": [
+        "add2",
+        "merkel5"
+      ],
+      "fallback": "/assets/img/contact.svg"
+    }
   },
-
   "heroSlides": [
-    { "prefer": ["merkel1"], "fallback": "/assets/slides/blueprint-01.webp" },
-    { "prefer": ["merkel2"], "fallback": "/assets/slides/blueprint-02.webp" },
-    { "prefer": ["merkel3"], "fallback": "/assets/slides/blueprint-03.webp" }
+    {
+      "prefer": [
+        "merkel1"
+      ],
+      "fallback": "/assets/slides/blueprint-01.webp"
+    },
+    {
+      "prefer": [
+        "addd"
+      ],
+      "fallback": "/assets/slides/blueprint-02.webp"
+    },
+    {
+      "prefer": [
+        "add"
+      ],
+      "fallback": "/assets/slides/blueprint-03.webp"
+    }
   ]
 }
