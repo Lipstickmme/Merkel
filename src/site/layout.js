@@ -85,7 +85,7 @@ function nav(active = '') {
   return `
   <header class="nav" id="nav">
     <a class="brand" href="/" aria-label="Merkel Constructions home">
-      <img class="brand-logo" src="/assets/brand/merkel-constructions-wordmark.png" alt="Merkel Constructions" width="1048" height="203" />
+      <img class="brand-logo" src="/assets/brand/merkel-constructions-wordmark-light.png" alt="Merkel Constructions" width="1048" height="203" />
     </a>
     <nav class="nav-links" id="navlinks">
       ${link('/projects', 'Projects', 'projects')}
@@ -105,7 +105,7 @@ function footer() {
   <footer class="footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
-        <img class="brand-logo footer-logo" src="/assets/brand/merkel-constructions-wordmark.png" alt="Merkel Constructions" width="1048" height="203" />
+        <img class="brand-logo footer-logo" src="/assets/brand/merkel-constructions-wordmark-light.png" alt="Merkel Constructions" width="1048" height="203" />
         <p>Engineering for buildings and infrastructure.</p>
       </div>
       <div class="col">
