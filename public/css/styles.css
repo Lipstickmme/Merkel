@@ -1716,15 +1716,70 @@ body, main { background: var(--editorial-paper) !important; color: var(--editori
 .page-header-inner .eyebrow { color: var(--editorial-orange) !important; }
 .footer { background: var(--editorial-ink) !important; color: #f7f4ec !important; }
 
+/* Landing sections use a full-width editorial stack: image first, then subject and body. */
+.chapter:not(.hero) {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: auto !important;
+  padding: 0 !important;
+}
+.chapter:not(.hero) .chapter-media {
+  order: 1 !important;
+  width: min(100%, 1180px) !important;
+  height: clamp(240px, 38vw, 480px) !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+}
+.chapter:not(.hero) .chapter-inner {
+  order: 2 !important;
+  width: min(100%, 1180px) !important;
+  margin: 0 auto !important;
+  padding: clamp(56px, 8vw, 112px) 0 clamp(72px, 9vw, 132px) !important;
+}
+.chapter:not(.hero) .section-head,
+.chapter:not(.hero) .contact-grid,
+.chapter:not(.hero) .leadership {
+  width: 100% !important;
+  max-width: none !important;
+}
+.chapter:not(.hero) .section-head {
+  display: block !important;
+}
+.chapter:not(.hero) .section-head h2 {
+  max-width: 720px;
+}
+.chapter:not(.hero) .section-head p {
+  max-width: 680px;
+}
+.chapter:not(.hero) .services-grid,
+.chapter:not(.hero) .stats-grid,
+.chapter:not(.hero) .cards-grid {
+  width: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+.chapter:not(.hero) .leadership {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 48px !important;
+}
+.chapter:not(.hero) .leadership-media {
+  width: min(520px, 100%) !important;
+  margin: 0 !important;
+}
+.chapter:not(.hero) .leadership-body {
+  width: 100% !important;
+  max-width: 760px !important;
+}
+
 @media (max-width: 720px) {
-  .chapter { display: flex !important; flex-direction: column !important; }
-  .chapter-media { order: 1 !important; width: calc(100% - 32px) !important; height: 300px !important; margin: 16px !important; }
-  .chapter-inner { order: 2 !important; padding: 56px 24px 72px !important; }
-  .chapter-media::after { height: 5px; }
-  .services-grid, .stats-grid, .cards-grid { grid-template-columns: 1fr !important; }
+  .chapter:not(.hero) .chapter-media { width: 100% !important; height: 300px !important; margin: 0 !important; }
+  .chapter:not(.hero) .chapter-inner { width: 100% !important; padding: 56px 24px 72px !important; }
+  .chapter:not(.hero) .services-grid,
+  .chapter:not(.hero) .stats-grid,
+  .chapter:not(.hero) .cards-grid { grid-template-columns: 1fr !important; }
+  .chapter:not(.hero) .leadership-media { width: calc(100% - 12px) !important; }
   .page-header { display: flex !important; flex-direction: column !important; min-height: auto !important; padding-top: 70px !important; }
   .page-header-inner { order: 1 !important; padding: 48px 24px 32px !important; }
   .page-header-media { order: 2 !important; width: calc(100% - 32px) !important; height: 220px !important; min-height: 220px !important; margin: 0 16px 32px !important; }
-  .leadership { gap: 40px !important; }
-  .leadership-media { margin: 0 12px 12px 0; }
 }
