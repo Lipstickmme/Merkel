@@ -442,11 +442,12 @@ h1[data-reveal].in, h2[data-reveal].in,
   .nav-links { display: none; }
   .nav-toggle { display: block; }
   .nav-links.open {
-    display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
-    background: rgb(255 255 255 / 0.97); backdrop-filter: blur(14px); padding: 20px var(--gutter); gap: 6px;
-    border-bottom: 1px solid var(--line);
+  display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
+  background: rgb(255 255 255 / 0.97); backdrop-filter: blur(14px); padding: 20px var(--gutter); gap: 6px;
+  border-bottom: 1px solid var(--line);
   }
-  .nav-links.open a { padding: 12px 0; }
+  .nav-links.open a { padding: 12px 0; color: #07111b !important; }
+  .nav-links.open a:hover, .nav-links.open a.is-active { color: var(--accent) !important; }
   .hero { padding-top: 104px; }
   .hero h1 { font-size: clamp(44px, 14vw, 78px); }
   .services-grid { grid-template-columns: 1fr; }
