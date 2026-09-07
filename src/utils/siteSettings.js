@@ -19,12 +19,18 @@ const TABLE = 'site_settings';
 const ROW_ID = 'default';
 const FIELDS = ['address', 'email', 'phone', 'hours'];
 
-/** Only the fields we own, trimmed, with blanks falling back to the default. */
+/**
+ * Only the fields we own, trimmed.
+ *
+ * A blank stays blank rather than falling back, because the address and the
+ * telephone are optional: the site shows them once they are set at the desk
+ * and leaves the row out entirely until then.
+ */
 function normalise(values) {
   const out = {};
   FIELDS.forEach((key) => {
     const supplied = values && values[key] != null ? String(values[key]).trim() : '';
-    out[key] = supplied || defaults[key];
+    out[key] = supplied || defaults[key] || '';
   });
   return out;
 }

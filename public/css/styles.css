@@ -186,22 +186,22 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 }
 
 .hero-inner { position: relative; z-index: 3; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
-.hero-tag { margin-bottom: 22px; }
+.hero-tag { margin-bottom: 16px; }
 .hero h1 {
-  font-size: clamp(54px, 10.5vw, 132px);
-  line-height: 0.94;
+  font-size: clamp(46px, 8vw, 112px);
+  line-height: 0.95;
   letter-spacing: -0.035em;
   font-weight: 600;
 }
-.hero-sub { margin-top: 24px; max-width: 42ch; color: var(--ink-soft); font-size: clamp(18px, 1.9vw, 26px); }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+.hero-sub { margin-top: 18px; max-width: 46ch; color: var(--ink-soft); font-size: clamp(17px, 1.6vw, 23px); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
 
 /* Slide dots */
 /* In flow under the buttons, so nothing collides with the readout strip and
    the whole hero stays inside the frame on a short landscape phone. */
 .hero-dots {
   position: relative; z-index: 3;
-  margin-top: 34px;
+  margin-top: 22px;
   display: flex; gap: 12px;
 }
 .hero-dots .dot {
@@ -1227,7 +1227,9 @@ h1[data-reveal].in, h2[data-reveal].in,
   .chapter:not(.hero) .chapter-scrim { display: none; }
   .chapter-inner { padding: 0 var(--gutter); }
   #services { padding-top: 0; }
-  .chapter:not(#services) { padding-top: clamp(48px, 9vw, 72px); }
+  /* :not(#services) carries an id, so this outranks any plain .hero rule.
+     The hero sets its own headroom to clear the bar and has to be excluded. */
+  .chapter:not(#services):not(.hero) { padding-top: clamp(48px, 9vw, 72px); }
 
   .section-head h2, .chapter .section-head h2 { font-size: clamp(27px, 8vw, 36px); }
   .chapter .section-head { margin-bottom: 26px; }
@@ -1270,4 +1272,128 @@ h1[data-reveal].in, h2[data-reveal].in,
 @media (max-width: 359px) {
   .hero-readout { grid-template-columns: 1fr; }
   .hero-readout .cell { border-right: 0; }
+}
+
+/* =========================================================================
+   Type over photography
+   The words carry their own surface rather than depending on a wash across
+   the whole picture. Contrast stops being a function of which photograph
+   happens to be behind them, and the picture stays bright.
+   ========================================================================= */
+
+.hero-copy,
+.chapter .section-head,
+.page-header-inner .eyebrow,
+.page-header-inner h1,
+.page-header-inner p {
+  position: relative;
+}
+
+.hero-copy {
+  display: block;
+  width: min(920px, 100%);
+  padding: clamp(26px, 2.8vw, 40px) clamp(24px, 2.8vw, 40px) clamp(22px, 2.4vw, 32px);
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.85) inset,
+    0 40px 90px -50px rgb(20 22 26 / 0.65);
+}
+
+.chapter .section-head {
+  display: inline-block;
+  padding: clamp(22px, 2.6vw, 34px) clamp(22px, 2.6vw, 34px) clamp(20px, 2.4vw, 30px);
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.85) inset,
+    0 34px 76px -48px rgb(20 22 26 / 0.6);
+}
+.chapter .section-head.with-action {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(20px, 3vw, 44px);
+  justify-content: space-between;
+  width: 100%;
+}
+.chapter.is-centred .section-head { display: block; margin-left: auto; margin-right: auto; }
+
+/* An interior header sets its words on the same surface. */
+.page-header-inner { display: flex; flex-direction: column; align-items: flex-start; }
+.page-header-inner > * { position: relative; z-index: 2; }
+.page-header-inner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -18px;
+  width: min(100%, 62ch);
+  height: calc(100% + 46px);
+  background: rgb(255 255 255 / 0.7);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.85) inset,
+    0 34px 76px -48px rgb(20 22 26 / 0.6);
+  transform: translate(clamp(-30px, -2.4vw, -22px), 0);
+  padding: 0 clamp(22px, 2.4vw, 30px);
+  box-sizing: content-box;
+  z-index: 1;
+}
+
+/* With the words on their own ground, the wash over the picture can go
+   almost entirely. */
+.chapter-scrim {
+  background:
+    linear-gradient(90deg,
+      rgb(var(--bg-rgb) / 0.5) 0%,
+      rgb(var(--bg-rgb) / 0.24) 30%,
+      rgb(var(--bg-rgb) / 0) 62%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.16) 0%, rgb(var(--bg-rgb) / 0) 24%, rgb(var(--bg-rgb) / 0.16) 100%);
+}
+.chapter.is-centred .chapter-scrim {
+  background:
+    radial-gradient(70% 60% at 50% 50%, rgb(var(--bg-rgb) / 0.4) 0%, rgb(var(--bg-rgb) / 0.16) 62%, rgb(var(--bg-rgb) / 0) 100%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.16) 0%, rgb(var(--bg-rgb) / 0) 45%, rgb(var(--bg-rgb) / 0.16) 100%);
+}
+.hero-scrim {
+  background:
+    linear-gradient(90deg,
+      rgb(var(--bg-rgb) / 0.44) 0%,
+      rgb(var(--bg-rgb) / 0.2) 28%,
+      rgb(var(--bg-rgb) / 0) 60%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.14) 0%, rgb(var(--bg-rgb) / 0) 22%, rgb(var(--bg-rgb) / 0.14) 100%);
+}
+.page-header::after {
+  background:
+    linear-gradient(90deg,
+      rgb(var(--bg-rgb) / 0.46) 0%,
+      rgb(var(--bg-rgb) / 0.2) 32%,
+      rgb(var(--bg-rgb) / 0) 64%),
+    linear-gradient(180deg, rgb(var(--bg-rgb) / 0.1) 0%, rgb(var(--bg-rgb) / 0) 30%, rgb(var(--bg-rgb) / 0.34) 100%);
+}
+
+/* Three cells now that the studio does not name a city. */
+.hero-readout { grid-template-columns: repeat(3, 1fr); }
+
+@media (max-width: 720px) {
+  .hero-copy {
+    display: block;
+    max-width: none;
+    padding: 24px 20px 22px;
+    border-radius: 5px;
+  }
+  .chapter .section-head { display: block; padding: 20px 18px 18px; }
+  .chapter .section-head.with-action { display: block; }
+  .page-header-inner::before { display: none; }
+  .page-header-inner { padding: 22px 18px; background: rgb(255 255 255 / 0.74); backdrop-filter: blur(20px); border: 1px solid rgb(255 255 255 / 0.6); border-radius: 5px; }
+  .hero-readout { grid-template-columns: 1fr 1fr; }
+  .hero-readout .cell:last-child { grid-column: 1 / -1; border-right: 0; }
 }

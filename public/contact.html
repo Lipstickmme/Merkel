@@ -41,7 +41,7 @@
   </header>
 
   
-  <header class="page-header" style="--ph-image:url('/assets/img/merkel1.webp')">
+  <header class="page-header" style="--ph-image:url('/assets/img/add2.webp')">
     <div class="page-header-media" aria-hidden="true"></div>
     <div class="wrap page-header-inner">
       <span class="eyebrow">Start a project</span>
@@ -53,9 +53,9 @@
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
         <div class="contact-detail">
-          <div class="row"><div class="k">Studio</div><div class="val" data-site="address">Wijnhaven 3, 3011 WG Rotterdam, NL</div></div>
+          <div class="row" data-site-row="address" hidden><div class="k">Studio</div><div class="val" data-site="address"></div></div>
           <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com" data-site="email">studio@merkelconstructions.com</a></div></div>
-          <div class="row"><div class="k">Telephone</div><div class="val"><a href="tel:+310102400198" data-site="phone">+31 (0)10 240 0198</a></div></div>
+          <div class="row" data-site-row="phone" hidden><div class="k">Telephone</div><div class="val"><a href="tel:" data-site="phone"></a></div></div>
           <div class="row"><div class="k">Hours</div><div class="val" data-site="hours">Monday to Friday, 09:00 to 18:00 CET</div></div>
         </div>
         <div class="contact-note">
@@ -106,13 +106,13 @@
       <div class="col">
         <h5>Contact</h5>
         <a href="mailto:studio@merkelconstructions.com" data-site="email">studio@merkelconstructions.com</a>
-        <a href="tel:+310102400198" data-site="phone">+31 (0)10 240 0198</a>
+        <a href="/contact" data-site-row="phone" hidden><span data-site="phone"></span></a>
         <a href="/contact">Contact us</a>
       </div>
     </div>
     <div class="wrap footer-bottom">
       <span>&copy; 2026 Merkel Constructions B.V.</span>
-      <span>Rotterdam, Netherlands</span>
+      <span data-site-row="address" hidden data-site="address"></span>
     </div>
   </footer>
 
