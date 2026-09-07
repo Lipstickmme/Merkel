@@ -1648,7 +1648,7 @@ main { background: #102534 !important; }
 .hero-readout .k { color: #101820 !important; font-size: 10px !important; }
 .hero-readout .v { font-size: clamp(18px, 2vw, 25px) !important; }
 .hero-dots { display: none !important; }
-.nav { position: absolute !important; z-index: 10 !important; background: linear-gradient(180deg, rgb(5 12 17 / .72), transparent) !important; }
+.nav { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 100 !important; background: #0c151c !important; border-bottom: 1px solid rgb(255 255 255 / .18) !important; box-shadow: 0 8px 24px rgb(0 0 0 / .14) !important; }
 .nav-links a, .nav-contact { color: #f7f4ec !important; }
 .nav-links a.is-active { color: #ffc107 !important; }
 
@@ -1660,7 +1660,7 @@ main { background: #102534 !important; }
   .hero h1 { max-width: 7ch !important; font-size: clamp(50px, 15vw, 74px) !important; }
   .hero-readout { right: 0 !important; bottom: 0 !important; width: 100% !important; min-height: 72px; }
   .hero::after { background-size: 56px 56px; mask-image: linear-gradient(180deg, black, transparent 82%); }
-  .nav { background: rgb(5 12 17 / .62) !important; }
+  .nav { position: fixed !important; top: 0 !important; background: #0c151c !important; }
 }
 
 @media (max-width: 720px) {
@@ -1712,10 +1712,12 @@ body, main { background: var(--editorial-paper) !important; color: var(--editori
 .leadership { align-items: center; }
 .leadership-media { border-radius: 0 !important; box-shadow: 12px 12px 0 var(--editorial-orange) !important; }
 .leadership-media img { filter: grayscale(.35) !important; }
-.page-header { min-height: 430px !important; grid-template-columns: minmax(0, 1fr) minmax(280px, 42%) !important; padding-top: 86px !important; background: var(--editorial-paper) !important; }
-.page-header-media { min-height: 300px !important; height: 300px !important; align-self: center !important; margin: 32px 40px 32px 0 !important; background-size: cover !important; filter: grayscale(1) contrast(.95); }
-.page-header-inner { background: var(--editorial-paper) !important; color: var(--editorial-ink) !important; padding: 64px clamp(24px, 7vw, 112px) !important; }
-.page-header-inner h1, .page-header-inner p, .page-header-inner .eyebrow { color: var(--editorial-ink) !important; }
+.page-header { min-height: 560px !important; grid-template-columns: minmax(0, 0.82fr) minmax(420px, 1.18fr) !important; padding-top: 74px !important; background: var(--editorial-paper) !important; }
+.page-header-media { min-height: 460px !important; height: min(62vh, 620px) !important; align-self: stretch !important; margin: 0 40px 0 0 !important; background-size: cover !important; background-position: center !important; filter: none !important; border-left: 14px solid var(--editorial-yellow); }
+.page-header-inner { display: flex !important; flex-direction: column !important; justify-content: center !important; background: var(--editorial-paper) !important; color: var(--editorial-ink) !important; padding: 72px clamp(24px, 7vw, 112px) !important; }
+.page-header-inner h1 { max-width: 8ch; font-size: clamp(56px, 7vw, 108px) !important; line-height: .96 !important; }
+.page-header-inner p { max-width: 46ch; font-size: clamp(17px, 1.8vw, 22px); line-height: 1.55; }
+.page-header-inner h1, .page-header-inner p { color: var(--editorial-ink) !important; text-shadow: none !important; }
 .page-header-inner .eyebrow { color: var(--editorial-orange) !important; }
 .footer { background: var(--editorial-ink) !important; color: #f7f4ec !important; }
 
@@ -1793,5 +1795,6 @@ body, main { background: var(--editorial-paper) !important; color: var(--editori
   .hero-readout { bottom: 0 !important; box-shadow: none !important; }
   .page-header { display: flex !important; flex-direction: column !important; min-height: auto !important; padding-top: 70px !important; }
   .page-header-inner { order: 1 !important; padding: 48px 24px 32px !important; }
-  .page-header-media { order: 2 !important; width: calc(100% - 32px) !important; height: 220px !important; min-height: 220px !important; margin: 0 16px 32px !important; }
+  .page-header-media { order: 2 !important; width: calc(100% - 32px) !important; height: 300px !important; min-height: 300px !important; margin: 0 16px 32px !important; border-left: 8px solid var(--editorial-yellow); }
+  .page-header-inner h1 { max-width: 9ch; font-size: clamp(52px, 15vw, 76px) !important; }
 }
