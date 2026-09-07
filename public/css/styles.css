@@ -1640,7 +1640,7 @@ main { background: #102534 !important; }
 .hero-copy { max-width: 720px !important; margin: 0 !important; }
 .hero h1 { max-width: 8ch !important; font-size: clamp(58px, 8.4vw, 126px) !important; color: #f7f4ec !important; }
 .hero-sub { max-width: 54ch !important; color: rgb(247 244 236 / 0.84) !important; }
-.hero-tag { color: #fff !important; }
+.hero-tag, .hero .eyebrow { color: #fff !important; }
 .hero .btn, .hero .btn.ghost { color: #fff !important; border-color: rgb(255 255 255 / .7) !important; }
 .hero .btn:hover, .hero .btn.ghost:hover { color: #fff !important; }
 .hero-scrim { display: block !important; background: rgb(5 12 17 / .22) !important; }
@@ -1707,7 +1707,12 @@ body, main { background: var(--editorial-paper) !important; color: var(--editori
 .section-head p, .contact-lede, .leadership-body p, .card p { color: var(--editorial-muted) !important; }
 .eyebrow, .section-head .eyebrow { color: var(--editorial-orange) !important; }
 .services-grid, .stats-grid, .cards-grid { border-top: 1px solid rgb(7 17 27 / .18); }
-.services-grid .service, .stats-grid .stat, .cards-grid .card { border-color: rgb(7 17 27 / .18) !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; }
+.services-grid .service, .stats-grid .stat, .cards-grid .card { border-color: rgb(7 17 27 / .18) !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; transform-style: preserve-3d; transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease; will-change: transform; }
+.services-grid .service:hover, .stats-grid .stat:hover, .cards-grid .card:hover { transform: perspective(900px) rotateX(2deg) rotateY(-3deg) translateY(-6px); box-shadow: 8px 10px 0 rgb(255 90 10 / .22) !important; background: rgb(255 196 0 / .08) !important; }
+@media (prefers-reduced-motion: reduce) {
+  .services-grid .service, .stats-grid .stat, .cards-grid .card { transition: none; }
+  .services-grid .service:hover, .stats-grid .stat:hover, .cards-grid .card:hover { transform: translateY(-3px); }
+}
 .services-grid .service::before { color: var(--editorial-orange) !important; }
 .service h3, .card h3, .stat .num, .stat .lbl { color: var(--editorial-ink) !important; }
 .chapter .btn, .btn.ghost { color: var(--editorial-ink) !important; border-color: var(--editorial-orange) !important; background: transparent !important; }

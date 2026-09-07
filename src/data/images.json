@@ -69,7 +69,6 @@
   "heroSlides": [
     {
       "prefer": [
-        "m1",
         "merkel2"
       ],
       "fallback": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/merkel2-X5a3OtwTvD1tkkyJ2iLPGsVU7Xgfqt.png"
