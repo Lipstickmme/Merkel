@@ -183,6 +183,25 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
 
+  /* A restrained pointer tilt gives the glass surfaces physical depth without
+     changing layout. Touch and reduced-motion users keep the static view. */
+  if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+    const tiltTargets = $$('.hero-copy, .nav, .service, .project, .leadership-media');
+    tiltTargets.forEach((target) => {
+      target.addEventListener('pointermove', (event) => {
+        const box = target.getBoundingClientRect();
+        const x = (event.clientX - box.left) / box.width - 0.5;
+        const y = (event.clientY - box.top) / box.height - 0.5;
+        target.style.setProperty('--tilt-x', `${(-y * 3.5).toFixed(2)}deg`);
+        target.style.setProperty('--tilt-y', `${(x * 4.5).toFixed(2)}deg`);
+      });
+      target.addEventListener('pointerleave', () => {
+        target.style.setProperty('--tilt-x', '0deg');
+        target.style.setProperty('--tilt-y', '0deg');
+      });
+    });
+  }
+
   /* Section artwork settles into place as its chapter arrives. */
   function stageChapters() {
     if (!chapters.length) return;
