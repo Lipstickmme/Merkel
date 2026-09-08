@@ -239,6 +239,7 @@
       // The page behind a full-screen sheet must not scroll under it.
       document.body.classList.toggle('nav-open', open);
       toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     };
     toggle.addEventListener('click', () => setSheet(!links.classList.contains('open')));
     $$('#navlinks a').forEach((a) => a.addEventListener('click', () => setSheet(false)));
