@@ -145,6 +145,11 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing:
 
 .nav-toggle { display: none; background: none; border: 1px solid var(--line); color: var(--ink); width: 42px; height: 38px; cursor: pointer; }
 .nav-toggle span { display:block; width:18px; height:1.5px; background: var(--ink); margin: 3px auto; transition: .3s var(--ease); }
+.nav.open-sheet .nav-toggle { position: relative; z-index: 110; border-color: var(--ink); }
+.nav.open-sheet .nav-toggle span { position: absolute; left: 11px; top: 17px; margin: 0; background: var(--ink); }
+.nav.open-sheet .nav-toggle span:first-child { transform: rotate(45deg); }
+.nav.open-sheet .nav-toggle span:nth-child(2) { opacity: 0; }
+.nav.open-sheet .nav-toggle span:last-child { transform: rotate(-45deg); }
 
 /* Hero ------------------------------------------------------------------ */
 .hero {
