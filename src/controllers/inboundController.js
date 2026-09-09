@@ -92,7 +92,16 @@ exports.resend = async (req, res, next) => {
     const result = verify(secret, req.headers, req.rawBody);
     if (!result.ok) {
       console.warn('[merkel] inbound webhook rejected:', result.reason);
-      return res.status(401).json({ error: 'invalid_signature', message: 'Webhook signature could not be verified.' });
+      // The reason is returned, not just logged: a provider's delivery log is
+      // where this failure is actually read, and a bare 401 there is
+      // indistinguishable between an unset secret, a mismatched one, and a
+      // provider that never sent the headers. It tells a caller nothing they
+      // did not already know from the status code.
+      return res.status(401).json({
+        error: 'invalid_signature',
+        reason: result.reason,
+        message: 'Webhook signature could not be verified.',
+      });
     }
 
     const payload = req.body || {};
