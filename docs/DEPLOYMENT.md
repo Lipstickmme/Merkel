@@ -384,7 +384,7 @@ notifications, so you can work entirely offline. To test notifications locally, 
 | `CHAT_NOTIFY` | no | `off` stops chat notifications (default `on`) |
 | `RESEND_WEBHOOK_SECRET` | for inbound | Webhook signing secret; endpoint is closed without it |
 | `MAILBOX_ADDRESS` | for inbound | The address that receives mail |
-| `FORWARD_TO` | for inbound | Where received mail is forwarded (falls back to `FORM_TO`) |
+| `FORWARD_TO` | for inbound | Where received mail is forwarded. No default: unset means nothing is forwarded |
 | `NOTIFY_WEBHOOK_URL` | no | Slack / Discord / desk webhook |
 | `DATA_DIR` | no | Override local file storage path |
 | `RATE_LIMIT_WINDOW_MS` / `RATE_LIMIT_MAX` | no | API rate limiting (default 60000 / 30) |
