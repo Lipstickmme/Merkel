@@ -15,12 +15,16 @@
 
     root.removeAttribute('data-loading');
     root.innerHTML = `
-      <header class="page-header" style="--ph-image:url('${esc(s.image)}')">
-        <div class="page-header-media" aria-hidden="true"></div>
-        <div class="wrap page-header-inner">
-          <span class="eyebrow">${esc(s.code)} / Services</span>
-          <h1 data-reveal>${esc(s.title)}</h1>
-          <p data-reveal>${esc(s.lede || s.summary)}</p>
+      <header class="page-header">
+        <div class="wrap page-header-grid">
+          <div class="page-header-copy">
+            <span class="eyebrow">${esc(s.code)} / Services</span>
+            <h1 data-reveal>${esc(s.title)}</h1>
+            <p data-reveal>${esc(s.lede || s.summary)}</p>
+          </div>
+          <figure class="figure page-header-figure" data-reveal>
+            <img src="${esc(s.image)}" alt="${esc(s.title)}" decoding="async" />
+          </figure>
         </div>
       </header>
 

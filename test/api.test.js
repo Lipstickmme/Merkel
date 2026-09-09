@@ -162,6 +162,31 @@ async function withApp(env, fn) {
       }
     );
     stale.close();
+
+    // Once MAILBOX_ADDRESS is set the inbox tables stop being optional. Filing
+    // is best effort, so without them the webhook still answers 200 and Resend
+    // still reports success while /admin stays empty and nothing says why.
+    const receiving = await mock.start({});
+    delete receiving.db.email_threads;
+    delete receiving.db.email_messages;
+    await withApp(
+      {
+        SUPABASE_URL: `http://127.0.0.1:${receiving.address().port}`,
+        SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY,
+        SUPABASE_ANON_KEY: mock.ANON_KEY,
+        MAILBOX_ADDRESS: 'Merkel Constructions <contact@merkel.test>',
+      },
+      async (base) => {
+        const res = await req(base, 'GET', '/api/health?probe=1');
+        assert.strictEqual(res.body.status, 'degraded');
+        assert.ok(
+          res.body.warnings.some((w) => /email_threads[\s\S]*0002_email\.sql/.test(w)),
+          JSON.stringify(res.body.warnings)
+        );
+        console.log('  ok  a site receiving mail is told the inbox tables are missing');
+      }
+    );
+    receiving.close();
   }
 
   /* ---- 5. contact enquiries still land ---- */
@@ -352,6 +377,71 @@ async function withApp(env, fn) {
         assert.strictEqual(res.body.source, 'defaults');
         assert.strictEqual(res.body.email, require(ROOT + '/src/data/site.json').email);
         console.log('  ok  without the table the built-in details stand');
+      }
+    );
+    sb.close();
+  }
+
+  /* ---- 15. a signed Resend delivery reaches the admin inbox ---- */
+  {
+    const { sign } = require(ROOT + '/src/utils/webhookSignature');
+    const SECRET = 'whsec_' + Buffer.from('merkel-inbound-test-secret').toString('base64');
+    const sb = await mock.start({});
+    await withApp(
+      {
+        SUPABASE_URL: `http://127.0.0.1:${sb.address().port}`,
+        SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY,
+        SUPABASE_ANON_KEY: mock.ANON_KEY,
+        RESEND_WEBHOOK_SECRET: SECRET,
+        MAILBOX_ADDRESS: 'Merkel Constructions <contact@merkel.test>',
+        // No forwarding here: this asserts the archive that /admin reads.
+        FORWARD_TO: '',
+        RESEND_API_KEY: '',
+      },
+      async (base) => {
+        const post = (raw, id, timestamp, signature) =>
+          fetch(base + '/api/inbound/resend', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'svix-id': id,
+              'svix-timestamp': timestamp,
+              'svix-signature': signature,
+            },
+            body: raw,
+          });
+
+        // Resend sends `to` as an array and prefixes the event with "email.".
+        const body = JSON.stringify({
+          type: 'email.received',
+          data: {
+            from: 'Ada Kolen <ada@example.com>',
+            to: ['contact@merkel.test'],
+            subject: 'Re: A 40m span',
+            text: 'Can you quote the canal crossing?',
+            message_id: '<m1@example.com>',
+          },
+        });
+        const ts = String(Math.floor(Date.now() / 1000));
+
+        const ok = await post(body, 'msg_1', ts, sign(SECRET, 'msg_1', ts, body));
+        assert.strictEqual(ok.status, 200, await ok.text());
+        assert.strictEqual(sb.db.email_threads.rows.length, 1, 'a thread was opened');
+        assert.strictEqual(sb.db.email_threads.rows[0].participant_email, 'ada@example.com');
+        // Re: is stripped so a reply joins the conversation it belongs to.
+        assert.strictEqual(sb.db.email_threads.rows[0].subject, 'A 40m span');
+        assert.strictEqual(sb.db.email_messages.rows.length, 1);
+        assert.strictEqual(sb.db.email_messages.rows[0].direction, 'inbound');
+        assert.strictEqual(sb.db.email_messages.rows[0].to_email, 'contact@merkel.test');
+        console.log('  ok  a signed inbound delivery lands in the admin inbox');
+
+        const tampered = body.replace('Ada Kolen', 'Mallory Vane');
+        const bad = await post(tampered, 'msg_2', ts, sign(SECRET, 'msg_2', ts, body));
+        assert.strictEqual(bad.status, 401);
+        // Named so a provider's delivery log says which of the failures it was.
+        assert.strictEqual((await bad.json()).reason, 'signature_mismatch');
+        assert.strictEqual(sb.db.email_messages.rows.length, 1, 'nothing filed from an unverified post');
+        console.log('  ok  a tampered body is refused and files nothing');
       }
     );
     sb.close();

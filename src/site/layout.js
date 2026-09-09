@@ -7,25 +7,9 @@
  * HTML, so there is no client-side layout flash.
  */
 
-const images = require('./images');
 const site = require('../data/site.json');
 
 const YEAR = new Date().getFullYear();
-
-/**
- * The image that sits behind every page, fixed to the viewport so the whole
- * site reads as one continuous surface rather than a stack of separate
- * screens. Section artwork lays over it; the scrim keeps type readable at
- * any brightness.
- */
-function underlay() {
-  return `
-  <div class="underlay" aria-hidden="true">
-    <div class="underlay-img" style="background-image:url('${images.underlay}')"></div>
-    <div class="underlay-grain"></div>
-    <div class="underlay-scrim"></div>
-  </div>`;
-}
 
 /**
  * The enquiry form. Shared so the landing page and /contact stay identical in
@@ -187,7 +171,6 @@ function page(opts) {
   return [
     head(opts),
     `<body class="${bodyClass}">`,
-    underlay(),
     `  <div class="scroll-progress" id="progress"></div>`,
     nav(active),
     content,
@@ -197,4 +180,4 @@ function page(opts) {
   ].join('\n');
 }
 
-module.exports = { page, nav, footer, chatWidget, head, contactForm, underlay };
+module.exports = { page, nav, footer, chatWidget, head, contactForm };

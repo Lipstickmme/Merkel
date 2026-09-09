@@ -16,12 +16,6 @@
   
 </head>
 <body class="page-home">
-
-  <div class="underlay" aria-hidden="true">
-    <div class="underlay-img" style="background-image:url('/assets/img/merkel1.webp')"></div>
-    <div class="underlay-grain"></div>
-    <div class="underlay-scrim"></div>
-  </div>
   <div class="scroll-progress" id="progress"></div>
 
   <header class="nav" id="nav">
@@ -41,26 +35,27 @@
   </header>
 <nav class="chapter-rail" id="chapter-rail" aria-label="Page sections"></nav>
 
-  <section class="hero chapter" id="top" data-chapter="Merkel">
-    <div class="hero-slides" id="hero-slides" aria-hidden="true">
-      <div class="slide is-active" style="background-image:url('/assets/img/merkel1.webp')"></div>
-      <div class="slide" style="background-image:url('/assets/img/addd.webp')"></div>
-      <div class="slide" style="background-image:url('/assets/img/add.webp')"></div>
-    </div>
-    <div class="hero-scrim" aria-hidden="true"></div>
-    <div class="hero-inner wrap">
+  <section class="hero" id="top" data-chapter="Merkel">
+    <div class="wrap hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow hero-tag" data-reveal>Structural, civil, mechanical and digital engineering</span>
+        <span class="eyebrow hero-tag" data-reveal>Structural, civil, mechanical, digital</span>
         <h1 data-reveal>Built to stand.</h1>
         <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
         <div class="hero-actions" data-reveal>
-          <a href="/projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
+          <a href="/projects" class="btn ghost">View projects <span class="arw">&rsaquo;</span></a>
           <a href="#contact" class="btn ghost">Contact us <span class="arw">&rsaquo;</span></a>
         </div>
-        <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
-          <button class="dot is-active" data-slide="0" aria-label="Slide 1"></button>
-          <button class="dot" data-slide="1" aria-label="Slide 2"></button>
-          <button class="dot" data-slide="2" aria-label="Slide 3"></button>
+      </div>
+      <div class="hero-figure" data-reveal>
+        <div class="hero-slides" id="hero-slides">
+          <img class="slide is-active" src="/assets/img/merkel2.webp" alt="Merkel Constructions engineers on site" loading="eager" decoding="async" />
+          <img class="slide" src="/assets/img/m3.webp" alt="" loading="lazy" decoding="async" />
+          <img class="slide" src="/assets/img/m1.webp" alt="" loading="lazy" decoding="async" />
+        </div>
+        <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Photographs">
+          <button class="dot is-active" data-slide="0" aria-label="Photograph 1"></button>
+          <button class="dot" data-slide="1" aria-label="Photograph 2"></button>
+          <button class="dot" data-slide="2" aria-label="Photograph 3"></button>
         </div>
       </div>
     </div>
@@ -72,42 +67,57 @@
   </section>
 
   <section class="chapter " id="services" data-chapter="Capabilities">
-    <div class="chapter-media" aria-hidden="true"><img src="/assets/img/add2.webp" alt="" loading="lazy" decoding="async" /></div>
-    <div class="chapter-scrim" aria-hidden="true"></div>
     <div class="wrap chapter-inner">
+      <div class="chapter-lead">
+        <div class="chapter-lead-copy">
       <div class="section-head" data-reveal>
         <span class="eyebrow">01 / Capabilities</span>
         <h2>Four disciplines, one coordinated model.</h2>
         <p>Structure, ground, systems and data are coordinated in one model, so nothing is lost in the gap between two sets of drawings.</p>
+      </div></div>
+        
+      <figure class="figure chapter-figure" data-reveal>
+        <img src="/assets/img/m2.webp" alt="Engineers reviewing a steel frame on site" loading="lazy" decoding="async" />
+      </figure>
       </div>
-      <div class="services-grid" id="services-grid"></div></div>
+      
+      <div class="services-grid" id="services-grid"></div>
+    </div>
   </section>
 
-  <section class="chapter is-centred" id="metrics" data-chapter="Practice">
-    <div class="chapter-media" aria-hidden="true"><img src="/assets/img/addd.webp" alt="" loading="lazy" decoding="async" /></div>
-    <div class="chapter-scrim" aria-hidden="true"></div>
+  <section class="chapter " id="metrics" data-chapter="Practice">
     <div class="wrap chapter-inner">
-      <div class="section-head centred" data-reveal>
+      <div class="chapter-lead flip">
+        <div class="chapter-lead-copy">
+      <div class="section-head" data-reveal>
         <span class="eyebrow">02 / The practice</span>
         <h2>Twenty seven years of load paths.</h2>
         <p>Figures our clients can check against the projects they name.</p>
+      </div></div>
+        
+      <figure class="figure chapter-figure" data-reveal>
+        <img src="/assets/img/m3.webp" alt="A Merkel Constructions engineer at a plant under construction" loading="lazy" decoding="async" />
+      </figure>
       </div>
+      
       <div class="stats-grid" data-reveal>
         <div class="stat"><div class="num" data-count="640" data-suffix="+">0</div><div class="lbl">Projects delivered</div></div>
         <div class="stat"><div class="num" data-count="27" data-suffix="">0</div><div class="lbl">Years in practice</div></div>
         <div class="stat"><div class="num"><em data-count="22" data-suffix="%">0</em></div><div class="lbl">Average material saved</div></div>
         <div class="stat"><div class="num" data-count="14" data-suffix="">0</div><div class="lbl">Countries built in</div></div>
-      </div></div>
+      </div>
+    </div>
   </section>
 
   <section class="chapter " id="leadership" data-chapter="Leadership">
-    
     <div class="wrap chapter-inner">
+      
+      
       <div class="leadership">
-        <div class="leadership-media" data-reveal>
-          <img src="/assets/img/ceo.jpg" alt="Portrait of Tommy Kowalski" loading="lazy" />
-          <span class="leadership-badge">Founding Principal & CEO</span>
-        </div>
+        <figure class="figure leadership-media" data-reveal>
+          <img src="/assets/img/ceo.jpg" alt="Portrait of Tommy Kowalski" loading="lazy" decoding="async" />
+          <figcaption class="leadership-badge">Founding Principal & CEO</figcaption>
+        </figure>
         <div class="leadership-body" data-reveal>
           <span class="eyebrow">03 / Leadership</span>
           <blockquote>&ldquo;The best-performing structures are engineered early, while ideas are still cheap to change.&rdquo;</blockquote>
@@ -115,13 +125,14 @@
           <p>Tommy founded Merkel Constructions in 1998 after a decade designing tall buildings across Europe, and holds a doctorate in structural engineering. Since then they have led the practice through more than six hundred commissions, from super-tall frames to fjord-spanning bridges, and still review every major structural scheme the studio puts its name to.</p>
           <a href="/careers" class="link-arrow">Join the studio <span class="arw">&rsaquo;</span></a>
         </div>
-      </div></div>
+      </div>
+    </div>
   </section>
 
   <section class="chapter " id="work" data-chapter="Work">
-    <div class="chapter-media" aria-hidden="true"><img src="/assets/img/merkel4.webp" alt="" loading="lazy" decoding="async" /></div>
-    <div class="chapter-scrim" aria-hidden="true"></div>
     <div class="wrap chapter-inner">
+      <div class="chapter-lead">
+        <div class="chapter-lead-copy">
       <div class="section-head with-action" data-reveal>
         <div>
           <span class="eyebrow">04 / Selected work</span>
@@ -129,23 +140,39 @@
           <p>Four commissions from the last three years.</p>
         </div>
         <a href="/projects" class="btn ghost">All projects <span class="arw">&rsaquo;</span></a>
+      </div></div>
+        
+      <figure class="figure chapter-figure" data-reveal>
+        <img src="/assets/img/m4.webp" alt="Steel structure being erected on a Merkel Constructions project" loading="lazy" decoding="async" />
+      </figure>
       </div>
-      <div class="cards-grid" id="featured-projects"></div></div>
+      
+      <div class="cards-grid" id="featured-projects"></div>
+    </div>
   </section>
 
   <section class="chapter " id="contact" data-chapter="Contact">
-    <div class="chapter-media" aria-hidden="true"><img src="/assets/img/add.webp" alt="" loading="lazy" decoding="async" /></div>
-    <div class="chapter-scrim" aria-hidden="true"></div>
     <div class="wrap chapter-inner">
+      <div class="chapter-lead flip">
+        <div class="chapter-lead-copy">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">05 / Start a project</span>
+        <h2>Bring us the hard part.</h2>
+        <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
+      </div></div>
+        
+      <figure class="figure chapter-figure" data-reveal>
+        <img src="/assets/img/m1.webp" alt="Merkel Constructions site team at work" loading="lazy" decoding="async" />
+      </figure>
+      </div>
+      
       <div class="contact-grid">
         <div class="contact-info" data-reveal>
-          <span class="eyebrow">05 / Start a project</span>
-          <h2>Bring us the hard part.</h2>
-          <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
           <div class="contact-detail">
             <div class="row" data-site-row="address" hidden><div class="k">Studio</div><div class="val" data-site="address"></div></div>
             <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:studio@merkelconstructions.com" data-site="email">studio@merkelconstructions.com</a></div></div>
             <div class="row" data-site-row="phone" hidden><div class="k">Telephone</div><div class="val"><a href="tel:" data-site="phone"></a></div></div>
+            <div class="row"><div class="k">Hours</div><div class="val" data-site="hours">Monday to Friday, 09:00 to 18:00 CET</div></div>
           </div>
         </div>
         
@@ -172,7 +199,8 @@
         <div class="form-status" data-form-status role="status" aria-live="polite"></div>
         <button type="submit" class="btn" data-submit>Send enquiry <span class="arw">&rsaquo;</span></button>
       </form>
-      </div></div>
+      </div>
+    </div>
   </section>
 
   <footer class="footer">

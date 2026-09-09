@@ -62,7 +62,7 @@
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
         const el = e.target;
-        const section = el.closest('.chapter, section, header') || document.body;
+        const section = el.closest('section, header') || document.body;
         const peers = $$('[data-reveal]', section);
         const step = Math.min(peers.indexOf(el), 5);
         el.style.setProperty('--reveal-delay', (step * 90) + 'ms');
@@ -125,19 +125,14 @@
 
   window.MERKEL = { $, $$, esc, fetchJSON, reduceMotion, projectCard, observeReveals, FALLBACK_PROJECTS, site };
 
-  /* Nav, scroll progress, underlay parallax, chapter rail ----------------- */
+  /* Nav, scroll progress, chapter rail ------------------------------------ */
   const nav = $('#nav');
   const progress = $('#progress');
-  const underlay = $('.underlay-img');
-  const chapters = $$('.chapter[data-chapter]');
+  /* The hero is a chapter for the rail's purposes without carrying the
+     class, so the rail is built from the marker rather than the styling. */
+  const chapters = $$('[data-chapter]');
   let railLinks = [];
   let ticking = false;
-
-  /* The underlay drifts across the whole document rather than with raw scroll,
-     so the travel is the same on a short page and a long one. */
-  const UNDERLAY_TRAVEL = 70;
-  const MEDIA_TRAVEL = 80;
-  const media = $$('.chapter-media');
 
   function frame() {
     ticking = false;
@@ -147,22 +142,6 @@
 
     if (nav) nav.classList.toggle('scrolled', scrolled > 24);
     if (progress) progress.style.width = (pct * 100) + '%';
-    if (underlay && !reduceMotion) {
-      underlay.style.setProperty('--underlay-shift', (-UNDERLAY_TRAVEL * pct).toFixed(1) + 'px');
-    }
-
-    /* Artwork drifts against its section: at the top of the section the image
-       sits low, at the bottom it has risen, so the picture and the words are
-       never travelling at the same speed. */
-    if (!reduceMotion) {
-      for (let i = 0; i < media.length; i += 1) {
-        const layer = media[i];
-        const box = layer.parentElement.getBoundingClientRect();
-        if (box.bottom < -200 || box.top > window.innerHeight + 200) continue;
-        const progress = (window.innerHeight - box.top) / (window.innerHeight + box.height);
-        layer.style.setProperty('--media-shift', ((progress - 0.5) * MEDIA_TRAVEL).toFixed(1) + 'px');
-      }
-    }
 
     if (railLinks.length) {
       const middle = scrolled + window.innerHeight / 2;
@@ -182,21 +161,6 @@
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
-
-  /* Section artwork settles into place as its chapter arrives. */
-  function stageChapters() {
-    if (!chapters.length) return;
-    if (reduceMotion || !('IntersectionObserver' in window)) {
-      chapters.forEach((c) => c.classList.add('is-onstage'));
-      return;
-    }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('is-onstage'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.2 });
-    chapters.forEach((c) => io.observe(c));
-  }
 
   /* The rail is built from the sections themselves, so adding a chapter to
      src/site/pages.js adds its marker here with nothing else to update. */
@@ -362,7 +326,6 @@
     const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
     hydrateSite();
     buildRail();
-    stageChapters();
     setupSlides();
     runCounters();
     setupForms();
