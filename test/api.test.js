@@ -162,6 +162,31 @@ async function withApp(env, fn) {
       }
     );
     stale.close();
+
+    // Once MAILBOX_ADDRESS is set the inbox tables stop being optional. Filing
+    // is best effort, so without them the webhook still answers 200 and Resend
+    // still reports success while /admin stays empty and nothing says why.
+    const receiving = await mock.start({});
+    delete receiving.db.email_threads;
+    delete receiving.db.email_messages;
+    await withApp(
+      {
+        SUPABASE_URL: `http://127.0.0.1:${receiving.address().port}`,
+        SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY,
+        SUPABASE_ANON_KEY: mock.ANON_KEY,
+        MAILBOX_ADDRESS: 'Merkel Constructions <contact@merkel.test>',
+      },
+      async (base) => {
+        const res = await req(base, 'GET', '/api/health?probe=1');
+        assert.strictEqual(res.body.status, 'degraded');
+        assert.ok(
+          res.body.warnings.some((w) => /email_threads[\s\S]*0002_email\.sql/.test(w)),
+          JSON.stringify(res.body.warnings)
+        );
+        console.log('  ok  a site receiving mail is told the inbox tables are missing');
+      }
+    );
+    receiving.close();
   }
 
   /* ---- 5. contact enquiries still land ---- */

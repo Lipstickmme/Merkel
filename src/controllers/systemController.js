@@ -25,9 +25,22 @@ const PROBES = [
   { table: 'chat_sessions', columns: 'id,created_at,visitor_id,last_message_at,status,handled_by_agent' },
   { table: 'chat_messages', columns: 'id,created_at,session_id,sender,body' },
   { table: 'admins', columns: 'user_id,email' },
-  // 0002_email.sql is optional: a site not receiving mail never creates these.
-  { table: 'email_threads', columns: 'id,participant_email,subject,last_message_at,status', optional: true },
-  { table: 'email_messages', columns: 'id,thread_id,direction,from_email,to_email,message_id', optional: true },
+  // From 0002_email.sql. A site not receiving mail never needs these, but once
+  // MAILBOX_ADDRESS is set they carry the admin inbox, so their absence is a
+  // fault rather than a choice: filing is best effort, so the webhook still
+  // answers 200 and Resend still reports success while nothing reaches /admin.
+  {
+    table: 'email_threads',
+    columns: 'id,participant_email,subject,last_message_at,status',
+    migration: '0002_email.sql',
+    neededWhen: () => Boolean(config.mailboxAddress()),
+  },
+  {
+    table: 'email_messages',
+    columns: 'id,thread_id,direction,from_email,to_email,message_id',
+    migration: '0002_email.sql',
+    neededWhen: () => Boolean(config.mailboxAddress()),
+  },
 ];
 
 async function probeSchema() {
@@ -35,15 +48,18 @@ async function probeSchema() {
   if (!supabase) return null;
 
   const results = {};
-  for (const { table, columns, optional } of PROBES) {
+  const problems = [];
+  for (const { table, columns, migration, neededWhen } of PROBES) {
+    const needed = neededWhen ? neededWhen() : true;
     try {
       await supabase.select(table, `select=${columns}&limit=1`);
       results[table] = 'ok';
     } catch (err) {
-      results[table] = optional ? `optional: ${err.message}` : err.message;
+      results[table] = needed ? err.message : `optional: ${err.message}`;
+      if (needed) problems.push({ table, message: err.message, migration: migration || '0001_init.sql' });
     }
   }
-  return results;
+  return { results, problems };
 }
 
 /** GET /api/public-config: what the browser needs to talk to Supabase. */
@@ -122,11 +138,12 @@ exports.health = async (req, res) => {
   // Opt-in: the plain health check stays a pure environment read.
   let schema;
   if (req.query.probe) {
-    schema = await probeSchema();
-    Object.entries(schema || {}).forEach(([table, result]) => {
-      if (result !== 'ok' && !String(result).startsWith('optional:')) {
-        warnings.push(`Table ${table} did not answer as expected: ${result}. Run supabase/migrations/0001_init.sql in the Supabase SQL Editor.`);
-      }
+    const probed = await probeSchema();
+    schema = probed ? probed.results : null;
+    (probed ? probed.problems : []).forEach(({ table, message, migration }) => {
+      warnings.push(
+        `Table ${table} did not answer as expected: ${message}. Run supabase/migrations/${migration} in the Supabase SQL Editor.`
+      );
     });
   }
 
