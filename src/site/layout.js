@@ -7,9 +7,25 @@
  * HTML, so there is no client-side layout flash.
  */
 
+const images = require('./images');
 const site = require('../data/site.json');
 
 const YEAR = new Date().getFullYear();
+
+/**
+ * The image that sits behind every page, fixed to the viewport so the whole
+ * site reads as one continuous surface rather than a stack of separate
+ * screens. Section artwork lays over it; the scrim keeps type readable at
+ * any brightness.
+ */
+function underlay() {
+  return `
+  <div class="underlay" aria-hidden="true">
+    <div class="underlay-img" style="background-image:url('${images.underlay}')"></div>
+    <div class="underlay-grain"></div>
+    <div class="underlay-scrim"></div>
+  </div>`;
+}
 
 /**
  * The enquiry form. Shared so the landing page and /contact stay identical in
@@ -69,7 +85,7 @@ function nav(active = '') {
   return `
   <header class="nav" id="nav">
     <a class="brand" href="/" aria-label="Merkel Constructions home">
-      <img class="brand-logo" src="/assets/brand/merkel-constructions-wordmark.png" alt="Merkel Constructions" width="1048" height="203" />
+      <img class="brand-logo" src="/assets/brand/merkel-constructions-wordmark-light.png" alt="Merkel Constructions" width="1048" height="203" />
     </a>
     <nav class="nav-links" id="navlinks">
       ${link('/projects', 'Projects', 'projects')}
@@ -78,9 +94,9 @@ function nav(active = '') {
       ${link('/contact', 'Contact us', 'contact')}
     </nav>
     <a href="/contact" class="btn ghost nav-cta">Contact us <span class="arw">&rsaquo;</span></a>
-    <button class="nav-toggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+  <button class="nav-toggle" id="navtoggle" aria-label="Open menu" aria-expanded="false">
+  <span></span><span></span><span></span>
+  </button>
   </header>`;
 }
 
@@ -89,7 +105,7 @@ function footer() {
   <footer class="footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
-        <img class="brand-logo footer-logo" src="/assets/brand/merkel-constructions-wordmark.png" alt="Merkel Constructions" width="1048" height="203" />
+        <img class="brand-logo footer-logo" src="/assets/brand/merkel-constructions-wordmark-light.png" alt="Merkel Constructions" width="1048" height="203" />
         <p>Engineering for buildings and infrastructure.</p>
       </div>
       <div class="col">
@@ -102,13 +118,11 @@ function footer() {
       <div class="col">
         <h5>Contact</h5>
         <a href="mailto:${site.email}" data-site="email">${site.email}</a>
-        <a href="/contact" data-site-row="phone"${site.phone ? '' : ' hidden'}><span data-site="phone">${site.phone}</span></a>
         <a href="/contact">Contact us</a>
       </div>
     </div>
     <div class="wrap footer-bottom">
       <span>&copy; ${YEAR} Merkel Constructions B.V.</span>
-      <span data-site-row="address"${site.address ? '' : ' hidden'} data-site="address">${site.address}</span>
     </div>
   </footer>`;
 }
@@ -180,4 +194,4 @@ function page(opts) {
   ].join('\n');
 }
 
-module.exports = { page, nav, footer, chatWidget, head, contactForm };
+module.exports = { page, nav, footer, chatWidget, head, contactForm, underlay };

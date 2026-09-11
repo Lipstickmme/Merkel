@@ -5,91 +5,53 @@ const images = require('./images');
 const site = require('../data/site.json');
 const { contactForm } = require('./layout');
 
-/**
- * A photograph on the page.
- *
- * Every picture on this site is a real <img> sitting beside the words, never
- * a background behind them. Nothing is laid over a photograph, so the picture
- * keeps its own contrast and the type keeps the page's.
- */
-function figure({ image, alt, className = '', reveal = true, eager = false }) {
-  if (!image) return '';
+/* Reusable interior page header with an image band. */
+function pageHeader({ eyebrow, title, sub, image }) {
   return `
-      <figure class="figure ${className}"${reveal ? ' data-reveal' : ''}>
-        <img src="${image}" alt="${alt}" loading="${eager ? 'eager' : 'lazy'}" decoding="async" />
-      </figure>`;
-}
-
-/* Reusable interior page header: title on the page, photograph next to it. */
-function pageHeader({ eyebrow, title, sub, image, alt }) {
-  return `
-  <header class="page-header">
-    <div class="wrap page-header-grid">
-      <div class="page-header-copy">
-        <span class="eyebrow">${eyebrow}</span>
-        <h1 data-reveal>${title}</h1>
-        ${sub ? `<p data-reveal>${sub}</p>` : ''}
-      </div>
-      ${figure({ image, alt, className: 'page-header-figure', eager: true })}
+  <header class="page-header" style="--ph-image:url('${image}')">
+    <div class="page-header-media" aria-hidden="true"></div>
+    <div class="wrap page-header-inner">
+      <span class="eyebrow">${eyebrow}</span>
+      <h1 data-reveal>${title}</h1>
+      ${sub ? `<p data-reveal>${sub}</p>` : ''}
     </div>
   </header>`;
 }
 
 /**
- * A chapter of the landing page: one screen, one idea.
- *
- * The head and the photograph share a two column band at the top, and
- * whatever the chapter is really about runs full width underneath. The side
- * the picture takes alternates down the page, so no two chapters read the
- * same way.
+ * A full-height chapter of the landing page. Each one carries its own
+ * photograph over the site-wide underlay, so scrolling the page reads as
+ * moving through a building rather than down a document.
  */
-function chapter({ id, label, image, alt, flip = false, tone = '', head = '', body = '' }) {
-  const lead = image
-    ? `<div class="chapter-lead${flip ? ' flip' : ''}">
-        <div class="chapter-lead-copy">${head}</div>
-        ${figure({ image, alt, className: 'chapter-figure' })}
-      </div>`
-    : head;
+function chapter({ id, label, image, tone = '', inner }) {
   return `
   <section class="chapter ${tone}" id="${id}" data-chapter="${label}">
-    <div class="wrap chapter-inner">
-      ${lead}
-      ${body}
-    </div>
+    ${image ? `<div class="chapter-media" aria-hidden="true"><img src="${image}" alt="" loading="lazy" decoding="async" /></div>
+    <div class="chapter-scrim" aria-hidden="true"></div>` : ''}
+    <div class="wrap chapter-inner">${inner}</div>
   </section>`;
 }
 
 /* ---------- Landing ---------- */
 const ceo = leadership[0];
 
-/**
- * The hero. Copy on the left, the studio's own photography on the right,
- * changing on a timer. The picture is beside the headline rather than under
- * it, so both are read at full strength.
- */
 const heroSection = `
-  <section class="hero" id="top" data-chapter="Merkel">
-    <div class="wrap hero-grid">
+  <section class="hero chapter" id="top" data-chapter="Merkel">
+    <div class="hero-slides" id="hero-slides" aria-hidden="true">
+      ${images.heroSlides.map((src, i) => `<div class="slide${i === 0 ? ' is-active' : ''}" style="background-image:url('${src}')"></div>`).join('\n      ')}
+    </div>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-inner wrap">
       <div class="hero-copy">
-        <span class="eyebrow hero-tag" data-reveal>Structural, civil, mechanical, digital</span>
+        <span class="eyebrow hero-tag" data-reveal>Structural, civil, mechanical and digital engineering</span>
         <h1 data-reveal>Built to stand.</h1>
         <p class="hero-sub" data-reveal>Engineering for the buildings and infrastructure that have to last.</p>
         <div class="hero-actions" data-reveal>
-          <a href="/projects" class="btn ghost">View projects <span class="arw">&rsaquo;</span></a>
+          <a href="/projects" class="btn">View projects <span class="arw">&rsaquo;</span></a>
           <a href="#contact" class="btn ghost">Contact us <span class="arw">&rsaquo;</span></a>
         </div>
-      </div>
-      <div class="hero-figure" data-reveal>
-        <div class="hero-slides" id="hero-slides">
-          ${images.heroSlides
-            .map(
-              (src, i) =>
-                `<img class="slide${i === 0 ? ' is-active' : ''}" src="${src}" alt="${i === 0 ? 'Merkel Constructions engineers on site' : ''}" ${i === 0 ? 'loading="eager"' : 'loading="lazy"'} decoding="async" />`
-            )
-            .join('\n          ')}
-        </div>
-        <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Photographs">
-          ${images.heroSlides.map((src, i) => `<button class="dot${i === 0 ? ' is-active' : ''}" data-slide="${i}" aria-label="Photograph ${i + 1}"></button>`).join('\n          ')}
+        <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Background slides">
+          ${images.heroSlides.map((src, i) => `<button class="dot${i === 0 ? ' is-active' : ''}" data-slide="${i}" aria-label="Slide ${i + 1}"></button>`).join('\n          ')}
         </div>
       </div>
     </div>
@@ -104,14 +66,12 @@ const capabilitiesSection = chapter({
   id: 'services',
   label: 'Capabilities',
   image: images.capabilities,
-  alt: 'Engineers reviewing a steel frame on site',
-  head: `
+  inner: `
       <div class="section-head" data-reveal>
         <span class="eyebrow">01 / Capabilities</span>
         <h2>Four disciplines, one coordinated model.</h2>
         <p>Structure, ground, systems and data are coordinated in one model, so nothing is lost in the gap between two sets of drawings.</p>
-      </div>`,
-  body: `
+      </div>
       <div class="services-grid" id="services-grid"></div>`,
 });
 
@@ -119,15 +79,13 @@ const metricsSection = chapter({
   id: 'metrics',
   label: 'Practice',
   image: images.metrics,
-  alt: 'A Merkel Constructions engineer at a plant under construction',
-  flip: true,
-  head: `
-      <div class="section-head" data-reveal>
+  tone: 'is-centred',
+  inner: `
+      <div class="section-head centred" data-reveal>
         <span class="eyebrow">02 / The practice</span>
         <h2>Twenty seven years of load paths.</h2>
         <p>Figures our clients can check against the projects they name.</p>
-      </div>`,
-  body: `
+      </div>
       <div class="stats-grid" data-reveal>
         <div class="stat"><div class="num" data-count="640" data-suffix="+">0</div><div class="lbl">Projects delivered</div></div>
         <div class="stat"><div class="num" data-count="27" data-suffix="">0</div><div class="lbl">Years in practice</div></div>
@@ -139,12 +97,12 @@ const metricsSection = chapter({
 const leadershipSection = chapter({
   id: 'leadership',
   label: 'Leadership',
-  body: `
+  inner: `
       <div class="leadership">
-        <figure class="figure leadership-media" data-reveal>
-          <img src="${ceo.image}" alt="Portrait of ${ceo.name}" loading="lazy" decoding="async" />
-          <figcaption class="leadership-badge">${ceo.role}</figcaption>
-        </figure>
+        <div class="leadership-media" data-reveal>
+          <img src="${ceo.image}" alt="Portrait of ${ceo.name}" loading="lazy" />
+          <span class="leadership-badge">${ceo.role}</span>
+        </div>
         <div class="leadership-body" data-reveal>
           <span class="eyebrow">03 / Leadership</span>
           <blockquote>&ldquo;${ceo.quote}&rdquo;</blockquote>
@@ -159,8 +117,7 @@ const workSection = chapter({
   id: 'work',
   label: 'Work',
   image: images.work,
-  alt: 'Steel structure being erected on a Merkel Constructions project',
-  head: `
+  inner: `
       <div class="section-head with-action" data-reveal>
         <div>
           <span class="eyebrow">04 / Selected work</span>
@@ -168,8 +125,7 @@ const workSection = chapter({
           <p>Four commissions from the last three years.</p>
         </div>
         <a href="/projects" class="btn ghost">All projects <span class="arw">&rsaquo;</span></a>
-      </div>`,
-  body: `
+      </div>
       <div class="cards-grid" id="featured-projects"></div>`,
 });
 
@@ -177,22 +133,14 @@ const contactSection = chapter({
   id: 'contact',
   label: 'Contact',
   image: images.contact,
-  alt: 'Merkel Constructions site team at work',
-  flip: true,
-  head: `
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">05 / Start a project</span>
-        <h2>Bring us the hard part.</h2>
-        <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
-      </div>`,
-  body: `
+  inner: `
       <div class="contact-grid">
         <div class="contact-info" data-reveal>
+          <span class="eyebrow">05 / Start a project</span>
+          <h2>Bring us the hard part.</h2>
+          <p class="contact-lede">Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer reads it and replies within two working days.</p>
           <div class="contact-detail">
-            <div class="row" data-site-row="address"${site.address ? '' : ' hidden'}><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
             <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:${site.email}" data-site="email">${site.email}</a></div></div>
-            <div class="row" data-site-row="phone"${site.phone ? '' : ' hidden'}><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
-            <div class="row"><div class="k">Hours</div><div class="val" data-site="hours">${site.hours}</div></div>
           </div>
         </div>
         ${contactForm('home-contact-form')}
@@ -211,7 +159,7 @@ const indexContent = [
 
 /* ---------- Projects listing ---------- */
 const projectsContent = `
-  ${pageHeader({ eyebrow: 'Selected work', title: 'Projects.', sub: 'Towers, bridges, industrial plant and transit, from first scheme to handover.', image: images.projectsHeader, alt: 'A completed Merkel Constructions structure' })}
+  ${pageHeader({ eyebrow: 'Selected work', title: 'Projects.', sub: 'Towers, bridges, industrial plant and transit, from first scheme to handover.', image: images.projectsHeader })}
   <section class="section-pad">
     <div class="wrap">
       <div class="proj-filters" id="proj-filters" data-reveal></div>
@@ -227,7 +175,7 @@ const projectContent = `
 
 /* ---------- Services listing ---------- */
 const servicesContent = `
-  ${pageHeader({ eyebrow: 'What we do', title: 'Services.', sub: 'Eight disciplines under one roof, from the ground investigation to the day the plant runs.', image: images.servicesHeader, alt: 'Engineers working through a discipline package on site' })}
+  ${pageHeader({ eyebrow: 'What we do', title: 'Services.', sub: 'Eight disciplines under one roof, from the ground investigation to the day the plant runs.', image: images.capabilities })}
   <section class="section-pad">
     <div class="wrap">
       <div class="service-index" id="service-index"></div>
@@ -242,7 +190,7 @@ const serviceContent = `
 
 /* ---------- Apply ---------- */
 const applyContent = `
-  ${pageHeader({ eyebrow: 'Careers', title: 'Apply.', sub: 'One form, read by the people you would work with. We reply to everyone.', image: images.applyHeader, alt: 'A Merkel Constructions engineer on site' })}
+  ${pageHeader({ eyebrow: 'Careers', title: 'Apply.', sub: 'One form, read by the people you would work with. We reply to everyone.', image: images.metrics })}
   <section class="section-pad">
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
@@ -288,7 +236,7 @@ const applyContent = `
 
 /* ---------- Careers ---------- */
 const careersContent = `
-  ${pageHeader({ eyebrow: 'Careers', title: 'Build things that stand.', sub: 'We are a studio of senior engineers who stay on the work rather than moving to management. If that is the career you want, write to us.', image: images.careersHeader, alt: 'Merkel Constructions engineers on a live project' })}
+  ${pageHeader({ eyebrow: 'Careers', title: 'Build things that stand.', sub: 'We are a studio of senior engineers who stay on the work rather than moving to management. If that is the career you want, write to us.', image: images.careersHeader })}
   <section class="section-pad">
     <div class="wrap careers-intro" data-reveal>
       <div>
@@ -314,14 +262,12 @@ const careersContent = `
 
 /* ---------- Contact ---------- */
 const contactContent = `
-  ${pageHeader({ eyebrow: 'Start a project', title: 'Contact us.', sub: 'Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer replies within two working days.', image: images.contactHeader, alt: 'Merkel Constructions site team' })}
+  ${pageHeader({ eyebrow: 'Start a project', title: 'Contact us.', sub: 'Send us the drawing set, the constraint you keep running into, or a paragraph on the site. A principal engineer replies within two working days.', image: images.contactHeader })}
   <section class="section-pad">
     <div class="wrap contact-grid">
       <div class="contact-info" data-reveal>
         <div class="contact-detail">
-          <div class="row" data-site-row="address"${site.address ? '' : ' hidden'}><div class="k">Studio</div><div class="val" data-site="address">${site.address}</div></div>
           <div class="row"><div class="k">Email</div><div class="val"><a href="mailto:${site.email}" data-site="email">${site.email}</a></div></div>
-          <div class="row" data-site-row="phone"${site.phone ? '' : ' hidden'}><div class="k">Telephone</div><div class="val"><a href="tel:${site.phone.replace(/[^+\d]/g, '')}" data-site="phone">${site.phone}</a></div></div>
           <div class="row"><div class="k">Hours</div><div class="val" data-site="hours">${site.hours}</div></div>
         </div>
         <div class="contact-note">
