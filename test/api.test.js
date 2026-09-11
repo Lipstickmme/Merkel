@@ -456,7 +456,7 @@ async function withApp(env, fn) {
     const realFetch = global.fetch;
     const asked = [];
     global.fetch = async (url, init) => {
-      if (String(url).startsWith('https://api.resend.com/emails/')) {
+      if (String(url).startsWith('https://api.resend.com/emails/receiving/')) {
         asked.push(String(url));
         return new Response(JSON.stringify({ text: 'Can you quote the canal crossing?' }), {
           status: 200, headers: { 'Content-Type': 'application/json' },
@@ -497,7 +497,9 @@ async function withApp(env, fn) {
         });
         assert.strictEqual(res.status, 200, await res.text());
         assert.strictEqual(asked.length, 1, 'the body was fetched by email_id');
-        assert.match(asked[0], /4a93e097-c85c-408f-89fd-67bc22511be5$/);
+        // Received mail lives under /emails/receiving; /emails/{id} is sent mail
+        // and answers "Email not found" for an inbound id.
+        assert.match(asked[0], /\/emails\/receiving\/4a93e097-c85c-408f-89fd-67bc22511be5\?/);
         const filed = sb.db.email_messages.rows[0];
         assert.strictEqual(filed.body_text, 'Can you quote the canal crossing?',
           'the fetched body is what reaches the dashboard');

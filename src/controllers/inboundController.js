@@ -55,9 +55,16 @@ async function fetchBody(emailId) {
   if (!apiKey || !emailId) return null;
 
   try {
-    const res = await fetch(`https://api.resend.com/emails/${encodeURIComponent(emailId)}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
+    // Received mail is a separate collection from sent: /emails/{id} answers
+    // "Email not found" for an inbound id.
+    //
+    // html_format=cid leaves inline images as cid: references to the
+    // attachments rather than expanding them into base64 data URIs, which keeps
+    // a photo signature from turning one row into megabytes.
+    const res = await fetch(
+      `https://api.resend.com/emails/receiving/${encodeURIComponent(emailId)}?html_format=cid`,
+      { headers: { Authorization: `Bearer ${apiKey}` } }
+    );
     const raw = await res.text().catch(() => '');
     if (!res.ok) {
       // The response text names which of these it is: a wrong path, a key
