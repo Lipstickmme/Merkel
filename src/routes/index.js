@@ -20,5 +20,6 @@ router.use('/leadership', require('./leadership'));
 router.use('/contact', require('./contact'));
 router.use('/applications', require('./applications'));
 router.use('/chat', require('./chat'));
+router.use('/emails', require('./emails'));
 
 module.exports = router;

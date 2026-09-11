@@ -447,6 +447,167 @@ async function withApp(env, fn) {
     sb.close();
   }
 
+  /* ---- 15b. an inbound webhook that carries no body fetches one ---- */
+  {
+    const { sign } = require(ROOT + '/src/utils/webhookSignature');
+    const SECRET = 'whsec_' + Buffer.from('body-fetch-secret').toString('base64');
+    const sb = await mock.start({});
+
+    const realFetch = global.fetch;
+    const asked = [];
+    global.fetch = async (url, init) => {
+      if (String(url).startsWith('https://api.resend.com/emails/')) {
+        asked.push(String(url));
+        return new Response(JSON.stringify({ text: 'Can you quote the canal crossing?' }), {
+          status: 200, headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return realFetch(url, init);
+    };
+
+    await withApp(
+      {
+        SUPABASE_URL: `http://127.0.0.1:${sb.address().port}`,
+        SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, SUPABASE_ANON_KEY: mock.ANON_KEY,
+        RESEND_WEBHOOK_SECRET: SECRET, RESEND_API_KEY: 'test-key',
+        MAILBOX_ADDRESS: 'contact@merkel.test', FORWARD_TO: '',
+      },
+      async (base) => {
+        // Shaped like a real Resend delivery: envelope only, no text or html.
+        const body = JSON.stringify({
+          type: 'email.received',
+          data: {
+            attachments: [], bcc: [], cc: [],
+            email_id: '4a93e097-c85c-408f-89fd-67bc22511be5',
+            from: 'ada@example.com',
+            message_id: '<ada-2@example.com>',
+            received_for: ['contact@merkel.test'],
+            subject: 'Canal crossing',
+            to: ['contact@merkel.test'],
+          },
+        });
+        const id = 'msg_body', ts = String(Math.floor(Date.now() / 1000));
+        const res = await fetch(base + '/api/inbound/resend', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'svix-id': id, 'svix-timestamp': ts, 'svix-signature': sign(SECRET, id, ts, body),
+          },
+          body,
+        });
+        assert.strictEqual(res.status, 200, await res.text());
+        assert.strictEqual(asked.length, 1, 'the body was fetched by email_id');
+        assert.match(asked[0], /4a93e097-c85c-408f-89fd-67bc22511be5$/);
+        const filed = sb.db.email_messages.rows[0];
+        assert.strictEqual(filed.body_text, 'Can you quote the canal crossing?',
+          'the fetched body is what reaches the dashboard');
+        console.log('  ok  an envelope-only delivery fetches its body before filing');
+      }
+    );
+
+    global.fetch = realFetch;
+    sb.close();
+  }
+
+  /* ---- 16. replying to studio mail from the desk ---- */
+  {
+    const sb = await mock.start({});
+    const sbUrl = `http://127.0.0.1:${sb.address().port}`;
+
+    // Stand in for Resend so the suite never sends real mail.
+    const realFetch = global.fetch;
+    const sentMail = [];
+    global.fetch = async (url, init) => {
+      if (String(url).startsWith('https://api.resend.com/')) {
+        sentMail.push(JSON.parse(init.body));
+        return new Response(JSON.stringify({ id: 'resend-1' }), {
+          status: 200, headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return realFetch(url, init);
+    };
+
+    // A real signed-in session, the way the desk gets one.
+    const signIn = async (email, password) => {
+      await realFetch(`${sbUrl}/auth/v1/signup`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', apikey: mock.ANON_KEY },
+        body: JSON.stringify({ email, password }),
+      });
+      const res = await realFetch(`${sbUrl}/auth/v1/token?grant_type=password`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', apikey: mock.ANON_KEY },
+        body: JSON.stringify({ email, password }),
+      });
+      return res.json();
+    };
+
+    const staff = await signIn('desk@merkel.test', 'pw-desk');
+    const outsider = await signIn('nosy@example.com', 'pw-nosy');
+    sb.db.admins.rows.push({ user_id: staff.user.id, email: staff.user.email });
+
+    const thread = {
+      id: '11111111-2222-4333-8444-555555555555',
+      created_at: new Date().toISOString(), last_message_at: new Date().toISOString(),
+      subject: 'A 40m span', participant_email: 'ada@example.com', participant_name: 'Ada', status: 'new',
+    };
+    sb.db.email_threads.rows.push(thread);
+    sb.db.email_messages.rows.push({
+      id: 'aaaaaaaa-2222-4333-8444-555555555555', created_at: new Date().toISOString(),
+      thread_id: thread.id, direction: 'inbound', from_email: 'ada@example.com',
+      to_email: 'contact@merkel.test', subject: 'A 40m span', message_id: '<ada-1@example.com>',
+      has_attachments: false,
+    });
+
+    await withApp(
+      {
+        SUPABASE_URL: sbUrl, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, SUPABASE_ANON_KEY: mock.ANON_KEY,
+        RESEND_API_KEY: 'test-key', MAILBOX_ADDRESS: 'Merkel Constructions <contact@merkel.test>',
+      },
+      async (base) => {
+        const reply = (token, payload) => fetch(base + '/api/emails/reply', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' },
+            token ? { Authorization: `Bearer ${token}` } : {}),
+          body: JSON.stringify(payload),
+        });
+
+        const anon = await reply(null, { threadId: thread.id, body: 'hello' });
+        assert.strictEqual(anon.status, 401, 'an unauthenticated caller cannot send mail as the studio');
+        assert.strictEqual(sentMail.length, 0);
+        console.log('  ok  replying without a session is refused');
+
+        const nonAdmin = await reply(outsider.access_token, { threadId: thread.id, body: 'hello' });
+        assert.strictEqual(nonAdmin.status, 403, 'a signed-in non-admin cannot send mail either');
+        assert.strictEqual(sentMail.length, 0);
+        console.log('  ok  a signed-in non-admin is refused');
+
+        const empty = await reply(staff.access_token, { threadId: thread.id, body: '   ' });
+        assert.strictEqual(empty.status, 422);
+        console.log('  ok  an empty reply is rejected before sending');
+
+        const missing = await reply(staff.access_token, { threadId: '99999999-2222-4333-8444-555555555555', body: 'hi' });
+        assert.strictEqual(missing.status, 404);
+        console.log('  ok  replying to a thread that does not exist is a 404');
+
+        const ok = await reply(staff.access_token, { threadId: thread.id, body: 'Quoting next week.' });
+        assert.strictEqual(ok.status, 201, JSON.stringify(await ok.json().catch(() => ({}))));
+        assert.strictEqual(sentMail.length, 1);
+        assert.deepStrictEqual(sentMail[0].to, ['ada@example.com']);
+        assert.strictEqual(sentMail[0].subject, 'Re: A 40m span', 'one Re: prefix, not two');
+        // Threading headers are what put the reply inside Ada's conversation.
+        assert.strictEqual(sentMail[0].headers['In-Reply-To'], '<ada-1@example.com>');
+
+        const outbound = sb.db.email_messages.rows.filter((r) => r.direction === 'outbound');
+        assert.strictEqual(outbound.length, 1, 'the reply is recorded on the thread');
+        assert.strictEqual(outbound[0].body_text, 'Quoting next week.');
+        assert.strictEqual(outbound[0].message_id, 'resend-1');
+        console.log('  ok  an admin reply sends, threads, and is filed as outbound');
+      }
+    );
+
+    global.fetch = realFetch;
+    sb.close();
+  }
+
   console.log('\nserver suite passed');
   process.exit(0);
 })().catch((err) => {

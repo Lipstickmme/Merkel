@@ -514,12 +514,7 @@
     );
     detail.appendChild(head);
 
-    const reply = el('p', 'admin-sub');
-    const link = el('a', null, row.participant_email);
-    link.href = `mailto:${row.participant_email}?subject=${encodeURIComponent(`Re: ${row.subject || ''}`)}`;
-    reply.appendChild(document.createTextNode('Reply from your own mail client: '));
-    reply.appendChild(link);
-    detail.appendChild(reply);
+    detail.appendChild(el('p', 'admin-sub', `Conversation with ${row.participant_email}`));
 
     const thread = el('ol', 'admin-thread');
     state.mail.forEach((message) => {
@@ -529,6 +524,50 @@
       thread.appendChild(li);
     });
     detail.appendChild(thread);
+    thread.scrollTop = thread.scrollHeight;
+
+    const form = el('form', 'admin-reply');
+    const box = el('textarea');
+    box.rows = 3;
+    box.placeholder = `Reply to ${row.participant_email}`;
+    box.setAttribute('aria-label', 'Reply');
+    box.value = state.drafts[row.id] || '';
+    box.addEventListener('input', () => {
+      state.drafts[row.id] = box.value;
+    });
+    const send = el('button', 'btn', 'Send reply');
+    send.type = 'submit';
+    form.appendChild(box);
+    form.appendChild(send);
+    detail.appendChild(form);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const body = box.value.trim();
+      if (!body) return;
+      send.disabled = true;
+      try {
+        // The one part of this page that goes through the API: sending needs the
+        // Resend key, which the browser must never hold.
+        const token = await client.auth.accessToken();
+        const res = await fetch('/api/emails/reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ threadId: row.id, body }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || `Reply failed (${res.status})`);
+        box.value = '';
+        delete state.drafts[row.id];
+        alertBar('');
+        await refreshThread();
+      } catch (err) {
+        // The draft stays in the box, so a failed send is not lost text.
+        alertBar(err.message);
+      } finally {
+        send.disabled = false;
+      }
+    });
   }
 
   /* ---------------------------------------------------------- settings --- */

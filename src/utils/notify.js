@@ -30,13 +30,20 @@ function defaultFrom() {
 }
 
 /**
- * Send an email through Resend.
- * @param {{to?:string, from?:string, subject:string, text:string, replyTo?:string}} opts
+ * Send an email through Resend, reporting what came back.
+ *
+ * `headers` carries RFC 5322 headers such as In-Reply-To, which is what makes a
+ * reply land inside the recipient's existing conversation rather than opening a
+ * fresh one beside it.
+ *
+ * @param {{to?:string, from?:string, subject:string, text:string, replyTo?:string, headers?:object}} opts
+ * @returns {Promise<{ok: boolean, id?: string, error?: string}>}
  */
-async function sendEmail(opts) {
+async function send(opts) {
   const apiKey = process.env.RESEND_API_KEY;
   const to = opts.to || defaultTo();
-  if (!apiKey || !to) return false;
+  if (!apiKey) return { ok: false, error: 'no_api_key' };
+  if (!to) return { ok: false, error: 'no_recipient' };
 
   const payload = {
     from: opts.from || defaultFrom(),
@@ -46,6 +53,7 @@ async function sendEmail(opts) {
     html: `<pre style="font:14px/1.6 ui-monospace,monospace;white-space:pre-wrap">${escapeHtml(opts.text)}</pre>`,
   };
   if (opts.replyTo) payload.reply_to = opts.replyTo;
+  if (opts.headers && Object.keys(opts.headers).length) payload.headers = opts.headers;
 
   try {
     const res = await fetch(RESEND_ENDPOINT, {
@@ -53,14 +61,24 @@ async function sendEmail(opts) {
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
+    const text = await res.text().catch(() => '');
     if (!res.ok) {
-      console.warn('[merkel] notify email failed:', res.status, await res.text().catch(() => ''));
+      console.warn('[merkel] notify email failed:', res.status, text);
+      return { ok: false, error: `resend_${res.status}` };
     }
-    return res.ok;
+    let id;
+    try { id = JSON.parse(text).id; } catch (e) { /* id is a bonus, not a requirement */ }
+    return { ok: true, id };
   } catch (err) {
     console.warn('[merkel] notify email error:', err.message);
-    return false;
+    return { ok: false, error: err.message };
   }
+}
+
+/** Fire-and-forget wrapper for callers that only care whether it left. */
+async function sendEmail(opts) {
+  const result = await send(opts);
+  return result.ok;
 }
 
 async function sendWebhook(subject, text, data) {
@@ -129,4 +147,4 @@ function chatMessage(sessionId, text) {
   return notify('New live chat message', lines, { sessionId, text });
 }
 
-module.exports = { notify, sendEmail, enquiry, application, chatMessage, defaultTo, defaultFrom };
+module.exports = { notify, send, sendEmail, enquiry, application, chatMessage, defaultTo, defaultFrom };

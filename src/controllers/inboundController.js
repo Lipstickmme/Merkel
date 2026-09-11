@@ -29,6 +29,9 @@ function parseEmail(payload) {
   const d = (payload && (payload.data || payload.email || payload)) || {};
   return {
     messageId: firstString(d.message_id, d.messageId, d.id, payload && payload.id),
+    // The provider's own handle for the message, which is how the body is
+    // retrieved when the webhook does not carry one.
+    emailId: firstString(d.email_id, d.emailId),
     inReplyTo: firstString(d.in_reply_to, d.inReplyTo, d.references),
     from: firstString(d.from, d.sender, d.From),
     to: firstString(d.to, d.recipient, d.To),
@@ -36,6 +39,37 @@ function parseEmail(payload) {
     text: firstString(d.text, d.body_plain, d.plain, d.body),
     html: firstString(d.html, d.body_html),
   };
+}
+
+/**
+ * Fetch a message body the webhook did not carry.
+ *
+ * Resend's email.received payload lists the envelope -- sender, recipients,
+ * subject, attachments -- but no text or html part, so a message filed straight
+ * from the webhook reads as empty in the dashboard. The body has to be asked
+ * for by id. Best effort: a conversation with a subject and a sender is still
+ * worth keeping if this fails.
+ */
+async function fetchBody(emailId) {
+  const apiKey = config.resendApiKey();
+  if (!apiKey || !emailId) return null;
+
+  try {
+    const res = await fetch(`https://api.resend.com/emails/${encodeURIComponent(emailId)}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (!res.ok) {
+      console.warn('[merkel] could not fetch inbound body:', res.status);
+      return null;
+    }
+    const data = await res.json();
+    const text = firstString(data.text, data.body_plain, data.plain);
+    const html = firstString(data.html, data.body_html);
+    return text || html ? { text, html } : null;
+  } catch (err) {
+    console.warn('[merkel] inbound body fetch error:', err.message);
+    return null;
+  }
 }
 
 /** Threads match on correspondent plus subject, so strip reply prefixes. */
@@ -116,6 +150,14 @@ exports.resend = async (req, res, next) => {
     const mailbox = config.mailboxAddress();
     if (mailbox && email.to && !email.to.toLowerCase().includes(config.parseAddress(mailbox).email)) {
       return res.status(200).json({ ok: true, ignored: 'not_for_mailbox' });
+    }
+
+    if (!email.text && !email.html) {
+      const fetched = await fetchBody(email.emailId);
+      if (fetched) {
+        email.text = fetched.text;
+        email.html = fetched.html;
+      }
     }
 
     // Archive onto a thread (best effort; never fails the webhook).

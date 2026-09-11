@@ -192,6 +192,15 @@ function start({ tables, port = 0, drop = [] }) {
       return json(res, 204);
     }
 
+    // Resolves a bearer token to its user. Server routes that cannot rely on
+    // row level security check a caller's session here.
+    if (url.pathname === '/auth/v1/user') {
+      const auth = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+      const user = sessions.get(auth);
+      if (!user) return fail(res, 401, 'invalid_token', 'Invalid or expired token');
+      return json(res, 200, user);
+    }
+
     /* ---------------------------------------------------------- PostgREST -- */
 
     const restMatch = /^\/rest\/v1\/([A-Za-z0-9_]+)$/.exec(url.pathname);
