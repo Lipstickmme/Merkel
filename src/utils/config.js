@@ -54,6 +54,12 @@ const formFrom = () => pick('FORM_FROM', 'NOTIFY_FROM') || 'Merkel Website <onbo
 const mailboxAddress = () => pick('MAILBOX_ADDRESS');
 const forwardTo = () => pick('FORWARD_TO');
 
+/**
+ * The name a recipient sees beside the address. Without one, mail clients fall
+ * back to the local part, so a reply from contact@ shows up as "contact".
+ */
+const studioName = () => pick('STUDIO_NAME') || 'Merkel Constructions';
+
 /** Bare address out of "Name <a@b.c>". */
 function parseAddress(value) {
   const raw = String(value || '').trim();
@@ -106,6 +112,7 @@ module.exports = {
   formFrom,
   mailboxAddress,
   forwardTo,
+  studioName,
   parseAddress,
   ownAddresses,
   forwardWouldLoop,

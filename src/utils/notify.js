@@ -50,8 +50,15 @@ async function send(opts) {
     to: to.split(',').map((s) => s.trim()).filter(Boolean),
     subject: opts.subject,
     text: opts.text,
-    html: `<pre style="font:14px/1.6 ui-monospace,monospace;white-space:pre-wrap">${escapeHtml(opts.text)}</pre>`,
   };
+
+  // The monospace block suits the machine-formatted notifications this started
+  // out serving. A message written by a person should not arrive looking like a
+  // log line, and a text-only mail also scores better with spam filters, so
+  // `html: false` sends without an HTML part at all.
+  if (opts.html !== false) {
+    payload.html = `<pre style="font:14px/1.6 ui-monospace,monospace;white-space:pre-wrap">${escapeHtml(opts.text)}</pre>`;
+  }
   if (opts.replyTo) payload.reply_to = opts.replyTo;
   if (opts.headers && Object.keys(opts.headers).length) payload.headers = opts.headers;
 

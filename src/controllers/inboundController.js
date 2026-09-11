@@ -58,11 +58,20 @@ async function fetchBody(emailId) {
     const res = await fetch(`https://api.resend.com/emails/${encodeURIComponent(emailId)}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
+    const raw = await res.text().catch(() => '');
     if (!res.ok) {
-      console.warn('[merkel] could not fetch inbound body:', res.status);
+      // The response text names which of these it is: a wrong path, a key
+      // without inbound scope, or an id this account cannot read.
+      console.warn('[merkel] could not fetch inbound body:', res.status, raw.slice(0, 300));
       return null;
     }
-    const data = await res.json();
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch (err) {
+      console.warn('[merkel] inbound body was not json:', raw.slice(0, 200));
+      return null;
+    }
     const text = firstString(data.text, data.body_plain, data.plain);
     const html = firstString(data.html, data.body_html);
     return text || html ? { text, html } : null;

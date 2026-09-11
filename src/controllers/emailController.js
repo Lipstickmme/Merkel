@@ -17,6 +17,20 @@ const { getSupabase } = require('../utils/supabase');
 const MAX_BODY = 20000;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/**
+ * The From header for a reply, always carrying a display name.
+ *
+ * Mail clients fall back to the local part of the address when there is none,
+ * so a reply from contact@merkelconstructions.com shows in the recipient's
+ * inbox as "contact" rather than the studio's name.
+ */
+function senderIdentity() {
+  const configured = config.mailboxAddress() || config.formFrom();
+  const { name, email } = config.parseAddress(configured);
+  if (!email) return configured;
+  return name ? configured : `${config.studioName()} <${email}>`;
+}
+
 /** Keep one "Re: " on the front, however the subject arrived. */
 function replySubject(subject) {
   const base = String(subject || '').replace(/^((re|fwd|fw)\s*:\s*)+/i, '').trim();
@@ -67,7 +81,7 @@ exports.reply = async (req, res, next) => {
     );
     if (Array.isArray(previous) && previous.length) inReplyTo = previous[0].message_id || null;
 
-    const from = config.mailboxAddress() || config.formFrom();
+    const from = senderIdentity();
     const subject = replySubject(thread.subject);
 
     const sent = await notify.send({
@@ -75,6 +89,9 @@ exports.reply = async (req, res, next) => {
       from,
       subject,
       text: body,
+      // Written by a person, so it goes as plain text rather than the monospace
+      // block the automated notifications use.
+      html: false,
       headers: inReplyTo ? { 'In-Reply-To': inReplyTo, References: inReplyTo } : undefined,
     });
 

@@ -560,7 +560,7 @@ async function withApp(env, fn) {
     await withApp(
       {
         SUPABASE_URL: sbUrl, SUPABASE_SERVICE_ROLE_KEY: mock.SERVICE_KEY, SUPABASE_ANON_KEY: mock.ANON_KEY,
-        RESEND_API_KEY: 'test-key', MAILBOX_ADDRESS: 'Merkel Constructions <contact@merkel.test>',
+        RESEND_API_KEY: 'test-key', MAILBOX_ADDRESS: 'contact@merkel.test',
       },
       async (base) => {
         const reply = (token, payload) => fetch(base + '/api/emails/reply', {
@@ -595,6 +595,12 @@ async function withApp(env, fn) {
         assert.strictEqual(sentMail[0].subject, 'Re: A 40m span', 'one Re: prefix, not two');
         // Threading headers are what put the reply inside Ada's conversation.
         assert.strictEqual(sentMail[0].headers['In-Reply-To'], '<ada-1@example.com>');
+        // A bare MAILBOX_ADDRESS would otherwise show in the recipient's inbox
+        // as "contact", the local part, rather than as the studio.
+        assert.strictEqual(sentMail[0].from, 'Merkel Constructions <contact@merkel.test>');
+        // Written by a person, so no monospace HTML part goes with it.
+        assert.strictEqual(sentMail[0].html, undefined);
+        assert.strictEqual(sentMail[0].text, 'Quoting next week.');
 
         const outbound = sb.db.email_messages.rows.filter((r) => r.direction === 'outbound');
         assert.strictEqual(outbound.length, 1, 'the reply is recorded on the thread');
